@@ -1,0 +1,350 @@
+.data-enrichment-features {
+    cursor: pointer;
+}
+.ult_modal-body ul {
+    list-style: inherit !important;
+    margin-left: 18px !important;
+}
+.volume-container .square_box-icon .aio-icon-description {
+    min-height: 250px!important;
+}
+.volume-container .aio-icon-description h3 {
+        margin: 22px 0;
+}
+
+.history-row .title{
+    font-size: 26px;
+    font-weight: bold;
+    color: #171717;
+    text-transform: uppercase;
+}
+
+.history-row .subtitle{
+    font-size: 20px;
+    font-weight: 500;
+    color: #171717;
+    text-transform: uppercase;
+    margin-top: 15px;
+}
+
+.title-desc{
+    margin-bottom: 10px;
+}
+
+.title-desc p, .read-more-desc p{
+    font-size: 14px !important;
+    color: #171717;
+    font-weight: normal;
+    line-height: 2;
+}
+
+.about-us-read-more, .about-us-show-less{
+    background: none!important;
+    border: none;
+    padding: 0!important;
+    color: #00AE8D;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: bold !important;
+    font-size: 13px;
+}
+
+#show-less-row{
+	display:none;
+}
+
+.about-us-read-more .ubtn-text:hover, .about-us-show-less .ubtn-text:hover{
+	color: #1CD3AB;
+}
+
+.about-us-read-more .ubtn-icon, .about-us-show-less .ubtn-icon{
+    display:none;
+}
+
+.history-row{
+    padding-bottom: 20px !important;
+}
+
+.history-row:before{
+    content: '';
+    background-image: url('https://www.intalio.com/wp-content/uploads/2020/05/history-background.png');
+    background-repeat: no-repeat;
+    background-position: 50% 0;
+    -ms-background-size: cover;
+    -o-background-size: cover;
+    -moz-background-size: cover;
+    -webkit-background-size: cover;
+    background-size: cover;
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: 0.8;
+}
+
+.about-us-read-more:after, .about-us-show-less:after{
+    position: absolute;
+    content: url(https://www.intalio.com/wp-content/uploads/2020/04/right-arrow.png) !important;
+    transform: scale(.7);
+    padding-top: 3px;
+    padding-left: 6px;
+}
+
+.intalio-ever-logo{
+    width: 200px;
+    height: auto;
+}
+
+.logo-history-column .wpb_single_image{
+    margin-bottom: 10px;
+}
+
+.logo-history-column .wpb_text_column:first-child{
+    margin-bottom: 15px;
+}
+
+.history-more-desc-row{
+    margin-top: 15px !important;
+}
+
+.counter-row{
+    background-color: #171717;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    padding-left: 7%;
+    padding-right: 7%;
+}
+
+.counter-row .counter-box{
+    text-align:center;
+}
+
+.counter-row .counter-box .vc_column-inner{
+	padding-top: 0px !important;
+}
+
+.counter-row .counter-box .aio-icon-component{
+    margin-top: 35px;
+    border: 1px solid #707070;
+}
+
+.counter-row .counter-box .aio-icon-component .left-icon .aio-icon-left{
+    vertical-align:middle;
+    padding-top: 5%;
+	width: 50%;
+	float: left;
+}
+
+.counter-row .counter-box .aio-icon-component .left-icon .aio-icon-left .aio-icon-img {
+	margin-right: 0px;
+}
+
+.counter-row .counter-box .aio-icon-component .left-icon .aio-icon-left:after{
+    content: "";
+    background-color: #FFFFFF;
+    position: absolute;
+    width: 1px;
+    height: 80px;
+    top: 30%;
+    left: 50%;
+    display: block;
+    opacity: 0.3;
+}
+
+.counter-row .counter-box .aio-icon-component .left-icon .aio-ibd-block{
+	width: 50%;
+	margin-left: 50%;
+	display:flex;
+}
+
+.counter-row .counter-box .left-icon{
+	display:block;
+	padding-top: 30px;
+	padding-bottom: 30px;
+}
+
+.counter-row .counter-box .aio-icon-description{
+	margin-top: 5px;
+}
+
+.counter-row .counter-box .aio-icon-description .counter-number{
+    font-size: 42px !important;
+    color: #FFFFFF !important;
+    font-weight: bold !important;
+}
+
+.counter-row .counter-box .aio-icon-description .counter-number:after{
+	font-size: 18px !important;
+    color: #FFFFFF !important;
+    font-weight: bold !important;
+    text-align: left;
+	content: '+';
+	position: absolute;
+	top: 35%;
+}
+
+.counter-row .counter-box .aio-icon-description .counter-desc{
+    font-size: 15px !important;
+    color: #FFFFFF !important;
+	padding-top: 5px;
+}
+
+.counter-row .counter-box .aio-icon-description .counter-plus-icon{
+    font-size: 18px !important;
+    color: #FFFFFF !important;
+    font-weight: bold !important;
+    text-align: left;
+	padding-left: 70%;
+}
+
+.quote-column .vc_column-inner{
+    padding-top: 0px !important;
+}
+
+.quote-row{
+    padding-top: 8%;
+    padding-bottom: 6%;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+}
+
+.quote-row:before{
+    content: '';
+    background-image: url('https://www.intalio.com/wp-content/uploads/2020/05/quote-background.png');
+    background-repeat: no-repeat;
+    background-position: 50% 0;
+    -ms-background-size: cover;
+    -o-background-size: cover;
+    -moz-background-size: cover;
+    -webkit-background-size: cover;
+    background-size: cover;
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: 0.6;
+}
+
+.quote-position:after{
+    content: url(https://www.intalio.com/wp-content/uploads/2020/05/aboutus-quote-box.png);
+    position: absolute;
+    transform: scale(0.6);
+    left: 85%;
+    top: 100px;
+    z-index: 999;
+}
+
+.quote-image .wpb_single_image{
+    text-align:center;
+}
+
+.quote-row .quote-text{
+    margin-left: 15%;
+    margin-right: 15%;
+    text-align: center;
+}
+
+.quote-row .quote-text:after{
+	content: url(https://www.intalio.com/wp-content/uploads/2020/05/about-us-quote.png);
+    position: absolute;
+    padding-top: 0px;
+    top: 65%;
+    transform: scale(0.7);
+    left: 49%;
+}
+
+.quote-row .quote-text p{
+    line-height: 3;
+    font-size: 14px;
+    color: #3A3A3A;
+    font-weight: normal;
+}
+
+.quote-position{
+    text-align:center;
+	padding-top: 50px;
+	margin-bottom: 15px;
+}
+
+.quote-position .quoter-name{
+    font-size: 14px;
+    font-weight: bold;
+    color: #00AE8D;
+}
+
+.quote-position .quoter-position{
+    font-size: 12px;
+    color: #3A3A3A;
+    font-weight: bold;
+}
+
+.footer-boxes{
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-left: 7%;
+    padding-right: 7%;
+    background: #F4F4F4;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+}
+
+.footer-boxes .footer-box .title{
+    font-size: 20px;
+    font-weight: 500;
+    color: #262625;
+        text-transform: unset;
+}
+
+.footer-boxes .footer-box .subtitle{
+    font-size: 14px;
+    font-weight: bold;
+    color: #00AE8D;
+        text-transform: unset;
+}
+
+.footer-boxes .footer-box .description{
+    font-size: 12px;
+    font-weight: normal;
+    color: #3A3A3A;
+    opacity: 0.6;
+}
+
+.footer-boxes .footer-box .aio-icon-box{
+    text-align: center;
+    background: white;
+    min-height: 380px !important;
+}
+
+.footer-boxes .footer-box .aio-icon-top{
+    padding-top: 20px;
+}
+
+.footer-boxes .footer-box .aio-icon-description{
+    padding-left: 30px;
+    padding-bottom: 30px;
+    padding-right: 30px;
+}
+
+.footer-boxes .driven-customers-box:after{
+    content: url(https://www.intalio.com/wp-content/uploads/2020/04/Group-1023.png);
+    position: absolute;
+    transform: scale(0.8);
+    left: 40px;
+    bottom: -5px;
+}
+
+.about-us-logo{
+    margin-bottom: 15px;
+}
+
+.about-us-logo .intalio-text,.everteam-text{
+    font-size: 18px;
+    font-weight: 500;
+    color: #00ae8b;
+}

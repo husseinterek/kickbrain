@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<questions>
+      <question>
+      	<prompt-en>Name national teams that have won the FIFA World Cup at least once.</prompt-en>
+      	<prompt-ar>اذكر المنتخبات التي فازت بكأس العالم مرة واحدة على الأقل.</prompt-ar>
+      	<answers>Brazil, Germany, Italy, Argentina, Uruguay, France, Spain, England</answers>
+      </question>
+      <question>
+      	<prompt-en>Name players who have won the UEFA Champions League with more than one club.</prompt-en>
+      	<prompt-ar>اذكر اللاعبين الذين فازوا بدوري أبطال أوروبا مع أكثر من نادي.</prompt-ar>
+      	<answers>Toni Kroos, Cristiano Ronaldo, Mateo Kovacic, Gerard Pique, Clarence Seedorf, David Alaba, Samuel Eto’o, Fernando Redondo, Xherdan Shaqiri, Daniel Sturridge, Thiago Alcantara, Thiago Motta, Xabi Alonso, Deco ,Jose Bosingwa,Paulo Ferreira,Owen Hargreaves,Paulo Sousa,Edwin Van Der Sar,Christian Panucci,Marcel Desailly,Didier Deschamps,Scott Carson</answers>
+      </question>
+      <question>
+      	<prompt-en>Name players who have won the Ballon d'Or at least twice.</prompt-en>
+      	<prompt-ar>اذكر اللاعبين الذين فازوا بجائزة الكرة الذهبية (البالون دور) مرتين على الأقل.</prompt-ar>
+      	<answers>Lionel Messi, Cristiano Ronaldo, Ronaldo Nazario, Johann Cruyff, Michel Platini, Marco van Basten, Alfredo Di Stéfano, Franz Beckenbauer, Kevin Keegan,Karl-Heinz Rummenigge</answers>
+      </question>
+      <question>
+      	<prompt-en>Name stadiums that have hosted the UEFA Champions League final since 2000</prompt-en>
+      	<prompt-ar>اذكر الملاعب التي استضافت نهائي دوري أبطال أوروبا منذ عام 2000.</prompt-ar>
+      	<answers>Stade de France, San Siro, Hampden Park,Old Trafford, Arena AufSchalke, Ataturk Olympic,  Stade de France, OAKA, Luzhniki, Stadio Olimpico, Santiago Bernabeu, Wembley, Allianz Arena, Estadio da Luz, Olympiastadion Berlin, Millennium, NSC Olimpiyskiy, Wanda Metropolitano, Estadio da Luz, Estadio do Dragao</answers>
+      </question>
+      <question>
+      	<prompt-en>Name players who have scored at least 40 goals in the UEFA Champions League.</prompt-en>
+      	<prompt-ar>اذكر اللاعبين الذين سجلوا ما لا يقل عن 40 هدف في دوري أبطال أوروبا.</prompt-ar>
+      	<answers>Cristiano Ronaldo, Lionel Messi, Robert Lewandowski, Karim Benzema, Raul Gonzalez, Ruud van Nistelrooy, Thierry Henry, Andriy Shevchenko, Zlatan Ibrahimovic, Thomas Muller, Filippo Inzaghi</answers>
+      </question>
+      <question>
+      	<prompt-en>Name clubs that have won both their domestic league and the champions league in the same season.</prompt-en>
+      	<prompt-ar>اذكر الأندية التي فازت بلقب دوريها المحلي ودوري أبطال أوروبا في نفس الموسم.</prompt-ar>
+      	<answers>Barcelona, Real Madrid, Bayern Munich, Ajax, Inter Milan, Manchester United, Liverpool, AC Milan, Benfica, Porto, Celtic, Hamburg, Steaua Bucharest, PSV, Red Star Belgrade</answers>
+      </question>
+      <question>
+      	<prompt-en>Name national teams that have won the UEFA European Championship (Euro).</prompt-en>
+      	<prompt-ar>اذكر المنتخبات التي فازت ببطولة أمم أوروبا.</prompt-ar>
+      	<answers>Germany, Spain, Italy, France, Soviet Union, Czechoslovakia, Netherlands, Denmark, Greece, Portugal</answers>
+      </question>
+	<question>
+      	<prompt-en>Name clubs that have never been relegated from their country's top division.</prompt-en>
+      	<prompt-ar>اذكر الأندية التي لم تسقط أبداً من الدوري الأول في بلدانها.</prompt-ar>
+      	<answers>Inter Milan, Real Madrid, Barcelona, Athletic Bilbao, Ajax, Feyenoord, PSV, Utrecht, Benfica, Porto, Sporting Lisbon, Paris Saint-Germain, Celtic, Aberdeen, Arsenal, Liverpool, Aston Villa, Manchester United, Everton, Tottenham Hotspur, Chelsea</answers>
+      </question>
+      <question>
+      	<prompt-en>Name countries that have hosted the FIFA World Cup.</prompt-en>
+      	<prompt-ar>اذكر البلدان التي استضافت كأس العالم عبر التاريخ.</prompt-ar>
+      	<answers>Uruguay, Italy, France, Brazil, Switzerland, Sweden, Chile, England, Mexico, Argentina, Spain, United States, South Korea, Japan, South Africa, Russia, Qatar</answers>
+      </question>
+      <question>
+      	<prompt-en>Name players who have won the UEFA Champions League and the world cup in the same season.</prompt-en>
+      	<prompt-ar>اذكر اللاعبين الذين فازوا بدوري أبطال أوروبا وكأس العالم في نفس الموسم.</prompt-ar>
+      	<answers>Sepp Maier, Paul Breitner, Hans-Georg Schwarzenbeck, Franz Beckenbauer, Gerd Müller, Uli Hoeness, Christian Karembeu, Roberto Carlos, Raphaël Varane</answers>
+      </question>
+      <question>
+      	<prompt-en>Name players who have won the FIFA World Cup's Best Young Player award.</prompt-en>
+      	<prompt-ar>اذكر اللاعبين الذين فازوا بجائزة أفضل لاعب شاب في كأس العالم.</prompt-ar>
+      	<answers>Enzo Fernández, Kylian Mbappe, Paul Pogba, Thomas Muller, Lukas Podolski, Landon Donovan, Michael Owen , Marc Overmars, Robert Prosinecki, Enzo Schifo, Manuel Amoros, Antonio Cabrini, Wladyslaw Zmuda, Teofillo Cubillas, Franz Beckenbauer, Florian Albert , Pele</answers>
+      </question>
+      <question>
+      	<prompt-en>Name national teams that have won the Copa America.</prompt-en>
+      	<prompt-ar>اذكر المنتخبات التي فازت بكوبا أمريكا عبر التاريخ.</prompt-ar>
+      	<answers>Uruguay, Argentina, Brazil, Paraguay, Chile, Peru, Bolivia, Colombia</answers>
+      </question>
+      <!-- <question>
+      	<prompt-en>Name national teams that have qualified for the FIFA World Cup but have never won the tournament.</prompt-en>
+      	<prompt-ar>اذكر المنتخبات التي تأهلت لكأس العالم ولكنها لم تفز بالبطولة.</prompt-ar>
+      	<answers>Mexico, Belgium, Serbia, Switzerland, Sweden, South Korea, United States, Netherlands, Russia, Poland, Hungary, Czech Republic, Chile, Portugal, Cameroon, Scotland, Paraguay, Japan, Bulgaira, Romania, Austria, Australia, Iran, Costa Rica, Croatia, Saudi Arabia, Tunisia, Morocco, Denmark, Colombia, Nigeria, Peru, Ghana, Ecuador, Algeria, Senegal, Ivory Coast, Norway, Northern Ireland, Honduras, Republic of Ireland, Greece, South Africa, Bolivia, Egypt, Wales, Canada, Turkey, North Korea, Salvador, New Zealand, Slovernia, Cuba, Indonesia, Congo, Haiti, Kuwait, Iraq, United Arab Emirates, Jamaica, China, Angolo, Togo, Trinidad and Tobago, Ukraine, Slovakia, Bosnia and Herzegovina, Iceland, Panama, Qatar</answers>
+      </question> -->
+      <question>
+      	<prompt-en>Name players who have scored 70 or more international goals for their national teams.</prompt-en>
+      	<prompt-ar>اذكر اللاعبين الذين سجلوا 70 هدفاً أو أكثر في المباريات الدولية مع منتخبات بلادهم.</prompt-ar>
+      	<answers>Cristiano Ronaldo, Lionel Messi, Ali Daei, Sunil Chhetri, Mokhtar Dahari, Ferenc Puskás, Ali Mabkhout, Godfrey Chitalu, Robert Lewandowski, Hussein Saeed, Pelé, Neymar, Vivian Woodward, Sándor Kocsis, Kunishige Kamamoto, Romelu Lukaku, Bashar Abdullah,  Majed Abdullah, Kinnah Phiri, Kiatisuk Senamuang, Miroslav Klose, Piyapong Pue-on, Abdul Kadir, Stern John</answers>
+      </question>
+      <question>
+      	<prompt-en>Name national teams that have won the Africa Cup of Nations.</prompt-en>
+      	<prompt-ar>اذكر المنتخبات التي فازت بكأس الأمم الأفريقية عبر التاريخ.</prompt-ar>
+      	<answers>Senegal, Algeria, Cameroon, Ivory Coast, Nigeria, Zambia, Egypt, Tunisia, South Africa, Morocco, Zaire, PR Congo, Sudan, DR Congo, Ghana, Ethiopia</answers>
+      </question>
+      <question>
+      	<prompt-en>Name players who have won both the UEFA Champions League and the Copa Libertadores.</prompt-en>
+      	<prompt-ar>اذكر اللاعبين الذين فازوا بدوري أبطال أوروبا وكوبا ليبرتادوريس.</prompt-ar>
+      	<answers>Juan Pablo Sorín, Dida , Cafú , Roque Júnior, Carlos Tevez, Walter Samuel, Ronaldinho , Neymar , Danilo , Rafinha , Ramires</answers>
+      </question>
+      <question>
+      	<prompt-en>Name players who have won the Ballon d'Or, UEFA Champions League and World Cup during their career.</prompt-en>
+      	<prompt-ar>اذكر اللاعبين الذين فازوا بجائزة الكرة الذهبية (البالون دور) ودوري أبطال أوروبا وكأس العالم في حياتهم الكروية.</prompt-ar>
+      	<answers>Bobby Charlton, Franz Beckenbauer, Gerd Müller, Paolo Rossi, Zinedine Zidane, Rivaldo, Ronaldinho, Kaká, Lionel Messi</answers>
+      </question>
+      <question>
+      	<prompt-en>Name players who scored at least 10 goals in a single UEFA Champions League season.</prompt-en>
+      	<prompt-ar>اذكر اللاعبين الذين سجلوا على الأقل عشر أهداف في موسم واحد من دوري أبطال أوروبا.</prompt-ar>
+      	<answers>Cristiano Ronaldo,Lionel Messi,Robert Lewandowski,Ruud van Nistelrooy,Karim Benzema, Jose Altafini, Mario Gomez, Gerd Muller, Ferenc Puskas, Erling Haaland</answers>
+      </question>
+      <question>
+      	<prompt-en>Name players who have scored hat-tricks in the FIFA World Cup since 1994.</prompt-en>
+      	<prompt-ar>اذكر اللاعبين الذين سجلوا هاتريك في كأس العالم منذ عام 1994.</prompt-ar>
+      	<answers>Gabriel Batistuta, Oleg Salenko, Miroslav Klose, Pauleta, Gonzalo Higuaín, Thomas Müller, Xherdan Shaqiri, Cristiano Ronaldo, Harry Kane, Gonçalo Ramos, Kylian Mbappé</answers>
+      </question>
+      <question>
+      	<prompt-en>Name national teams that have won the AFC Asian Cup.</prompt-en>
+      	<prompt-ar>اذكر المنتخبات التي فازت بكأس آسيا عبر التاريخ.</prompt-ar>
+      	<answers>Japan, Saudi Arabia, Iran, South Korea, Kuwait, Iraq, Australia, Qatar</answers>
+      </question>
+      <question>
+      	<prompt-en>Name clubs that have won the treble (domestic league, domestic cup, and UEFA Champions League in the same season).</prompt-en>
+      	<prompt-ar>اذكر الأندية التي فازت بثلاثية (الدوري المحلي وكأس المحلي ودوري أبطال أوروبا) في نفس الموسم.</prompt-ar>
+      	<answers>Man City, Bayern München, Barcelona, Inter Milan, Manchester United, PSV Eindhoven, Ajax, Celtic</answers>
+      </question>
+      <question>
+      	<prompt-en>Name players who have scored 4 or more goals in a single UEFA Champions League match.</prompt-en>
+      	<prompt-ar>اذكر اللاعبين الذين سجلوا 4 أهداف أو أكثر في مباراة واحدة من دوري أبطال أوروبا.</prompt-ar>
+      	<answers>Marco van Basten, Simone Inzaghi, Dado Prso, Ruud van Nistelrooy, Andriy Shevchenko, Lionel Messi, Bafetimbi Gomis, Mario Gomez, Robert Lewandowski, Zlatan Ibrahimovic, Luiz Adriano, Cristiano Ronaldo, Serge Gnabry</answers>
+      </question>
+      <question>
+      	<prompt-en>Name players who have scored hattricks in the UEFA Champions League since 2006</prompt-en>
+      	<prompt-ar>اذكر اللاعبين الذين سجلوا هاتريك في مباراة واحدة من دوري أبطال أوروبا منذ 2006.</prompt-ar>
+      	<answers>Fernando Morientes, Didier Drogba, Kaka, Yossi Benayoun, Joseba Llorente, Jádson, Grafite, Michael Owen, Nicklas Bendtner, Lionel Messi, Ivica Olić, Samuel Eto'o, Gareth Bale, André-Pierre Gignac, Mario Gómez, Karim Benzema, Roberto Soldado, Bafétimbi Gomis, Cristiano Ronaldo, Claudio Pizarro, Burak Yılmaz, Rui Pedro, Luiz Adriano, Robert Lewandowski, Kostas Mitroglou, Zlatan Ibrahimović, Álvaro Negredo, Arturo Vidal, Neymar, Robin van Persie, Yacine Brahimi, Danny Welbeck, Sergio Agüero, Mario Mandžukić,  Olivier Giroud, Mesut Özil, Lucas Pérez, Arda Turan, Pierre-Emerick Aubameyang, Harry Kane, Wissam Ben Yedder, Layvin Kurzawa, Philippe Coutinho, Sadio Mané, Paulo Dybala, Edin Džeko, Gabriel Jesus, Lucas Moura, Erling Haaland , Mislav Oršić, Serge Gnabry, Raheem Sterling, Kylian Mbappe,Rodrygo, Arkadiusz Milik, Josip Iličic, Marcus Rashford, Alassane Plea, Diogo Jota, İrfan Kahveci, Christopher Nkunku, Sébastien Haller, Mohamed Salah</answers>
+      </question>
+      <question>
+      	<prompt-en>Name national teams that have won the FIFA World Cup multiple times.</prompt-en>
+      	<prompt-ar>اذكر المنتخبات التي فازت بكأس العالم عدة مرات عبر التاريخ.</prompt-ar>
+      	<answers>Brazil,Germany,Italy,Uruguay,Argentina,France</answers>
+      </question>
+      <question>
+      	<prompt-en>Name players who have won the UEFA European Championship (Euro) multiple times.</prompt-en>
+      	<prompt-ar>اذكر اللاعبين الذين فازوا ببطولة أمم أوروبا (يورو) مرتين أو أكثر.</prompt-ar>
+      	<answers>Raúl Albiol, Xabi Alonso, Álvaro Arbeloa, Rainer Bonhof, Iker Casillas, Santi Cazorla, Cesc Fàbregas, Andrés Iniesta, Sergio Ramos, Pepe Reina, David Silva, Fernando Torres, Xavi</answers>
+      </question>
+      <question>
+      	<prompt-en>Name national teams that have won the Copa America multiple times.</prompt-en>
+      	<prompt-ar>اذكر المنتخبات التي فازت ببطولة كوبا أمريكا مرتين أو أكثر عبر التاريخ.</prompt-ar>
+      	<answers>Uruguay, Argentina, Brazil, Chile, Peru, Paraguay</answers>
+      </question>
+      <question>
+      	<prompt-en>Name national teams that have won the AFC Asian Cup (Asian Football Championship) multiple times.</prompt-en>
+      	<prompt-ar>اذكر المنتخبات التي فازت ببطولة كأس آسيا مرتين أو أكثر.</prompt-ar>
+      	<answers>Japan,Saudi Arabia,Iran,South Korea</answers>
+      </question>
+      <question>
+      	<prompt-en>Name national teams that have won the Africa Cup of Nations multiple times.</prompt-en>
+      	<prompt-ar>اذكر المنتخبات التي فازت بكأس الأمم الأفريقية مرتين أو أكثر.</prompt-ar>
+      	<answers>Egypt,Ghana,Cameroon,Nigeria,Côte d'Ivoire, DR Congo</answers>
+      </question>
+      <question>
+      	<prompt-en>Name african players who have won the UEFA Champions League.</prompt-en>
+      	<prompt-ar>اذكر لاعبين أفريقيين  فازوا بدوري أبطال أوروبا عبر التاريخ.</prompt-ar>
+      	<answers>Bruce Grobbelaar, Rabah Madjer, Abedi Pelé, Finidi George, Nwankwo Kanu, Ibrahim Tanko, Samuel Kuffour, Geremi , Benni McCarthy, Djimi Traoré, Samuel Eto’o, Yaya Touré, Seydou Keita, Sulley Muntari, McDonald Mariga, John Obi Mikel, Michael Essien, Salomon Kalou, Didier Drogba, Achraf Hakimi, Mohamed Salah, Sadio Mane,Joel Matip, Naby Keita, Édouard Mendy, Hakim Ziyech, Riyad Mahrez</answers>
+      </question>
+      <question>
+	    <prompt-en>Name players who have won the FIFA World Cup twice.</prompt-en>
+	    <prompt-ar>اذكر اللاعبين الذين فازوا بكأس العالم مرتين.</prompt-ar>
+	    <answers>Bellini, Cafu, Castilho, Didi, Djalma Santos, Giovanni Ferrari, Garrincha, Gilmar, Guido Masetti, Mauro, Giuseppe Meazza, Eraldo Monzeglio, Nílton Santos, Daniel Passarella, Pele, Ronaldo, Vavá, Mário Zagallo, Zito, Zózimo</answers>
+	</question>
+	<question>
+	    <prompt-en>Name clubs that have won the UEFA Champions League at least three times.</prompt-en>
+	    <prompt-ar>اذكر الأندية التي فازت بدوري أبطال أوروبا ثلاث مرات أو أكثر.</prompt-ar>
+	    <answers>Real Madrid, AC Milan, Liverpool, Bayern Munich, Barcelona, Ajax, Manchester United, Inter Milan</answers>
+	</question>
+	<question>
+	    <prompt-en>Name players who have scored more than 500 goals in their professional career.</prompt-en>
+	    <prompt-ar>اذكر اللاعبين الذين سجلوا أكثر من 500 هدف في مسيرتهم المهنية.</prompt-ar>
+	    <answers>Franz Binder, Imre Schlosser, Hugo Sánchez, Roberto Dinamite, György Sárosi, Alfredo Di Stéfano, Luis Suárez, Jimmy McGrory, Uwe Seeler,  Fernando Peyroteo, Zlatan Ibrahimović, Glenn Ferguson, Robert Lewandowski, Eusébio, Abe Lenstra, Joe Bambrick, Gerd Müller, Jimmy Jones, Josef Bican, Ferenc Puskás, Romário, Pelé, Lionel Messi, Cristiano Ronaldo</answers>
+	</question>
+	<question>
+	    <prompt-en>Name the host countries of the FIFA World Cup since the year 2000.</prompt-en>
+	    <prompt-ar>اذكر دول استضافت كأس العالم منذ عام 2000.</prompt-ar>
+	    <answers>South Korea/Japan, Germany, South Africa, Brazil, Russia, Qatar</answers>
+	</question>
+	<question>
+	    <prompt-en>Name players who have won the Ballon d'Or award at least two times.</prompt-en>
+	    <prompt-ar>اذكر اللاعبين الذين فازوا بجائزة الكرة الذهبية (بالون دور) مرتين على الأقل.</prompt-ar>
+	    <answers>Lionel Messi, Cristiano Ronaldo, Michel Platini, Johan Cruyff, Marco van Basten, Franz Beckenbauer, Ronaldo, Alfredo Di Stéfano, Kevin Keegan, Karl-Heinz Rummenigge</answers>
+	</question>
+	<question>
+	    <prompt-en>Name clubs that have won the English Premier League since its inception.</prompt-en>
+	    <prompt-ar>اذكر الأندية التي فازت بالدوري الإنجليزي الممتاز منذ بدايته.</prompt-ar>
+	    <answers>Manchester United, Arsenal, Chelsea, Manchester City, Liverpool, Blackburn Rovers, Leicester City</answers>
+	</question>
+	<question>
+	    <prompt-en>Name players who have won the Golden Boot award in the FIFA World Cup since 1990</prompt-en>
+	    <prompt-ar>اذكر اللاعبين الذين فازوا بجائزة الحذاء الذهبي في كأس العالم منذ عام 1990.</prompt-ar>
+	    <answers>Salvatore Schillaci, Oleg Salenko, Hristo Stoichkov, Davor Suker, Ronaldo, Miroslav Klose, Thomas Muller, James Rodríguez, Harry Kane, Kylian Mbappe</answers>
+	</question>
+	<question>
+	    <prompt-en>Name players who have won the Golden Boy award as the best young player in Europe since 2003</prompt-en>
+	    <prompt-ar>اذكر اللاعبين الذين فازوا بجائزة الفتى الذهبي كأفضل لاعب شاب في أوروبا منذ عام 2003.</prompt-ar>
+	    <answers>Rafael van der Vaart, Wayne Rooney, Lionel Messi, Cesc Fàbregas, Sergio Agüero, Felipe Anderson, Alexandre Pato, Mario Balotelli, Mario Götze, Isco, Paul Pogba, Raheem Sterling, Anthony Martial, Renato Sanches, Kylian Mbappé, Matthijs de Ligt, João Félix, Erling Haaland, Pedri</answers>
+	</question>
+	<question>
+	    <prompt-en>Name the clubs that have won the FIFA Club World Cup since its inception.</prompt-en>
+	    <prompt-ar>اذكر الأندية التي فازت بكأس العالم للأندية منذ بدايته.</prompt-ar>
+	    <answers>Corinthians, São Paulo, Internacional, AC Milan, Manchester United, Barcelona, Bayern Munich, Real Madrid, Liverpool, Chelsea</answers>
+	</question>
+	<question>
+	    <prompt-en>Name players who have won the Premier League Golden Glove award for the most clean sheets since 2004</prompt-en>
+	    <prompt-ar>اذكر الحراس الذين فازوا بجائزة القفاز الذهبي في الدوري الإنجليزي الممتاز لأكثر عدد من الشباك النظيفة منذ عام 2004.</prompt-ar>
+	    <answers>Petr Čech, Pepe Reina, Edwin van der Sar, Joe Hart, Wojciech Szczęsny, Thibaut Courtois, David de Gea, Alisson, Ederson</answers>
+	</question>
+	<question>
+	    <prompt-en>Name the players who have won the European Golden Shoe award multiple times</prompt-en>
+	    <prompt-ar>اذكر اللاعبين الذين فازوا بجائزة الحذاء الذهبي لأفضل هداف في أوروبا أكثر من مرة.</prompt-ar>
+	    <answers>Lionel Messi, Cristiano Ronaldo, Eusébio, Gerd Müller, Dudu Georgescu, Fernando Gomes, Ally McCoist, Mário Jardel, Thierry Henry, Diego Forlán, Luis Suárez, Luis Suárez</answers>
+	</question>
+	<question>
+	    <prompt-en>Name players who have won the African Footballer of the Year since 2000</prompt-en>
+	    <prompt-ar>اذكر اللاعبين الذين فازوا بجائزة أفضل لاعب في أفريقيا منذ عام 2000.</prompt-ar>
+	    <answers>Patrick M'Boma, El Hadji Diouf, Samuel Eto'o,  Didier Drogba, Frédéric Kanouté, Emmanuel Adebayor, Yaya Touré, Pierre-Emerick Aubameyang, Riyad Mahrez, Mohamed Salah, Sadio Mané</answers>
+	</question>
+	<question>
+	    <prompt-en>Name the clubs that have won the CAF Champions League at least two times.</prompt-en>
+	    <prompt-ar>اذكر الأندية التي فازت بدوري أبطال إفريقيا مرتين على الأقل.</prompt-ar>
+	    <answers>Al Ahly, Zamalek, TP Mazembe, ES Tunis, Wydad AC, Hafia FC, Raja CA, Canon Yaoundé, Asante Kotoko, JS Kabylie, ES Sétif, Enyimba</answers>
+	</question>
+	<question>
+	    <prompt-en>Name the clubs that have won the Copa del Rey multiple times.</prompt-en>
+	    <prompt-ar>اذكر الأندية التي فازت بكأس ملك إسبانيا مرات متعددة.</prompt-ar>
+	    <answers>Real Sociedad, Deportivo de la Coruña, Real Unión de Irún, Real Betis, Español, Sevilla, Barcelona, Real Madrid, Real Zaragoza, Valencia, Atlético Madrid, Athletic Bilbao</answers>
+	</question>
+	<question>
+	    <prompt-en>Name the clubs that have won the UEFA Europa League since 2000.</prompt-en>
+	    <prompt-ar>اذكر الأندية التي فازت بدوري الأبطال الأوروبية منذ عام 2000.</prompt-ar>
+	    <answers>Galatasaray, Liverpool, Feyenoord, Porto, Valencia, CSKA Moscow, Sevilla, Zenit St. Petersburgo, Shakhtar Donestk, Atletico Madrid,Chelsea,Manchester United,Villarreal,Eintracht Frankfurt </answers>
+	</question>
+      <question>
+          <prompt-en>Name Chelsea squad in season 2019-2020</prompt-en>
+          <prompt-ar>اذكر أسماء لاعبي نادي تشيلسي في موسم 2019-2020</prompt-ar>
+          <answers>Kepa,Jamie Cumming, Willy Caballero, Azpilicueta, Andreas Christensen, Emerson, Reece James, Ian Maatsen,  Marcos Alonso, Antonio Rüdiger,     Fikayo Tomori,    Kurt Zouma, Tino Anjorin, Ross Barkley, Billy Gilmour, Jorginho,  N'Golo Kanté, Mateo Kovačić, Ruben Loftus-Cheek, Mason Mount, Danilo Pantić, Marco van Ginkel, Tammy Abraham, Michy Batshuayi,      Armando Broja, Olivier Giroud, Callum Hudson-Odoi, Pedro,   Christian Pulišić, Willian</answers>
+      </question>  
+     <question>
+          <prompt-en>Name UEFA Champions League clubs in season 2022-2023</prompt-en>
+          <prompt-ar>اذكر أندية دوري أبطال أوروبا في موسم 2022-2023</prompt-ar>
+          <answers>RB Salzburg, Club Brugge, Dinamo Zagreb, Viktoria Plzen, Copenhagen, Manchester City, Liverpool, Chelsea, Tottenham Hotspur, PSG, Olympique Marseille, Bayern Munich, Borussia Dortmund, Bayer Leverkusen, Leipzig, Eintracht Frankfurt, Maccabi Haifa, AC Milan, Inter Milan, Napoli, Juventus, Ajax, Benfica, Porto, Sporting CP, Celtic, Rangers, Real Madrid, Barcelona, Atletico Madrid, Sevilla, Shakhtar Donetsk</answers>
+      </question>
+      <question>
+          <prompt-en>Name Spanish players who played in English Premier League since 2010</prompt-en>
+          <prompt-ar>اذكر لاعبين إسبانيين لعبوا في الدوري الانكليزي الممتاز منذ عام 2010</prompt-ar>
+          <answers>Diego Costa, Xabi Alonso, Fernando Torres, David De Gea, Juan Mata, Pepe Reina, David Silva, Santi Cazorla, Mikel Arteta, Cesc Fabregas, César Azpilicueta, Aymeric Laporte, Javi García, Álvaro Negredo, Jesús Navas, Marcos Alonso, Pedro, Brahim Díaz, Adrián, Eric García, Rodri, Ferran Torres</answers>
+      </question>
+      <question>
+          <prompt-en>Name Brazilian players who played for Real Madrid throughout history</prompt-en>
+          <prompt-ar>اذكر لاعبين برازيليين لعبوا في ريال مدريد عبر التاريخ</prompt-ar>
+          <answers>Emerson, Cicinho, Abner Felipe, Lucas Silva, Willian Jose, Julio Cesar, Reinier Jesus, Fabinho, Danilo, Flavio Conceicao, Kaka, Savio Bortolini, Robinho, Julio Baptista, Rodrygo, Eder Militao, Vinicius Junior, Casemiro, Ronaldo, Roberto Carlos, Marcelo</answers>
+      </question>
+      <question>
+          <prompt-en>Name Real Madrid coaches since 2000</prompt-en>
+          <prompt-ar>اذكر مدربين ريال مدريد منذ عام 2000</prompt-ar>
+          <answers>Vicente del Bosque, Carlos Queiroz, José Antonio Camacho, Mariano García Remón, Vanderlei Luxemburgo, Juan Ramón López Caro, Fabio Capello, Bernd Schuster, Juande Ramos, Manuel Pellegrini, José Mourinho, Carlo Ancelotti, Rafael Benítez, Zinedine Zidane, Julen Lopetegui, Santiago Solari</answers>
+      </question>
+      <question>
+          <prompt-en>Name all players who have played for both Real Madrid and Barcelona throughout history</prompt-en>
+          <prompt-ar>اذكر جميع اللاعبين الذين لعبوا في ريال مدريد وبرشلونة عبر التاريخ</prompt-ar>
+          <answers>Gheorghe Hagi, Luis Enrique, Luis Figo, Ronaldo, Michael Laudrup, Samuel Eto'o, Javier Saviola, Miquel Soler, Bernd Schuster, Albert Celades, Robert Prosinecki</answers>
+      </question>
+      <question>
+          <prompt-en>Name the 16 teams of the round 16 in UEFA Champions league 2018-2019</prompt-en>
+          <prompt-ar>اذكر أندية الدوري الستة عشر (16) من دوري أبطال أوروبا في موسم 2018-2019</prompt-ar>
+          <answers>Tottenham Hotspur, Borussia Dortmund, Schalke, Manchester City,  Ajax, Real Madrid, Atlético Madrid, Juventus, Manchester United , PSG, Lyon, Barcelona, Liverpool, Bayern Munich, Roma, Porto</answers>
+      </question>
+      <question>
+          <prompt-en>Name the first 20 French scorers in the history of the English Premier League</prompt-en>
+          <prompt-ar>اذكر أول ٢٠ هداف فرنسي في تاريخ الدوري الإنجليزي الممتاز</prompt-ar>
+          <answers>Thierry Henry, Nicolas Anelka, Olivier Giroud, Louis Saha, Eric Cantona, Robert Pires, Anthony Martial, Alexandre Lacazette, Steed Malbranque, Samir Nasri, Florent Malouda, Djibril Cissé, Patrick Vieira, Sylvain Wiltord, Paul Pogba, Charles N'Zogbia, Loïc Rémy, Neal Maupay, Yohan Cabaye, William Gallas</answers>
+      </question>
+      <question>
+          <prompt-en>Name Barcelona squad in season 2005-2006</prompt-en>
+          <prompt-ar>اذكر أسماء لاعبي نادي برشلونة في موسم 2005-2006</prompt-ar>
+          <answers>Víctor Valdés, Belletti, Edmilson, Javi Martos, Rafael Márquez, Oleguer, Olmo, Peña, Puyol, Rodri, Sylvinho, Giovanni van Bronckhorst, Deco, Gabri, Iniesta, Jordi Gómez, Thiago Motta, Mark van Bommel,Xavi, Samuel Eto'o, Ludovic Giuly, Henrik Larsson, Lionel Messi, Maxi López, Ronaldinho</answers>
+      </question>  
+    <question>
+          <prompt-en>Name Real Madrid squad in season 2022-2023</prompt-en>
+          <prompt-ar>اذكر أسماء لاعبي نادي ريال مدريد في موسم 2022-2023</prompt-ar>
+          <answers>Thibaut Courtois,      David Alaba,      Álvaro Odriozola, Dani Carvajal, Eder Militão, Jesús Vallejo, Lucas Vázquez, Marvel,      Ferland Mendy, Nacho, Antonio Rüdiger, Vinícius Tobías, Arribas,  Eduardo Camavinga,      Dani Ceballos, Toni Kroos,    Mario Martín,     Luka Modrić, Aurélien Tchouaméni, Federico Valverde, Álvaro Rodríguez, Karim Benzema, Eden Hazard, Marco Asensio, Mariano, Rodrygo, Vinícius Junior</answers>
+      </question>  
+     <question>
+          <prompt-en>Name English Premier League clubs in season 2022-2023</prompt-en>
+          <prompt-ar>اذكر أندية الدوري الإنجليزي في موسم 2022-2023</prompt-ar>
+          <answers>Manchester City, Arsenal, Manchester United, Newcastle United,   Liverpool,  Brighton Albion, Aston Villa, Tottenham Hotspur, Brentford, Fulham, Crystal Palace, Chelsea, Wolverhampton Wanderers, West Ham United, Bournemouth, Nottingham Forest, Everton, Leicester City, Leeds United , Southampton</answers>
+      </question>
+     <question>
+          <prompt-en>Name La Liga clubs in season 2022-2023</prompt-en>
+          <prompt-ar>اذكر أندية الدوري الاسباني في موسم 2022-2023</prompt-ar>
+          <answers>Barcelona, Real Madrid, Atlético Madrid, Real Sociedad,Villarreal,Real Betis, Osasuna, Athletic Bilbao, Mallorca,Girona, Rayo Vallecano, Sevilla, Celta Vigo, Cádiz, Getafe, Valencia, Almería, Valladolid , Espanyol , Elche</answers>
+      </question>
+     <question>
+          <prompt-en>Name players who have won the Premier League in two different clubs</prompt-en>
+          <prompt-ar>اذكر اللاعبين الذين فازوا بالدوري الانكليزي مع أكثر من نادي</prompt-ar>
+          <answers>Robert Huth, Mark Schwarzer, Henning Berg, Nicolas Anelka, Carlos Tevez, Gael Clichy, NGolo Kante, Kolo Toure, Ashley Cole, Riyad Mahrez, James Milner</answers>
+      </question>
+     <question>
+          <prompt-en>Name players who have won the Euro top scorer award since 1992</prompt-en>
+          <prompt-ar>اذكر اللاعبين الذين فازوا بجائزة أفضل هداف في اليورو منذ عام 1992</prompt-ar>
+          <answers>Alan Shearer, Patrick Kluivert, Savo Miloševic, Milan Baros, David Villa, Fernando Torres, Mario Gómez,Alan Dzagoev, Antoine Griezmann, Cristiano Ronaldo, Olivier Giroud, Patrik Schick, Karim Benzema</answers>
+      </question>
+     <question>
+          <prompt-en>Name players who have scored in the World Cup finals since 2002</prompt-en>
+          <prompt-ar>اذكر اللاعبين الذين سجلوا في نهائي كأس العالم منذ عام 2002</prompt-ar>
+          <answers>Ronaldo,Zinedine Zidane, Marco Materazzi, Andrés Iniesta, Mario Gotze, Mario Mandžukic, Ivan Perišic, Antoine Griezmann, Paul Pogba, Kylian Mbappe, Lionel Messi, Ángel Di Maria</answers>
+      </question>
+     <question>
+          <prompt-en>Name players who have won the La liga top scorer award since 2000.</prompt-en>
+          <prompt-ar>اذكر اللاعبين الذين فازوا بجائزة هداف الليغا الاسبانية منذ عام 2000</prompt-ar>
+          <answers>Diego Forlan, Lionel Messi, Cristiano Ronaldo, Luis Suárez, Karim Benzema, Robert Lewandowski,Daniel Guiza, Ruud van Nistelrooy, Samuel Eto'o, Ronaldo, Roy Makaay, Diego Tristán, Raul</answers>
+      </question>
+     <question>
+          <prompt-en>Name players who have won the Premier League top scorer award since 2000.</prompt-en>
+          <prompt-ar>اذكر اللاعبين الذين فازوا بجائزة هداف الدوري الانكليزي منذ عام 2000</prompt-ar>
+          <answers>Jimmy Floyd Hasselbaink, Thierry Henry, Ruud van Nistelrooy, Didier Drogba, Cristiano Ronaldo, Nicolas Anelka, Carlos Tevez, Dimitar Berbatov, Robin van Persie, Luis Suarez, Sergio Aguero, Harry Kane, Mohamed Salah, Pierre-Emerick Aubameyang, Sadio Mane, Jamie Vardy, Son Heung-min, Erling Haaland</answers>
+      </question>
+     <question>
+          <prompt-en>Name players who have won the Serie A top scorer award since 2000.</prompt-en>
+          <prompt-ar>اذكر اللاعبين الذين فازوا بجائزة هداف الدوري الايطالي منذ عام 2000</prompt-ar>
+          <answers>Hernan Crespo, David Trezeguet, Dario Hubner, Christian Vieri,Andriy Shevchenko, Cristiano Lucarelli, Luca Toni,Francesco Totti, Alessandro Del Piero, Zlatan Ibrahimovic, Antonio Di Natale, Edinson Cavani, Ciro Immobile, Mauro Icardi, Gonzalo Higuain, Edin Dzeko, Mauro Icardi, Fabio Quagliarella, Cristiano Ronaldo, Victor Osimhen</answers>
+      </question>
+     <question>
+          <prompt-en>Name players who have won the top scorer award in more than one league.</prompt-en>
+          <prompt-ar>اذكر اللاعبين الذين فازوا بجائزة أفضل هداف في دوريات مختلفة</prompt-ar>
+          <answers>Cristiano Ronaldo, Thierry Henry, Lionel Messi, Zlatan Ibrahimovic, Neymar, Henrik Larsson, Romelu Lukaku, Luis Suarez, Radamel Falcao, Gonzalo Higuain, Samuel Eto'o, Ruud van Nistelrooy, Robert Lewandowski</answers>
+      </question>
+     <question>
+          <prompt-en>Name players who have won the FIFA Puskás Award</prompt-en>
+          <prompt-ar>اذكر اللاعبين الذين فازوا بجائزة بوشكاش</prompt-ar>
+          <answers>Mohamed Salah, Wendell Lira, Mohd Faiz Subri, Son Heung-min, Cristiano Ronaldo, Daniel Zsori, Erik Lamela, Hamit Altintop, Miroslav Stoch, James Rodriguez, Neymar, Zlatan Ibrahimovic, Olivier Giroud</answers>
+      </question>
+     <question>
+          <prompt-en>Name players who have scored 100 or more goals in Premier League</prompt-en>
+          <prompt-ar>اذكر اللاعبين الذين سجلوا 100 هدف أو أكثر في الدوري الانكليزي</prompt-ar>
+          <answers>Matt Le Tissier, Son Heung-min, Cristiano Ronaldo, Didier Drogba, Darren Bent, Paul Scholes, Peter Crouch, Ryan Giggs, Emile Heskey, Dion Dublin, Sadio Mane, Ian Wright, Raheem Sterling, Steven Gerrard, Romelu Lukaku, Dwight Yorke, Nicolas Anelka, Robbie Keane, Jimmy Floyd Hasselbaink, Jamie Vardy, Mohamed Salah, Robin van Persie, Teddy Sheringham, Les Ferdinand, Michael Owen, Jermain Defoe, Robbie Fowler,Thierry Henry, Frank Lampard, Sergio Agüero, Andy Cole, Wayne Rooney, Harry KaneAlan Shearer</answers>
+      </question>
+     <question>
+          <prompt-en>Name players who have scored 150 or more goals in La Liga</prompt-en>
+          <prompt-ar>اذكر اللاعبين الذين سجلوا 150 هدف أو أكثر في الدوري الاسباني</prompt-ar>
+          <answers>Adrián Escudero, Julio Salinas, Ferenc Puskas, Aritz Aduriz, Luis Aragones, Samuel Eto'o, Antoine Griezmann, Luis Suarez, Juan Arza, Guillermo Gorostiza, David Villa, Santillana, Edmundo Suárez, Pahino, Quini, César Rodríguez, Alfredo Di Stéfano, Raul, Hugo Sánchez, Karim Benzema, Telmo Zarra, Cristiano Ronaldo, Lionel Messi</answers>
+      </question>
+      
+      <question>
+          <prompt-en>Name spanish goal keepers who played in Premier League</prompt-en>
+          <prompt-ar>اذكر حراس أسبان سبق وأن لعبوا في الدوري الانكليزي</prompt-ar>
+          <answers>César Sánchez, Roberto Jiménez, Ricardo López, Víctor Valdes, Kiko Casilla, Vicente Guaita, Fabricio Martin, Manuel Almunia, Adrián San Miguel, Sergio Rico, Kepa Arrizabalaga, Pepe Reina, Joel Robles, Pau López, David De Gea, Robert Sánchez</answers>
+      </question>
+      
+      <question>
+          <prompt-en>Name the 2018 FIFA World Cup qualifiers</prompt-en>
+          <prompt-ar>اذكر منتخبات كأس العالم ٢٠١٨</prompt-ar>
+          <answers>Russia, Belgium, Germany, England, Spain, Poland, Iceland, Serbia, France, Portugal, Switzerland, Croatia, Sweden, Denmark, Iran, South Korea, Japan, Saudi Arabia, Australia, Nigeria, Egypt, Senegal, Tunisia, Morocco, Mexico, Costa Rica, Panama,Brazil, Uruguay, Argentina, Colombia, Peru</answers>
+      </question>
+      <question>
+          <prompt-en>Name the Italy national team squad in the 2006 FIFA World Cup</prompt-en>
+          <prompt-ar>اذكر تشكيلة منتخب إيطاليا في كأس العالم ٢٠٠٦</prompt-ar>
+          <answers>Gianluigi Buffon, Gianluca Zambrotta, Fabio Cannavaro, Marco Materazzi, Fabio Grosso, Mauro Camoranesi, Gennaro Gattuso, Andrea Pirlo, Simone Perotta, Francesco Totti, Luca Toni, Daniele De Rossi, Vincenzo Iaquinta, Alessandro Del Piero</answers>
+      </question>
+      <question>
+          <prompt-en>Name the starting lineup of UEFA Champions league final 2012</prompt-en>
+          <prompt-ar>اذكر القائمة الأساسية نهائي دوري أبطال أوروبا 2012</prompt-ar>
+          <answers>Petr Cech, Ashley Cole, David Luiz, Gary Cahill, Jose Bosingwa, Frank Lampard, John Obi Mikel, Ryan Bertrand, Juan Mata, Salomon Kalou, Didier Drogba, Manuel Neuer, Diego Contento, Anatoliy Tymoshchuk, Jerome Boateng, Philipp Lahm, Toni Kroos, Bastian Schweinsteiger, Franck Ribery, Thomas Mueller, Arjen Robben, Mario Gomez</answers>
+      </question>
+      <question>
+          <prompt-en>Name the top 20 goal scorers in the history of the UEFA Champions league</prompt-en>
+          <prompt-ar>اذكر قائمة أول 20 هداف تاريخي في دوري أبطال أوروبا عبر التاريخ</prompt-ar>
+          <answers>Cristiano Ronaldo, Lionel Messi, Lewandowski, Benzema, Raúl González, Van Nistelrooy, Shevchenko, Muller, Thierry Henry, Filipi Inzaghi, Ibrahimovic, Di Stéfano, Mohamed Salah, Eusebio, Aguero, Drogba, Neymar, Del Piero, Mbappe, Morientes</answers>
+      </question>
+      <question>
+          <prompt-en>Name the qualified teams from the group stage of the UEFA Champions League in season 2022-2023</prompt-en>
+          <prompt-ar>اذكر الأندية المتأهلة من دور المجموعات في دوري أبطال أوروبا في موسم 2022-2023</prompt-ar>
+          <answers>Napoli, Liverpool, Porto, Club Brugge, Bayern Munich, Inter Milan, Tottenham Hotspur, Eintracht Frankfurt, Chelsea, Milan, Real Madrid, RB Leipzig, Manchester City, Borussia Dortmund, Benfica, Paris Saint-Germain</answers>
+      </question>
+      <question>
+          <prompt-en>Name the top ten goal scorers in the history of the Brazil national team</prompt-en>
+          <prompt-ar>اذكر أفضل عشرة هدافين في تاريخ منتخب البرازيل</prompt-ar>
+          <answers>Pele, Neymar, Ronaldo, Romario, Zico, Bebeto, Rivaldo, Jairzinho, Ronaldinho, Ademir</answers>
+      </question>
+      <question>
+          <prompt-en>Name players who have played with Cristiano Ronaldo and Messi</prompt-en>
+          <prompt-ar>اذكر لاعبين لعبوا بجانب كريستيانو رونالدو وميسي</prompt-ar>
+          <answers>Gabriel Heinze, Gerard Pique, Fernando Gago, Andre Gomes, Carlos Tevez, Nelson Semedo, Angel Di Maria, Deco, Gonzalo Higuain, Ezequiel Garay, Paulo Dybala, Henrik Larsson, Martin Caceres, Arthur Melo, Miralem Pjanic, Francisco Trincao, Keylor Navas, Sergio Ramos, Achraf Hakimi, Danilo Pereira, Pablo Sarabia</answers>
+      </question>
+      <question>
+          <prompt-en>Name clubs who have won UEFA super cup since 2000</prompt-en>
+          <prompt-ar>اذكر الأندية التي فازت بلقب كأس السوبر الأوروبي منذ عام 2000</prompt-ar>
+          <answers>Galatasaray, Liverpool, Real Madrid, Milan, Valencia, Liverpool, Sevilla,Zenit Saint Petersburg, Barcelona, Atlético Madrid, Bayern Munich, Chelsea, Manchester City</answers>
+      </question>
+      <!--     
+      <question>
+          <prompt-en>Name players whose names start with the letter "M"</prompt-en>
+          <prompt-ar>اذكر لاعبين تبدأ أسماؤهم بحرف "م"</prompt-ar>
+          <answers></answers>
+      </question>
+      <question>
+          <prompt-en>Name players from South America in the top five European leagues</prompt-en>
+          <prompt-ar>اذكر لاعبين من أمريكا الجنوبية في الدوريات الخمسة الأوروبية</prompt-ar>
+          <answers></answers>
+      </question>
+      
+      <question>
+          <prompt-en>Name retired players who have played in the English Premier League</prompt-en>
+          <prompt-ar>اذكر لاعبين معتزلين سابقاً وأن شاركوا في الدوري الإنجليزي الممتاز</prompt-ar>
+          <answers></answers>
+      </question> 
+      <question>
+          <prompt-en>Name retired players who have scored in a Champions League final</prompt-en>
+          <prompt-ar>اذكر لاعبين سبق وأن سجلوا في نهائي دوري الأبطال</prompt-ar>
+          <answers></answers>
+      </question> 
+      -->
+</questions>

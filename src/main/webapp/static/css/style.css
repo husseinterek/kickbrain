@@ -1,0 +1,129 @@
+/*================================================================================
+	Item Name: Modern Admin - Clean Bootstrap 4 Dashboard HTML Template
+	Author: PIXINVENT
+	Author URL: http://www.themeforest.net/user/pixinvent
+================================================================================
+
+NOTE:
+------
+PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
+WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
+
+.btn_menu{
+    color: #1e9ff2 !important;
+}
+
+.btn_menu .la-plus-circle::before {
+    content: "\f2c3";
+    font-size: 24px;
+    vertical-align: middle;
+}
+
+.wizard > .actions{
+	padding-bottom: 0px !important;
+}
+
+.data-source-card{
+	height: 130px; 
+	width: 150px;
+}
+
+.webservice-header .actions{
+	padding-right: 0px;
+}
+
+.webservice-header .actions i{
+	cursor: pointer;	
+}
+
+.widget-card{
+	cursor: pointer;	
+}
+
+.orderbyType{
+	padding-top: 5px;
+    cursor: pointer;
+    font-size: 20px !important;
+    margin-left: 5px;
+    font-weight: bold;
+    color: grey;
+}
+
+#widgets{
+	overflow-y: hidden;
+}
+
+.grid-stack>.grid-stack-item>.grid-stack-item-content{
+    border-radius: .45rem;
+    height: 100%;
+}
+
+.grid-stack-item-content > .widget-body{
+	height: 85%; 
+	width: 100%;
+}
+
+.grid-stack-item-content > .widget-header{
+	height: 15%; 
+	width: 100%;
+	background-color: #fff;
+	margin-right: 0px;  
+	margin-left: 0px;
+	padding:10px;
+}
+
+.grid-stack-item-content > .widget-header > .widget-header-actions, .grid-stack-item-content > .counter-header > .counter-header-actions{
+	text-align: right;
+	padding-right: 0px;
+	padding-left: 0px;
+    font-size: 16px;
+}
+
+.grid-stack-item-content > .widget-header > .widget-header-actions li, .grid-stack-item-content > .counter-header > .counter-header-actions li{
+	margin-left: 5px;
+}
+
+.dashboard-header{
+	margin-left: -5px;
+	height: 50px;
+}
+
+.grid-stack-item-content > .counter-header{
+	height: 20%;
+	float: right;
+	margin-right: 0px;
+    margin-left: 0px;
+    padding-top: 5px;
+    padding-right: 5px;
+}
+
+.grid-stack-item-content > .counter-body{
+	height: 80%; 
+	width: 100%;
+	padding-top: 10px;
+    padding-bottom: 20px;
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+.grid-stack-item-content > .counter-body > .logo{
+	margin-top: 10px;	
+}
+
+#assignPermissionsModal #addPermissionBtn{
+	margin-left: 10px;
+}
+
+#assignPermissionsModal .select2{
+	width: 85% !important;
+}
+
+.chart-bad-data{
+	background-color: white;
+	height: 100%;
+	padding-top: 20%;
+}
+
+.chart-bad-data i{
+	font-size: 40px !important;
+}

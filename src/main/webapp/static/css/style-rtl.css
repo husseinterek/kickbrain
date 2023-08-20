@@ -1,0 +1,559 @@
+/*================================================================================
+	Item Name: Modern Admin - Clean Bootstrap 4 Dashboard HTML Template
+	Author: PIXINVENT
+	Author URL: http://www.themeforest.net/user/pixinvent
+================================================================================
+
+NOTE:
+------
+PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
+WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
+
+.btn_menu{
+    color: #1e9ff2 !important;
+}
+
+.btn_menu .la-plus-circle::before {
+    content: "\f2c3";
+    font-size: 24px;
+    vertical-align: middle;
+}
+
+.wizard > .actions{
+	padding-bottom: 0px !important;
+}
+
+.data-source-card{
+	height: 130px; 
+	width: 150px;
+}
+
+.webservice-header .actions{
+	padding-left: 0px;
+}
+
+.webservice-header .actions i{
+	cursor: pointer;	
+}
+
+.widget-card{
+	cursor: pointer;	
+}
+
+.orderbyType{
+	padding-top: 5px;
+    cursor: pointer;
+    font-size: 20px !important;
+    margin-right: 5px;
+    font-weight: bold;
+    color: grey;
+}
+
+#widgets{
+	overflow-y: hidden;
+}
+
+.grid-stack>.grid-stack-item>.grid-stack-item-content{
+    border-radius: .45rem;
+    height: 100%;
+}
+
+.grid-stack-item-content > .widget-body{
+	height: 85%; 
+	width: 100%;
+}
+
+.grid-stack-item-content > .widget-header{
+	height: 15%; 
+	width: 100%;
+	background-color: #fff;
+	margin-right: 0px;  
+	margin-left: 0px;
+	padding:10px;
+}
+
+.grid-stack-item-content > .widget-header > .widget-header-actions, .grid-stack-item-content > .counter-header > .counter-header-actions{
+	text-align: left;
+	padding-right: 0px;
+	padding-left: 0px;
+    font-size: 16px;
+}
+
+.grid-stack-item-content > .widget-header > .widget-header-actions li, .grid-stack-item-content > .counter-header > .counter-header-actions li{
+	margin-right: 5px;
+}
+
+.dashboard-header{
+	margin-right: -5px;
+	height: 50px;
+}
+
+.grid-stack-item-content > .counter-header{
+	height: 20%;
+	float: left;
+	margin-right: 0px;
+    margin-left: 0px;
+    padding-top: 5px;
+    padding-left: 5px;
+}
+
+.grid-stack-item-content > .counter-body{
+	height: 80%; 
+	width: 100%;
+	padding-top: 10px;
+    padding-bottom: 20px;
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+.grid-stack-item-content > .counter-body > .logo{
+	margin-top: 10px;	
+}
+
+#assignPermissionsModal #addPermissionBtn{
+	margin-right: 10px;
+}
+
+#assignPermissionsModal .select2{
+	width: 85% !important;
+}
+
+.counter-body .chart-bad-data, .widget-body .chart-bad-data{
+	background-color: white;
+}
+
+.widget-body .chart-bad-data{
+	height: 100%;
+	padding-top: 20%;
+}
+
+.bad-data-msg, .bad-data-icon{
+	display:block;
+	text-align:center;	
+}
+
+.counter-body .chart-bad-data .bad-data-msg{
+	font-size: 12px;
+}
+
+.chart-bad-data i{
+	font-size: 40px !important;
+}
+
+.dashboard-body{
+	padding-top: 15px !important;
+}
+
+.email-body-elem textarea{
+	margin-left: 15px;
+}
+
+.save-dashboard-alert{
+	float:left;
+	margin-left: 0px !important;
+}
+
+.app-content .wizard > .actions > ul > li > a{
+	background: #1E9FF2 !important;
+}
+
+.app-content .wizard > .actions > ul > li > a[href="#previous"]{
+	background-color: #fcfcfc !important;
+}
+
+.pricing-plan-card{
+	cursor: pointer;
+}
+
+.pricing-plan-card:hover{
+	border: 2px solid #39D9A0;
+}
+
+.pricing-plan-card-selected{
+	border: 2px solid #39D9A0;
+	cursor: pointer;
+}
+
+.progressbar-back-btn{
+	float: left;
+	margin-bottom: 10px;
+	margin-top: 10px;
+}
+
+.highcharts-drilldown-axis-label, .highcharts-axis-labels > span, .highcharts-data-label > text, .highcharts-data-label > text > tspan{
+  	text-decoration:none !important;
+    white-space: nowrap;
+    color: rgb(102, 102, 102) !important;
+    font-weight: 400 !important;
+    font-size: 12px !important;
+}
+
+.progress-widget-line{
+	cursor: pointer;
+}
+
+.widget-body table thead tr{
+	background: #f2f4f8;
+    border: 1px solid white;
+}
+
+.select2-selection--multiple{
+	height: 40px;
+}
+
+.select2-container--classic .select2-results__options .select2-results__option[aria-selected=true], .select2-container--default .select2-results__options .select2-results__option[aria-selected=true]{
+	background-color: #36A9F3 !important;
+}
+
+.columns-body tr{
+	cursor: move;
+}
+
+.main-menu.menu-fixed{
+	padding-top: 15px !important;
+}
+
+.swiper-button-next:after{
+	font-size: 2.5rem !important;
+	color: black !important;
+	margin-right: 30px !important;
+	padding-left: 0px !important;
+}
+
+.dashboard-header .content-header-right .dropdown-menu{
+	transform: translate3d(100px, 33px, 0px) !important;
+}
+
+.widget-header-actions .dropdown-menu{
+	transform: translate3d(50px, 18px, 0px) !important;
+}
+
+.swiper-button-prev:after{
+	font-size: 2.5rem !important;
+	color: black !important;
+	padding-left: 0px !important;
+}
+
+#filter-section fieldset{
+	background-color: #464646;
+	border: 1px solid #292929;
+	color: #e3e3e3;
+	transition: background-color .2s;
+	padding-bottom: 0px !important;
+}
+
+#filter-section fieldset > .form-control{
+	margin-top: -8px !important;
+}
+
+#filter-section fieldset>input, #filter-section fieldset>select{
+	color: #e3e3e3 !important;
+	font-size: 12px;
+}
+
+#filter-section fieldset>select>option{
+	color: black !important;
+}
+
+#filter-section fieldset > input::-webkit-calendar-picker-indicator {
+  	filter: invert(0.8);
+}
+
+#filter-section fieldset>label{
+	font-weight: 500;
+	font-size: 10px;
+}
+
+.toggleFilters{
+	border: 1px solid #f8cc7c;
+	padding: 3px;
+	margin-top: -5px;
+	color: orange
+}
+
+.toggleFilters:hover{
+	color: white;
+	background-color: orange;
+}
+
+.hidden{
+	display:none !important;
+}
+.loading-skeleton{
+	margin-top: 2.5%;
+	margin-bottom: 2.5%;
+}
+.title-placeholder {
+  height: 10%;
+  margin-bottom: 2.5%;
+}
+
+.content-placeholder {
+  height: 75%;
+}
+
+.loading-placeholder {
+  display: inline-block;
+  margin-right: 5%;
+  width: 90%;
+  background: linear-gradient( to left, #ddd 0%, #ecebeb 50%, #ddd 100%) 0 0 /  200% 100%   #ddd;
+  animation: shine 1s infinite
+}
+
+.remainingDaysLabel{
+	font-weight: bold; 
+	font-size: 12px; 
+	color: red;
+	margin-right: -15px;
+}
+
+.form-save-filter{
+	text-align: left;
+}
+
+.form-save-filter .btn-save-filter{
+	margin-left: 5px;
+}
+
+#filter-section .select2-selection{
+	background-color: transparent;
+    border-color: transparent !important;
+    font-size: 12px;
+}
+
+#filter-section .select2-container{
+	width: 100% !important;
+}
+
+#filter-section .select2-container--classic .select2-selection--single, #filter-section .select2-container--default .select2-selection--single,
+#filter-section .select2-container--classic .select2-selection--multiple, #filter-section .select2-container--default .select2-selection--multiple
+{
+	min-height: 0px !important;
+	height: auto !important;
+	padding: 0px !important;
+	border-color: transparent !important;
+}
+
+#filter-section .select2-container--classic .select2-selection--multiple .select2-selection__choice, #filter-section .select2-container--default .select2-selection--multiple .select2-selection__choice{
+	background-color: white !important;
+	color: black !important;
+	margin-top: 3px !important;
+}
+
+#filter-section .select2-container--default .select2-search--inline .select2-search__field, #filter-section .filter-autocomplete .select2-container--default .select2-selection--single .select2-selection__rendered{
+	color: white !important;
+}
+
+#filter-section .select2-container--classic .select2-selection--multiple .select2-selection__choice__remove, #filter-section .select2-container--default .select2-selection--multiple .select2-selection__choice__remove{
+	color: black !important;
+}
+
+ul[role=alert]{
+	color: red;
+}
+
+.swal2-actions:not(.swal2-loading) .swal2-confirm{
+	background-color: #1e9ff2 !important;
+	border-color: #1e9ff2 !important;
+}
+
+.swal2-actions .swal2-cancel{
+	background-color: #6B6F82 !important;
+	border-color: #6B6F82 !important;
+}
+
+.toast-container{
+	right: 80% !important;
+}
+
+.game-rules-card{
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+.game-rules-card:hover {
+  box-shadow: 0 4px 10px rgba(0,0,0,0.16), 0 4px 10px rgba(0,0,0,0.23);
+}
+
+.answer-border-thickness {
+	border-width: 2px !important;
+}
+
+.game-rules-card-selected {
+	border: 4px solid #FFA500 !important;
+}
+
+#answerSection ul li{
+	background-color: #EDEDED;
+	border-color: #d0cfcf;
+}
+
+.spinner-button {
+    border: 2px solid #000;
+    display: inline-block;
+    padding: 8px 20px 9px;
+    font-size: 12px;
+    color: #000;
+    background-color: transparent
+}
+
+.spinner-button:hover {
+    background-color: #000;
+    border: 2px solid #000;
+    color: #fff 
+}
+
+.spinner-button i {
+    color: #fff
+} 
+
+.spinner-button:hover i {
+    color: #fff
+}
+
+#newOnlineGameBtn:disabled {
+    color: #fff;
+    background-color: #000;
+    border-color: #000;
+}
+
+
+#homepage .header .header-logo
+{
+	margin-right: 20px;
+}
+
+#homepage .coming-soon-badge
+{
+	left: -25px; 
+	background-color: red; 
+	border: 1px solid white !important; 
+	color: white !important; 
+	transform: rotate(-45deg);
+	height: 25px;
+	width: 100px;
+}
+
+#homepage .header .header-flags .ar-flag
+{
+	padding-right: 10px;
+}
+
+#homepage .header .insta-icon
+{
+	padding-right: 10px;
+}
+
+#game .card-footer .skipQuestionDiv{
+	text-align: left;
+}
+
+#whatdoyouknow #hero-section .header-logo{
+	margin-right: 20px;
+}
+
+#answerSection #attempt1{
+	height: 16px;
+	width: 16px;
+}
+
+#answerSection #attempt2{
+	margin-right: 3px;
+	height: 16px;
+	width: 16px;
+}
+
+#answerSection #attempt3{
+	margin-right: 3px;
+	height: 16px;
+	width: 16px;
+}
+
+#game-winner-section{
+	font-size: 16px;
+    font-weight: bold;
+    color: green;
+}
+
+#game-draw-section{
+	font-size: 16px;
+    font-weight: bold;
+    color: gray;
+}
+
+.game-score-table thead{
+	position: sticky;
+    top: 0;
+}
+
+.game-score-table th{
+	vertical-align: middle !important;
+}
+
+.game-score-table .player1-score, .game-score-table .player2-score{
+	color: green;
+}
+
+#possibleAnswersLabel{
+	font-size: 12px; 
+	padding-right: 10px;
+	font-style: italic;
+	color: black;
+}
+
+@keyframes shine {
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media only screen and (min-width: 600px) {
+	.grid-stack-item-content .card-title{
+	  	white-space: nowrap;
+	    width: 95%;
+	    overflow: hidden;
+	    text-overflow: ellipsis;
+	}
+}
+
+@media only screen and (max-width: 1024px) {
+  .dashboard-header .content-header-right{
+  	display:none;
+  }
+  
+  .dashboard-header .content-header-left{
+  	margin-top: 10px;
+  }
+  
+  .grid-stack-item-content .card-title{
+  	white-space: nowrap;
+    width: 95%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .dashboard-body{
+  	margin-top: 10px;
+  }
+  
+  .menu-item.new-dashboard, .nav-item.alerts-menu, .nav-item.datasources-menu, .nav-item.slideshows-menu{
+  	display:none;
+  }
+  
+  .widget-header-title{
+  	width: 90%;
+  }
+  
+  .widget-header-actions{
+  	width: 10%;
+  }
+  
+  .widget-header-actions .dropdown-menu{
+	transform: translate3d(100px, 18px, 0px) !important;
+  }
+  
+  .toast-container
+  {
+  	right: 50% !important;
+  }
+}
