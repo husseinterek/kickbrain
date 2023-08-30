@@ -12,6 +12,7 @@ import com.kickbrain.beans.GameReportResult;
 import com.kickbrain.beans.GameRoom;
 import com.kickbrain.beans.Player;
 import com.kickbrain.beans.SkipQuestionRequest;
+import com.kickbrain.beans.WaitingRoom;
 import com.kickbrain.manager.GameRoomManager;
 import com.kickbrain.manager.WebSocketManager;
 
@@ -121,8 +122,12 @@ public class WebSocketController {
     }
     
     private void waitForSecondPlayer(GameRoom gameRoom) {
+    	
+    	WaitingRoom waitingRoom = new WaitingRoom();
+    	waitingRoom.setRoomId(gameRoom.getRoomId());
+    	waitingRoom.setPlayerId(gameRoom.getPlayer1().getPlayerId());
         // Send a message to the player informing them that they need to wait for another player to join
-        messagingTemplate.convertAndSend("/topic/game/wait/" + gameRoom.getPlayer1().getUsername(), gameRoom.getRoomId());
+        messagingTemplate.convertAndSend("/topic/game/wait/" + gameRoom.getPlayer1().getUsername(), waitingRoom);
     }
     
     @MessageMapping("/ping")

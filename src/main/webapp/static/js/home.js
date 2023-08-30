@@ -84,6 +84,7 @@ function joinExistingGame()
 				  if(response.status == 1)
 				  {
 					  // Redirect the player to the game HTML page with the roomId as a parameter
+					  document.cookie = "playerId=" + response.playerId;
 					  document.location = contextPath + "/generateNewGame?lang="+language+"&roomId=" + roomId;
 				  }
 				  else

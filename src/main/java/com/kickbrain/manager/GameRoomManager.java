@@ -190,12 +190,12 @@ public class GameRoomManager {
 			}
 			else
 			{
-				return null;
+				return new ArrayList<>();
 			}
 		}
 		else
 		{
-			return null;
+			return new ArrayList<String>();
 		}
 	}
 	

@@ -22,7 +22,9 @@ import com.kickbrain.beans.BaseResult;
 import com.kickbrain.beans.BotAnswerRequest;
 import com.kickbrain.beans.BotAnswerResult;
 import com.kickbrain.beans.GameReportResult;
+import com.kickbrain.beans.GameResult;
 import com.kickbrain.beans.GameRoom;
+import com.kickbrain.beans.JoinGameResult;
 import com.kickbrain.beans.Player;
 import com.kickbrain.beans.StrikeRequest;
 import com.kickbrain.beans.StrikeResult;
@@ -57,7 +59,7 @@ public class GameController {
 	private Environment env;
 	
 	@RequestMapping(value = "/validateAnswer", method = RequestMethod.POST, consumes="application/json")
-	public ValidateAnswerResult validateAnswer(@RequestBody ValidateAnswerRequest request, BindingResult bindingResult, ModelMap model) {
+	public ValidateAnswerResult validateAnswer(@RequestBody ValidateAnswerRequest request) {
 		
 		ValidateAnswerResult result = new ValidateAnswerResult();
 		try
@@ -114,11 +116,17 @@ public class GameController {
 				if(submittedPlayerAnswers == null)
 				{
 					submittedPlayerAnswers = new ArrayList<String>();
+					submittedPlayerAnswers.add(matchingAnswer);
 				}
-				submittedPlayerAnswers.add(matchingAnswer);
-				int submittedAnswers = submittedPlayerAnswers.size() + (opponentPlayerAnswers == null ? 0 : opponentPlayerAnswers.size());
+				if(opponentPlayerAnswers == null)
+				{
+					opponentPlayerAnswers = new ArrayList<String>();
+				}
+				
+				int submittedAnswers = submittedPlayerAnswers.size() + opponentPlayerAnswers.size();
 				
 				result.setAllAnswersProvided(submittedAnswers == numOfPossibleAnswers);
+				result.setStatus(1);
 				messagingTemplate.convertAndSend("/topic/game/" + request.getRoomId() + "/answer", result);
 				
 				if(submittedAnswers == numOfPossibleAnswers)
@@ -149,6 +157,8 @@ public class GameController {
 			{
 				strike(request.getRoomId(), request.getSubmittedPlayerId(), request.getQuestionId(), request.getCurrentQuestionIdx(), gameRoom);
 			}
+			
+			result.setStatus(1);
 		}
 		catch(Exception ex)
 		{
@@ -160,7 +170,7 @@ public class GameController {
 	}
 	
 	@RequestMapping(value = "/validateSinglePlayerAnswer", method = RequestMethod.POST, consumes="application/json")
-	public ValidateSinglePlayerAnswerResult validateSinglePlayerAnswer(@RequestBody ValidateSinglePlayerAnswerRequest request, BindingResult bindingResult, ModelMap model) {
+	public ValidateSinglePlayerAnswerResult validateSinglePlayerAnswer(@RequestBody ValidateSinglePlayerAnswerRequest request) {
 		
 		ValidateSinglePlayerAnswerResult result = new ValidateSinglePlayerAnswerResult();
 		try
@@ -216,6 +226,8 @@ public class GameController {
 				
 				result.setAllAnswersProvided(submittedPlayerAnswers.size() == numOfPossibleAnswers);
 			}
+			
+			result.setStatus(1);
 		}
 		catch(Exception ex)
 		{
@@ -227,7 +239,7 @@ public class GameController {
 	}
 	
 	@RequestMapping(value = "/strike", method = RequestMethod.POST, consumes="application/json")
-	public void strike(@RequestBody StrikeRequest request, BindingResult bindingResult, ModelMap model) {
+	public void strike(@RequestBody StrikeRequest request) {
 
 		GameRoom gameRoom = gameRoomManager.getGameRoomById(request.getRoomId());
 		if(gameRoom != null)
@@ -237,9 +249,9 @@ public class GameController {
 	}
 	
 	@RequestMapping(value = "/{roomId}/join", method = RequestMethod.POST, consumes="application/json")
-	public BaseResult joinGame(@PathVariable String roomId, @RequestParam String username) {
+	public JoinGameResult joinGame(@PathVariable String roomId, @RequestParam String username) {
 		
-		BaseResult result = new BaseResult();
+		JoinGameResult result = new JoinGameResult();
 		GameRoom gameRoom = gameRoomManager.getWaitingGameById(roomId);
 		if(gameRoom != null)
 		{
@@ -251,6 +263,7 @@ public class GameController {
         	messagingTemplate.convertAndSend("/topic/game/start/" + activeRoom.getPlayer1().getUsername(), gameRoom.getRoomId());
             messagingTemplate.convertAndSend("/topic/game/start/" + activeRoom.getPlayer2().getUsername(), gameRoom.getRoomId());
             
+            result.setPlayerId(activeRoom.getPlayer2().getPlayerId());
             result.setStatus(1);
 		}
 		else
@@ -363,6 +376,81 @@ public class GameController {
 			messagingTemplate.convertAndSend("/topic/game/"+roomId+"/updateScore", playersScores);
 			messagingTemplate.convertAndSend("/topic/game/"+roomId+"/newQuestion", currentQuestionIndex + 1);
 		}
+	}
+	
+	@RequestMapping(value = "/onlineGame/{roomId}", method = RequestMethod.GET)
+	public GameResult onlineGame(@PathVariable String roomId) {
+		
+		GameResult result = new GameResult();
+		GameRoom gameRoom = null;
+		try
+		{
+			if(StringUtils.isEmpty(roomId))
+			{
+				throw new Exception();
+			}
+			
+			gameRoom = gameRoomManager.getGameRoomById(roomId);
+			if(gameRoom != null)
+			{
+				result.setQuestions(gameRoom.getQuestions());
+				result.setStatus(1);
+				result.setRoomId(roomId);
+				result.setPlayer1(gameRoom.getPlayer1());
+				result.setPlayer2(gameRoom.getPlayer2());
+				result.setCurrentTurn(gameRoom.getPlayer1().getPlayerId());
+			}
+			else
+			{
+				result.setErrorMessage("Could not find the specified game room");
+				result.setStatus(0);
+			}
+		}
+		catch(Exception ex)
+		{
+			result.setErrorMessage("Error while compiling the game questions");
+			result.setStatus(0);
+			ex.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	@RequestMapping(value = "/singleGame", method = RequestMethod.GET)
+	public GameResult singleGame(@RequestParam(value = "username") String username) {
+		
+		GameResult result = new GameResult();
+		GameRoom gameRoom = null;
+		try
+		{
+			if(StringUtils.isEmpty(username))
+			{
+				throw new Exception();
+			}
+			
+			gameRoom = gameRoomManager.createSingleGameRoom(username);
+			if(gameRoom != null)
+			{
+				result.setQuestions(gameRoom.getQuestions());
+				result.setStatus(1);
+				result.setRoomId(gameRoom.getRoomId());
+				result.setPlayer1(gameRoom.getPlayer1());
+				result.setPlayer2(gameRoom.getPlayer2());
+			}
+			else
+			{
+				result.setErrorMessage("Could not generate the game");
+				result.setStatus(0);
+			}
+		}
+		catch(Exception ex)
+		{
+			result.setErrorMessage("Error while compiling the game questions");
+			result.setStatus(0);
+			ex.printStackTrace();
+		}
+		
+		return result;
 	}
 	
 	/*private static boolean isAnswerMatching(List<String> answers, String capturedAnswer, List<String> opponentPlayerAnswers, List<String> submittedPlayerAnswers, int minimumMatchingRatio)

@@ -38,6 +38,9 @@ function submitQuestion()
 				  
 				  if(response.status == 1)
 				  {
+					  $('#questionEn').val('');
+					  $('#questionAr').val('');
+					  $('#answers').val('');
 					  toastr.success("Question is added successfully", 'Success!');
 				  }
 				  else

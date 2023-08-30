@@ -7,8 +7,8 @@ var stompClient = null;
 var questionsMap = {};
 $(document).ready(function() {
 	
-	var username = getCookie('username');
-	if(player1.username == username)
+	var playerIdSession = getCookie('playerId');
+	if(player1.playerId == playerIdSession)
 	{
 		currentPlayer = player1;
 		opponentPlayer = player2;
@@ -427,7 +427,6 @@ function subscribeToTopics()
 		var nbStrikes = response.nbStrikes;
 		var submittedPlayer = response.submittedPlayer;
 		
-		var answerElementId = response.answerElementId;
 		if(submittedPlayer == currentPlayer.playerId)
 		{
 			var maxId = 0;
@@ -495,20 +494,37 @@ function subscribeToTopics()
 		var correct = response.correct;
 		if(correct == true)
 		{
-			  var answerElementId = response.answerElementId;
 			  if(submittedPlayer == currentPlayer.playerId)
 			  {
-				  $(".player1AnswerSection #"+answerElementId+".player1AnswerValue").val(response.matchingAnswer);
-				  $(".player1AnswerSection #"+answerElementId+".player1AnswerValue").closest('li').find('.answer-icon-div').empty();
-				  $(".player1AnswerSection #"+answerElementId+".player1AnswerValue").closest('li').find('.answer-icon-div').append("<div class='badge border-success success round badge-border float-right mr-1'><i class='la la-check'></i></div>");
-				  populatePlayer1AnswerElement(questionId);
+				  var maxId = 0;
+					$(".player1AnswerSection .player1AnswerValue").each(function(i) {
+						var id = $(this).attr('id');
+						if(maxId < id)
+						{
+							maxId = id;
+						}
+					});
+					
+					$(".player1AnswerSection #"+maxId+".player1AnswerValue").val(response.matchingAnswer);
+					$(".player1AnswerSection #"+maxId+".player1AnswerValue").closest('li').find('.answer-icon-div').empty();
+					$(".player1AnswerSection #"+maxId+".player1AnswerValue").closest('li').find('.answer-icon-div').append("<div class='badge border-success success round badge-border float-right mr-1'><i class='la la-check'></i></div>");
+					populatePlayer1AnswerElement(questionId);
 			  }
 			  else
 			  {
-				  $(".player2AnswerSection #"+answerElementId+".player2AnswerValue").val(response.matchingAnswer);
-				  $(".player2AnswerSection #"+answerElementId+".player2AnswerValue").closest('li').find('.answer-icon-div').empty();
-				  $(".player2AnswerSection #"+answerElementId+".player2AnswerValue").closest('li').find('.answer-icon-div').append("<div class='badge border-success success round badge-border float-right mr-1'><i class='la la-check'></i></div>");
-				  populatePlayer2AnswerElement(questionId);
+				  var maxId = 0;
+					$(".player2AnswerSection .player2AnswerValue").each(function(i) {
+						var id = $(this).attr('id');
+						if(maxId < id)
+						{
+							maxId = id;
+						}
+					});
+					
+					$(".player2AnswerSection #"+maxId+".player2AnswerValue").val(response.matchingAnswer);
+					$(".player2AnswerSection #"+maxId+".player2AnswerValue").closest('li').find('.answer-icon-div').empty();
+					$(".player2AnswerSection #"+maxId+".player2AnswerValue").closest('li').find('.answer-icon-div').append("<div class='badge border-success success round badge-border float-right mr-1'><i class='la la-check'></i></div>");
+					populatePlayer2AnswerElement(questionId);
 			  }
 		}
 		

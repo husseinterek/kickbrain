@@ -1,6 +1,6 @@
-var currentPlayer;
 var roomId = '';
 var stompClient = null;
+var playerIdGlobal;
 $(document).ready(function() {
 	
 	connectToWebSocket();
@@ -27,8 +27,11 @@ function connectToWebSocket() {
 function subscribeToTopics()
 {
 	stompClient.subscribe('/topic/game/wait/' + username, function(message) {
-		$('#roomId').html(message.body);
-		roomId = message.body;
+		
+		var response = $.parseJSON(message.body);
+		$('#roomId').html(response.roomId);
+		roomId = response.roomId;
+		playerIdGlobal = response.playerId;
     	// Send a heartbeat ping every 10 seconds
         setInterval(sendPing, 5000);
     });
@@ -52,7 +55,7 @@ function startGame() {
 //Function to handle roomId received from the backend
 function handleRoomId(roomId) {
     // Handle the roomId as required (e.g., store it in a variable)
-    document.cookie = "username=" + username;
+    document.cookie = "playerId=" + playerIdGlobal;
     
     // Redirect the player to the game HTML page with the roomId as a parameter
     document.location = contextPath + "/generateNewGame?lang="+language+"&roomId=" + roomId;
