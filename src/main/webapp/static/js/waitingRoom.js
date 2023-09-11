@@ -1,6 +1,5 @@
 var roomId = '';
 var stompClient = null;
-var playerIdGlobal;
 $(document).ready(function() {
 	
 	connectToWebSocket();
@@ -31,14 +30,13 @@ function subscribeToTopics()
 		var response = $.parseJSON(message.body);
 		$('#roomId').html(response.roomId);
 		roomId = response.roomId;
-		playerIdGlobal = response.playerId;
     	// Send a heartbeat ping every 10 seconds
         setInterval(sendPing, 5000);
     });
 	
 	stompClient.subscribe('/topic/game/start/' + username, function(message) {
 		window.onbeforeunload = null;
-		handleRoomId(message.body);
+		handleRoomId($.parseJSON(message.body));
     });
 }
 
@@ -53,12 +51,12 @@ function startGame() {
 }
 
 //Function to handle roomId received from the backend
-function handleRoomId(roomId) {
+function handleRoomId(gameStartEvent) {
     // Handle the roomId as required (e.g., store it in a variable)
-    document.cookie = "playerId=" + playerIdGlobal;
+    document.cookie = "playerId=" + gameStartEvent.playerId;
     
     // Redirect the player to the game HTML page with the roomId as a parameter
-    document.location = contextPath + "/generateNewGame?lang="+language+"&roomId=" + roomId;
+    document.location = contextPath + "/generateNewGame?lang="+language+"&roomId=" + gameStartEvent.roomId;
 }
 
 function sendPing() {

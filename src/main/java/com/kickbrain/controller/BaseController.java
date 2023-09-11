@@ -42,6 +42,12 @@ public class BaseController {
 		return "login";
 	}
 	
+	@RequestMapping(value = "/privacyPolicy", method = RequestMethod.GET)
+	public String privacyPolicy(Locale locale, Model model, HttpSession session, Device device) {
+		
+		return "privacyPolicy";
+	}
+	
 	@RequestMapping(value = "/generateNewGame", method = RequestMethod.GET)
 	public String generateNewGame(@RequestParam(value = "roomId") String roomId, Locale locale, Model model, HttpSession session, Device device) {
 		

@@ -24,6 +24,7 @@ import com.kickbrain.beans.BotAnswerResult;
 import com.kickbrain.beans.GameReportResult;
 import com.kickbrain.beans.GameResult;
 import com.kickbrain.beans.GameRoom;
+import com.kickbrain.beans.GameStartEvent;
 import com.kickbrain.beans.JoinGameResult;
 import com.kickbrain.beans.Player;
 import com.kickbrain.beans.StrikeRequest;
@@ -35,6 +36,7 @@ import com.kickbrain.beans.ValidateSinglePlayerAnswerResult;
 import com.kickbrain.beans.configuration.Question;
 import com.kickbrain.configuration.XMLConfigurationManager;
 import com.kickbrain.manager.GameRoomManager;
+import com.kickbrain.manager.GameTimerManager;
 import com.kickbrain.manager.WebSocketManager;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
@@ -57,6 +59,9 @@ public class GameController {
 	
 	@Autowired
 	private Environment env;
+	
+	@Autowired
+	private GameTimerManager gameTimerManager;
 	
 	@RequestMapping(value = "/validateAnswer", method = RequestMethod.POST, consumes="application/json")
 	public ValidateAnswerResult validateAnswer(@RequestBody ValidateAnswerRequest request) {
@@ -149,8 +154,14 @@ public class GameController {
 							// both players take the point
 							gameRoomManager.addPlayerScoreToGameReport(gameRoom.getRoomId(), request.getSubmittedPlayerId(), request.getQuestionId());
 							addPointAndProceed(gameRoom, request.getQuestionId(), request.getCurrentQuestionIdx(), request.getOpponentPlayerId());
+							gameRoomManager.setQuestionResultasTie(gameRoom.getRoomId(), request.getQuestionId(), request.getSubmittedPlayerId(), request.getOpponentPlayerId());
 						}
 					}
+				}
+				else
+				{
+					String currentTurn = request.getSubmittedPlayerId().equals(gameRoom.getPlayer1().getPlayerId()) ? gameRoom.getPlayer2().getPlayerId() : gameRoom.getPlayer1().getPlayerId();
+					gameTimerManager.refreshGameTimer(request.getRoomId(), currentTurn, request.getQuestionId());
 				}
 			}
 			else
@@ -259,9 +270,26 @@ public class GameController {
 			Player player = new Player(null, username);
         	GameRoom activeRoom = gameRoomManager.createActiveGameRoom(gameRoom, player);
         	
+        	GameStartEvent gameStartEventP1 = new GameStartEvent();
+        	gameStartEventP1.setRoomId(gameRoom.getRoomId());
+        	gameStartEventP1.setPlayerId(gameRoom.getPlayer1().getPlayerId());
+        	
+        	GameStartEvent gameStartEventP2 = new GameStartEvent();
+        	gameStartEventP2.setRoomId(gameRoom.getRoomId());
+        	gameStartEventP2.setPlayerId(gameRoom.getPlayer2().getPlayerId());
+        	
             // Notify both players in the room about the game start
-        	messagingTemplate.convertAndSend("/topic/game/start/" + activeRoom.getPlayer1().getUsername(), gameRoom.getRoomId());
-            messagingTemplate.convertAndSend("/topic/game/start/" + activeRoom.getPlayer2().getUsername(), gameRoom.getRoomId());
+        	messagingTemplate.convertAndSend("/topic/game/start/" + activeRoom.getPlayer1().getUsername(), gameStartEventP1);
+            messagingTemplate.convertAndSend("/topic/game/start/" + activeRoom.getPlayer2().getUsername(), gameStartEventP2);
+            
+            // Send push notification to player1 who initiated the game
+            if(activeRoom.getPlayer1().getDeviceToken() != null)
+            {
+            	gameRoomManager.sendPushNotificationToWaitingPlayer(activeRoom.getPlayer1(), activeRoom.getRoomId());
+            }
+            
+            // Start answer timer
+            gameTimerManager.refreshGameTimer(activeRoom.getRoomId(), activeRoom.getPlayer1().getPlayerId(), String.valueOf(activeRoom.getQuestions().get(0).getId()));
             
             result.setPlayerId(activeRoom.getPlayer2().getPlayerId());
             result.setStatus(1);
@@ -327,16 +355,17 @@ public class GameController {
 	private void strike(String roomId, String submittedPlayerId, String questionId, int currentQuestionIndex, GameRoom gameRoom) {
 		
 		Integer strikes = gameRoomManager.getPlayerStrikesByGameAndQuestion(roomId, questionId, submittedPlayerId);
+		String currentTurn = submittedPlayerId.equals(gameRoom.getPlayer1().getPlayerId()) ? gameRoom.getPlayer2().getPlayerId() : gameRoom.getPlayer1().getPlayerId();
+		StrikeResult strikeResult = new StrikeResult();
+		strikeResult.setSubmittedPlayer(submittedPlayerId);
+		strikeResult.setCurrentTurn(currentTurn);
+		strikeResult.setNbStrikes(strikes == null ? 1 : strikes+1);
+		messagingTemplate.convertAndSend("/topic/game/" + roomId + "/strike", strikeResult);
+		
 		if(strikes == null || strikes < 2)
 		{
 			gameRoomManager.addPlayerStrikeToGameReport(roomId, questionId, submittedPlayerId);
-			
-			StrikeResult strikeResult = new StrikeResult();
-			strikeResult.setSubmittedPlayer(submittedPlayerId);
-			strikeResult.setCurrentTurn(submittedPlayerId.equals(gameRoom.getPlayer1().getPlayerId()) ? gameRoom.getPlayer2().getPlayerId() : gameRoom.getPlayer1().getPlayerId());
-			strikeResult.setNbStrikes(strikes == null ? 1 : strikes+1);
-			
-			messagingTemplate.convertAndSend("/topic/game/" + roomId + "/strike", strikeResult);
+			gameTimerManager.refreshGameTimer(roomId, currentTurn, questionId);
 		}
 		else
 		{
@@ -368,6 +397,7 @@ public class GameController {
 			GameReportResult gameReportResult = gameRoomManager.generateGameReportResult(roomId);
 			gameRoomManager.flushGame(roomId);
 			messagingTemplate.convertAndSend("/topic/game/" + roomId + "/complete", gameReportResult);
+			gameTimerManager.removeGameTimer(roomId);
 		}
 		else
 		{
@@ -375,6 +405,12 @@ public class GameController {
 			Map<String, Integer> playersScores = gameRoomManager.getPlayersScoresPerGame(roomId);
 			messagingTemplate.convertAndSend("/topic/game/"+roomId+"/updateScore", playersScores);
 			messagingTemplate.convertAndSend("/topic/game/"+roomId+"/newQuestion", currentQuestionIndex + 1);
+			
+			String currentTurn = playerId.equals(gameRoom.getPlayer1().getPlayerId()) ? gameRoom.getPlayer2().getPlayerId() : gameRoom.getPlayer1().getPlayerId();
+			messagingTemplate.convertAndSend("/topic/game/"+roomId+"/switchTurn", currentTurn);
+			
+			int nextQuestionId = gameRoom.getQuestions().get(currentQuestionIndex).getId();
+			gameTimerManager.refreshGameTimer(roomId, currentTurn, String.valueOf(nextQuestionId));
 		}
 	}
 	

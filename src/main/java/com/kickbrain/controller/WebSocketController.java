@@ -10,10 +10,12 @@ import org.springframework.stereotype.Controller;
 
 import com.kickbrain.beans.GameReportResult;
 import com.kickbrain.beans.GameRoom;
+import com.kickbrain.beans.GameStartEvent;
 import com.kickbrain.beans.Player;
 import com.kickbrain.beans.SkipQuestionRequest;
 import com.kickbrain.beans.WaitingRoom;
 import com.kickbrain.manager.GameRoomManager;
+import com.kickbrain.manager.GameTimerManager;
 import com.kickbrain.manager.WebSocketManager;
 
 @Controller
@@ -22,47 +24,39 @@ public class WebSocketController {
 	private GameRoomManager gameRoomManager;
 	private SimpMessagingTemplate messagingTemplate;
     private WebSocketManager websocketManager;
+    private GameTimerManager gameTimerManager;
 	
     @Autowired
-    public WebSocketController(GameRoomManager gameRoomManager, SimpMessagingTemplate messagingTemplate, WebSocketManager websocketManager) {
+    public WebSocketController(GameRoomManager gameRoomManager, SimpMessagingTemplate messagingTemplate, WebSocketManager websocketManager, GameTimerManager gameTimerManager) {
         this.gameRoomManager = gameRoomManager;
         this.messagingTemplate = messagingTemplate;
         this.websocketManager = websocketManager;
+        this.gameTimerManager = gameTimerManager;
     }
     
     @MessageMapping("/startGame")
     public void startGame(Player player, SimpMessageHeaderAccessor headerAccessor) {
     	// Check if there is an available game room to join
-        GameRoom availableGameRoom = gameRoomManager.findAvailableGameRoom();
+        GameRoom availableGameRoom = gameRoomManager.findAvailableGameRoom(player.getUsername());
         String playerId = null;
         try
         {
         	if (availableGameRoom != null) {
-        		
-        		String player1Username = availableGameRoom.getPlayer1().getUsername();
-        		if(!player1Username.equalsIgnoreCase(player.getUsername()))
-        		{
-        			// An available game room is found, add the player to the room as player2
-                	GameRoom activeRoom = gameRoomManager.createActiveGameRoom(availableGameRoom, player);
-                	playerId = activeRoom.getPlayer2().getPlayerId();
-                	
-                    // Notify both players in the room about the game start
-                    notifyGameStart(availableGameRoom);
-        		}
-        		else
-        		{
-        			String sessionId = headerAccessor.getSessionId();
-        			// Don't allow users with same username to play together
-        			// No available game room found, create a new game room and add the player as player1
-                    GameRoom newGameRoom = gameRoomManager.createWaitingGameRoom(player, sessionId);
-                    playerId = newGameRoom.getPlayer1().getPlayerId();
-                    
-                    // Add the sessionId and playerId to the WebSocketSessionManager
-                    websocketManager.addWaitingSession(sessionId, playerId);
-                    
-                    // Wait for the second player to join the room
-                    waitForSecondPlayer(newGameRoom);
-        		}
+        		// An available game room is found, add the player to the room as player2
+            	GameRoom activeRoom = gameRoomManager.createActiveGameRoom(availableGameRoom, player);
+            	playerId = activeRoom.getPlayer2().getPlayerId();
+            	
+            	// Send push notification to player1 who initiated the game
+            	if(activeRoom.getPlayer1().getDeviceToken() != null)
+            	{
+            		gameRoomManager.sendPushNotificationToWaitingPlayer(activeRoom.getPlayer1(), activeRoom.getRoomId());
+            	}
+            	
+                // Notify both players in the room about the game start
+                notifyGameStart(availableGameRoom);
+                
+                // Start answer timer
+                gameTimerManager.refreshGameTimer(availableGameRoom.getRoomId(), availableGameRoom.getPlayer1().getPlayerId(), String.valueOf(activeRoom.getQuestions().get(0).getId()));
             } else {
             	
             	String sessionId = headerAccessor.getSessionId();
@@ -105,6 +99,8 @@ public class WebSocketController {
 			// complete the game
 			GameReportResult gameReportResult = gameRoomManager.generateGameReportResult(request.getRoomId());
 			gameRoomManager.flushGame(request.getRoomId());
+			gameTimerManager.removeGameTimer(request.getRoomId());
+			
 			messagingTemplate.convertAndSend("/topic/game/" + request.getRoomId() + "/complete", gameReportResult);
 		}
 		else
@@ -112,13 +108,26 @@ public class WebSocketController {
 			Map<String, Integer> playersScores = gameRoomManager.getPlayersScoresPerGame(request.getRoomId());
 			messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/updateScore", playersScores);
 			messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/newQuestion", request.getCurrentQuestionIndex() + 1);
+			messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/switchTurn", request.getSubmittedPlayerId());
+			
+			String currentTurn = request.getSubmittedPlayerId();
+			int nextQuestionId = gameRoom.getQuestions().get(request.getCurrentQuestionIndex()).getId();
+			gameTimerManager.refreshGameTimer(request.getRoomId(), currentTurn, String.valueOf(nextQuestionId));
 		}
     }
     
     private void notifyGameStart(GameRoom gameRoom) {
         // Send a WebSocket message to both players in the game room to notify them about the game start
-        messagingTemplate.convertAndSend("/topic/game/start/" + gameRoom.getPlayer1().getUsername(), gameRoom.getRoomId());
-        messagingTemplate.convertAndSend("/topic/game/start/" + gameRoom.getPlayer2().getUsername(), gameRoom.getRoomId());
+    	GameStartEvent gameStartEventP1 = new GameStartEvent();
+    	gameStartEventP1.setRoomId(gameRoom.getRoomId());
+    	gameStartEventP1.setPlayerId(gameRoom.getPlayer1().getPlayerId());
+    	
+    	GameStartEvent gameStartEventP2 = new GameStartEvent();
+    	gameStartEventP2.setRoomId(gameRoom.getRoomId());
+    	gameStartEventP2.setPlayerId(gameRoom.getPlayer2().getPlayerId());
+    	
+        messagingTemplate.convertAndSend("/topic/game/start/" + gameRoom.getPlayer1().getUsername(), gameStartEventP1);
+        messagingTemplate.convertAndSend("/topic/game/start/" + gameRoom.getPlayer2().getUsername(), gameStartEventP2);
     }
     
     private void waitForSecondPlayer(GameRoom gameRoom) {

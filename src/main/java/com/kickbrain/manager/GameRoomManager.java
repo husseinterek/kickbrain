@@ -5,14 +5,19 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import com.kickbrain.beans.GameReport;
 import com.kickbrain.beans.GameReportResult;
 import com.kickbrain.beans.GameRoom;
@@ -30,6 +35,12 @@ public class GameRoomManager {
 	
 	@Autowired
 	private XMLConfigurationManager xmlConfigurationManager;
+	
+	@Autowired
+	private MessageSource messageSource;
+	
+	@Autowired
+	private FirebaseMessaging firebaseMessaging;
 	
 	public GameRoom createWaitingGameRoom(Player player, String sessionId) {
 	    // Create a new game room
@@ -54,6 +65,7 @@ public class GameRoomManager {
 			questionResult.setId(question.getId());
 			questionResult.setQuestionAr(question.getPromptAr());
 			questionResult.setQuestionEn(question.getPromptEn());
+			questionResult.setPossibleAnswers(question.getAnswers().size());
 			
 			questionsResult.add(questionResult);
 		}
@@ -113,11 +125,15 @@ public class GameRoomManager {
 		return waitingGameRooms.get(roomId);
 	}
 	
-	public GameRoom findAvailableGameRoom() {
+	public GameRoom findAvailableGameRoom(String username) {
 	    // Iterate through the list of game rooms and find the first available room
 	    for (GameRoom room : waitingGameRooms.values()) {
 	        if (!room.isFull()) {
-	            return room;
+	        	if(!room.getPlayer1().getUsername().equalsIgnoreCase(username))
+	        	{
+	        		// if the requested player has the same username as existing player, don't return the room
+	        		return room;
+	        	}
 	        }
 	    }
 	    return null; // If no available room is found
@@ -128,18 +144,18 @@ public class GameRoomManager {
 		player.setPlayerId(generateUniqueId());
 		room.setPlayer2(player);
 		room.setPlayersSessions(null);
-		activeGameRooms.put(room.getRoomId(), room);
 		
+		activeGameRooms.put(room.getRoomId(), room);
 		waitingGameRooms.remove(room.getRoomId());
 		
 		// create game report and initiate scores
 		GameReport gameReport = new GameReport();
 		gameReport.setRoomId(room.getRoomId());
 		
-		Map<String, Integer> playersScoreByGame = gameReport.getPlayersScore();
-		playersScoreByGame.put(room.getPlayer1().getPlayerId(), 0);
-		playersScoreByGame.put(room.getPlayer2().getPlayerId(), 0);
-		gameReport.setPlayersScore(playersScoreByGame);
+		Map<String, Integer> playersScores = gameReport.getPlayersScore();
+		playersScores.put(room.getPlayer1().getPlayerId(), 0);
+		playersScores.put(room.getPlayer2().getPlayerId(), 0);
+		gameReport.setPlayersScore(playersScores);
 		
 		gameReports.put(room.getRoomId(), gameReport);
 		
@@ -286,6 +302,17 @@ public class GameRoomManager {
 		gameReports.put(roomId, gameReport);
 	}
 	
+	public void setQuestionResultasTie(String roomId, String questionId, String player1Id, String player2Id)
+	{
+		GameReport gameReport = gameReports.get(roomId);
+		
+		Map<String, String> questionsResult = gameReport.getQuestionsResult();
+		questionsResult.put(questionId, player1Id + "," + player2Id);
+		gameReport.setQuestionsResult(questionsResult);
+		
+		gameReports.put(roomId, gameReport);
+	}
+	
 	public Map<String, Integer> getPlayersScoresPerGame(String roomId)
 	{
 		GameReport gameReport = gameReports.get(roomId);
@@ -392,5 +419,41 @@ public class GameRoomManager {
 		gameRoom.setPlayersSessions(playersSessions);
 		
 		activeGameRooms.put(gameRoom.getRoomId(), gameRoom);
+	}
+	
+	public void sendPushNotificationToWaitingPlayer(Player player, String roomId)
+	{
+		try
+		{
+			if(player.getDeviceToken() != null)
+			{
+				String notificationContent = messageSource.getMessage("waitingRoom.pushNotificationContent", null, Locale.forLanguageTag("en"));
+				String notificationSubject = messageSource.getMessage("waitingRoom.pushNotificationSubject", null, Locale.forLanguageTag("en"));
+				
+				Notification notification = Notification
+		                .builder()
+		                .setTitle(notificationSubject)
+		                .setBody(notificationContent)
+		                .build();
+				
+				Map<String, String> allData = new HashMap<String, String>();
+				allData.put("playerId", player.getPlayerId());
+				allData.put("roomId", roomId);
+				allData.put("type", "GAME_STARTED");
+				
+				Message message = Message
+		                .builder()
+		                .setToken(player.getDeviceToken())
+		                .setNotification(notification)
+		                .putAllData(allData)
+		                .build();
+				
+				firebaseMessaging.send(message);
+			}
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
 	}
 }

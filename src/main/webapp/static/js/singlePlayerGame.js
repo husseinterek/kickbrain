@@ -40,7 +40,7 @@ $(document).ready(function() {
 
 function validateAnswer(element)
 {
-	var capturedAnswer = $(element).val();
+	var capturedAnswer = $(element).val().trim();
 	if(capturedAnswer)
 	{
 		$(element).closest('li').find('.answerByMicrophone').replaceWith("<div class='ball-clip-rotate loader-primary float-right loader'><div></div></div>");
@@ -84,7 +84,7 @@ function validateAnswer(element)
 						        $(this).html(totalScore + ' pts').animate({'opacity': 1}, 400);    
 						    });
 						  questionsResult[questionId] = true;
-						  toastr.success(language == 'en' ? "Congratulations, you have earned the point of the question!" : "تهانينا! لقد كسبت نقاط السؤال!", language == 'en' ? 'Question Passed!' : 'تمت الاجابة بنجاح!');
+						  toastr.success(language == 'en' ? "Good job! you have earned the point of the question!" : "تهانينا! لقد كسبت نقاط السؤال!", language == 'en' ? 'Question Passed!' : 'تمت الاجابة بنجاح!');
 						  Proceed();
 					  }
 					  else
@@ -107,7 +107,7 @@ function validateAnswer(element)
 					  }
 					  else
 					  {
-						  toastr.error(language == 'en' ? "Sorry, you have reached the maximum attempts of failure answers. Moving to the next question!" : "لقد تم استنفاد جميع الأخطاء المتاحة!", language == 'en' ? 'Wrong Answer!' : 'جواب خاطىء!');
+						  toastr.error(language == 'en' ? "Sorry, you have reached the maximum failure attempts. Moving on to the next question!" : "لقد تم استنفاد جميع الأخطاء المتاحة!", language == 'en' ? 'Wrong Answer!' : 'جواب خاطىء!');
 						  questionsResult[questionId] = false;
 						  Proceed();
 					  }
@@ -116,7 +116,11 @@ function validateAnswer(element)
 			  }
 		});
 	}
-	return;
+	else
+	{
+		toastr.warning(language == 'en' ? "Please type an answer!" : "من فضلك اكتب اجابتك!", language == 'en' ? 'Missing Answer!': 'اكتب اجابتك!');
+		return;
+	}
 }
 
 function openNewQuestion()

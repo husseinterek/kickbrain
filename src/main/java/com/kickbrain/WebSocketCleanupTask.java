@@ -15,7 +15,8 @@ import com.kickbrain.manager.WebSocketManager;
 @Service
 public class WebSocketCleanupTask {
 
-    private static final long INACTIVE_THRESHOLD = 10000; // 30 seconds (adjust as needed)
+    private static final long INACTIVE_THRESHOLD_ACTIVE = 10000; // 10 seconds (adjust as needed)
+    private static final long INACTIVE_THRESHOLD_WAIT = 900000; // 15 mins (adjust as needed)
 
     @Autowired
     private WebSocketManager webSocketManager;
@@ -36,7 +37,7 @@ public class WebSocketCleanupTask {
         		if(session != null)
         		{
         			Long lastPingTime = webSocketManager.getLastpingtimes().get(session);
-                    if (lastPingTime != null && currentTime - lastPingTime > INACTIVE_THRESHOLD) {
+                    if (lastPingTime != null && currentTime - lastPingTime > INACTIVE_THRESHOLD_ACTIVE) {
                     	// Handle WebSocket disconnect event here
                         String playerId = getPlayerIdFromSession(session);
                         if (playerId != null) {
@@ -67,7 +68,7 @@ public class WebSocketCleanupTask {
         		if(session != null)
         		{
         			Long lastPingTime = webSocketManager.getLastWaitPingTimes().get(session);
-        			if (lastPingTime != null && currentTime - lastPingTime > INACTIVE_THRESHOLD) {
+        			if (lastPingTime != null && currentTime - lastPingTime > INACTIVE_THRESHOLD_WAIT) {
         				String playerId = getPlayerIdFromWaitingSession(session);
         				if (playerId != null) {
         					GameRoom gameRoom = gameRoomManager.getWaitingGameByPlayerId(playerId);

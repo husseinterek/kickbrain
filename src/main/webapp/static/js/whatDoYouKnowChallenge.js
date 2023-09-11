@@ -60,7 +60,7 @@ $(document).ready(function() {
 
 function validateAnswer(element)
 {
-	var capturedAnswer = $(element).val();
+	var capturedAnswer = $(element).val().trim();
 	if(capturedAnswer)
 	{
 		$(element).closest('li').find('.answerByMicrophone').replaceWith("<div class='ball-clip-rotate loader-primary float-right loader'><div></div></div>");
@@ -88,7 +88,11 @@ function validateAnswer(element)
 			  }
 		});
 	}
-	return;
+	else
+	{
+		toastr.warning(language == 'en' ? "Please type an answer!" : "من فضلك اكتب اجابتك!", language == 'en' ? 'Missing Answer!': 'اكتب اجابتك!');
+		return;
+	}
 }
 
 function openNewQuestion()
@@ -197,7 +201,7 @@ function populatePlayer1AnswerElement(questionId)
 	var answerElement = "<li class='list-group-item' style='padding: 12px'>"
 							+ "<div class='row'>"
 								+ "<div class='col-10'>"
-									+ "<input type='text' data-questionid='"+questionId+"' class='form-control player1AnswerValue playerAnswerValue' style='font-size: 13px' id='"+(existingAnswers+1)+"' placeholder='"+(language == 'en' ? "Write/Record "+currentPlayer.username+" answer" : " تسجيل أجوبة  "+currentPlayer.username+"")+"' readonly/>"
+									+ "<input type='text' data-questionid='"+questionId+"' class='form-control player1AnswerValue playerAnswerValue' style='font-size: 13px' id='"+(existingAnswers+1)+"' placeholder='"+(language == 'en' ? "Type "+currentPlayer.username+" answer" : " تسجيل أجوبة  "+currentPlayer.username+"")+"' readonly/>"
 								+ "</div>"
 								+ "<div class='col-2 answer-icon-div'>"
 									+ "<button type='button' class='btn btn-icon btn-warning float-right answerByMicrophone'><i class='la la-play'></i></button>"
@@ -218,7 +222,7 @@ function populatePlayer2AnswerElement(questionId)
 	var answerElement = "<li class='list-group-item' style='padding: 12px'>"
 							+ "<div class='row'>"
 								+ "<div class='col-10'>"
-									+ "<input type='text' data-questionid='"+questionId+"' class='form-control player2AnswerValue playerAnswerValue' style='font-size: 13px' id='"+(existingAnswers+1)+"' placeholder='"+(language == 'en' ? "Write/Record "+opponentPlayer.username+" answer" : " تسجيل أجوبة  "+opponentPlayer.username+"")+"' readonly/>"
+									+ "<input type='text' data-questionid='"+questionId+"' class='form-control player2AnswerValue playerAnswerValue' style='font-size: 13px' id='"+(existingAnswers+1)+"' placeholder='"+(language == 'en' ? "Type "+opponentPlayer.username+" answer" : " تسجيل أجوبة  "+opponentPlayer.username+"")+"' readonly/>"
 								+ "</div>"
 								+ "<div class='col-2 answer-icon-div'>"
 								+ "<button type='button' class='btn btn-icon btn-warning float-right answerByMicrophone'><i class='la la-play'></i></button>"
@@ -360,7 +364,7 @@ function switchTurn()
 		$('.player2AnswerSection').find('.player2AnswersList').find('.answerByMicrophone').hide();
 		
 		$(".question #"+ questionId + "").find('#answerSection').find('.player1AnswerCountdown').show();
-		answerIntervalFunc(questionId);
+		//answerIntervalFunc(questionId);
 	}
 	else
 	{
@@ -393,7 +397,7 @@ function switchTurn()
 		$('.player2AnswerSection').find('.player2AnswersList').find('.answerByMicrophone').hide();
 		
 		$(".question #"+ questionId + "").find('#answerSection').find('.player2AnswerCountdown').show();
-		answerIntervalFunc(questionId);
+		//answerIntervalFunc(questionId);
 	}
 }
 
@@ -416,10 +420,40 @@ function connectToWebSocket() {
 
 function subscribeToTopics()
 {
+	stompClient.subscribe('/topic/game/'+roomId+'/timer', function(message) {
+		var response = $.parseJSON(message.body);
+		var currentTurn = response.currentPlayer;
+		var questionId = response.questionId
+		var timer = response.timer;
+		
+		if(currentTurn == currentPlayer.playerId)
+		{
+			if (timer > 0) {
+				$(".question #"+ questionId + "").find('#answerSection').find('.player1AnswerCountdown').html(timer);
+			}
+			else
+			{
+				strikePost();
+			}
+		}
+		else
+		{
+			if(timer > 0)
+			{
+				$(".question #"+ questionId + "").find('#answerSection').find('.player2AnswerCountdown').html(timer);
+			}
+		}
+    });
+	
 	stompClient.subscribe('/topic/game/'+roomId+'/newQuestion', function(message) {
 		currentQuestionIdx = message.body;
 		openNewQuestion();
     });
+	
+	stompClient.subscribe('/topic/game/'+roomId+'/switchTurn', function(message) {
+		currentTurn = message.body;
+		switchTurn();
+	});
 	
 	stompClient.subscribe('/topic/game/'+roomId+'/strike', function(message) {
 		
@@ -591,15 +625,25 @@ function completeGame(player1Score, player2Score, questionsResult)
 		var row = "<tr><td>"+(language == 'en' ? question.questionEn : question.questionAr)+"</td>";
 		
 		var passedPlayer = questionsResult[i];
-		if(passedPlayer == player1.playerId)
+		var passedPlayerArr = passedPlayer.split(',');
+		if(passedPlayerArr.length == 2)
 		{
 			row += "<td class='text-center'><div class='badge border-success success round badge-border'><i class='la la-check'></i></div></td>";
-			row += "<td class='text-center'><div class='badge border-danger danger round badge-border'><i class='la la-close'></i></div></td>";
+			row += "<td class='text-center'><div class='badge border-success success round badge-border'><i class='la la-check'></i></div></td>";
 		}
 		else
 		{
-			row += "<td class='text-center'><div class='badge border-danger danger round badge-border'><i class='la la-close'></i></div></td>";
-			row += "<td class='text-center'><div class='badge border-success success round badge-border'><i class='la la-check'></i></div></td>";
+			passedPlayer = passedPlayerArr[0];
+			if(passedPlayer == player1.playerId)
+			{
+				row += "<td class='text-center'><div class='badge border-success success round badge-border'><i class='la la-check'></i></div></td>";
+				row += "<td class='text-center'><div class='badge border-danger danger round badge-border'><i class='la la-close'></i></div></td>";
+			}
+			else
+			{
+				row += "<td class='text-center'><div class='badge border-danger danger round badge-border'><i class='la la-close'></i></div></td>";
+				row += "<td class='text-center'><div class='badge border-success success round badge-border'><i class='la la-check'></i></div></td>";
+			}
 		}
 		
 		$('#resultReportModal').find('.reportResult-table').append(row);

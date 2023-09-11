@@ -60,6 +60,8 @@ public class LookupController {
 		gameRoomDictionaryEn.put("allAnswersProvided", messageSource.getMessage("gameRoom.allAnswersProvided", null, Locale.forLanguageTag("en")));
 		gameRoomDictionaryEn.put("gameComplete", messageSource.getMessage("gameRoom.gameComplete", null, Locale.forLanguageTag("en")));
 		gameRoomDictionaryEn.put("waitingMessage", messageSource.getMessage("gameRoom.waitingMessage", null, Locale.forLanguageTag("en")));
+		gameRoomDictionaryEn.put("gameEnd", messageSource.getMessage("gameRoom.gameEnd", null, Locale.forLanguageTag("en")));
+		gameRoomDictionaryEn.put("shareRoomLabel", messageSource.getMessage("waitingRoom.shareLabel", null, Locale.forLanguageTag("en")));
 		
 		// Populate home page dictionary - Arabic
 		Map<String, String> gameRoomDictionaryAr = new HashMap<String, String>();
@@ -69,6 +71,8 @@ public class LookupController {
 		gameRoomDictionaryAr.put("allAnswersProvided", messageSource.getMessage("gameRoom.allAnswersProvided", null, Locale.forLanguageTag("ar")));
 		gameRoomDictionaryAr.put("gameComplete", messageSource.getMessage("gameRoom.gameComplete", null, Locale.forLanguageTag("ar")));
 		gameRoomDictionaryAr.put("waitingMessage", messageSource.getMessage("gameRoom.waitingMessage", null, Locale.forLanguageTag("ar")));
+		gameRoomDictionaryAr.put("gameEnd", messageSource.getMessage("gameRoom.gameEnd", null, Locale.forLanguageTag("ar")));
+		gameRoomDictionaryAr.put("shareRoomLabel", messageSource.getMessage("waitingRoom.shareLabel", null, Locale.forLanguageTag("ar")));
 		
 		gameRoomTranslations.put("en", gameRoomDictionaryEn);
 		gameRoomTranslations.put("ar", gameRoomDictionaryAr);
