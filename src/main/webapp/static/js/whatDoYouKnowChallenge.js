@@ -421,6 +421,8 @@ function connectToWebSocket() {
 function subscribeToTopics()
 {
 	stompClient.subscribe('/topic/game/'+roomId+'/timer', function(message) {
+		
+		console.log("Timer event: " + message);
 		var response = $.parseJSON(message.body);
 		var currentTurn = response.currentPlayer;
 		var questionId = response.questionId

@@ -1,63 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<questions>
-      <question>
-      	<prompt-en>Test question english</prompt-en>
-      	<prompt-ar>سؤال بالعربي</prompt-ar>
-      	<answers>test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12,test13,test14,test15,test16,test17,test18,test19,test20, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12,test13,test14,test15,test16,test17,test18,test19,test20</answers>
-      </question>
-	  <question>
-      	<prompt-en>Test question english</prompt-en>
-      	<prompt-ar>سؤال بالعربي</prompt-ar>
-      	<answers>test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12,test13,test14,test15,test16,test17,test18,test19,test20, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12,test13,test14,test15,test16,test17,test18,test19,test20</answers>
-      </question>
-	  <question>
-      	<prompt-en>Test question english</prompt-en>
-      	<prompt-ar>سؤال بالعربي</prompt-ar>
-      	<answers>test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12,test13,test14,test15,test16,test17,test18,test19,test20</answers>
-      </question>
-	  <question>
-      	<prompt-en>Test question english</prompt-en>
-      	<prompt-ar>سؤال بالعربي</prompt-ar>
-      	<answers>test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12,test13,test14,test15,test16,test17,test18,test19,test20</answers>
-      </question>
-	  <question>
-      	<prompt-en>Test question english</prompt-en>
-      	<prompt-ar>سؤال بالعربي</prompt-ar>
-      	<answers>test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12,test13,test14,test15,test16,test17,test18,test19,test20</answers>
-      </question>
-	  <question>
-      	<prompt-en>Test question english</prompt-en>
-      	<prompt-ar>سؤال بالعربي</prompt-ar>
-      	<answers>test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12,test13,test14,test15,test16,test17,test18,test19,test20</answers>
-      </question>
-	  <question>
-      	<prompt-en>Test question english</prompt-en>
-      	<prompt-ar>سؤال بالعربي</prompt-ar>
-      	<answers>test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12,test13,test14,test15,test16,test17,test18,test19,test20</answers>
-      </question>
-	  <question>
-      	<prompt-en>Test question english</prompt-en>
-      	<prompt-ar>سؤال بالعربي</prompt-ar>
-      	<answers>test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12,test13,test14,test15,test16,test17,test18,test19,test20</answers>
-      </question>
-	  <question>
-      	<prompt-en>Test question english</prompt-en>
-      	<prompt-ar>سؤال بالعربي</prompt-ar>
-      	<answers>test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12,test13,test14,test15,test16,test17,test18,test19,test20</answers>
-      </question>
-	  <question>
-      	<prompt-en>Test question english</prompt-en>
-      	<prompt-ar>سؤال بالعربي</prompt-ar>
-      	<answers>test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12,test13,test14,test15,test16,test17,test18,test19,test20</answers>
-      </question>
-	  <question>
-      	<prompt-en>Test question english</prompt-en>
-      	<prompt-ar>سؤال بالعربي</prompt-ar>
-      	<answers>test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12,test13,test14,test15,test16,test17,test18,test19,test20</answers>
-      </question>
-	  <question>
-      	<prompt-en>Test question english</prompt-en>
-      	<prompt-ar>سؤال بالعربي</prompt-ar>
-      	<answers>test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12,test13,test14,test15,test16,test17,test18,test19,test20</answers>
-      </question>
-</questions>
+<app-config>
+     <answerFullMatchRatio>80</answerFullMatchRatio>
+     <answerPartMatchRatio>80</answerPartMatchRatio>
+     <delayNextChallenge>5</delayNextChallenge>
+     <onlineGame>
+          <challenges>
+                  <challenge>
+                        <titleEn>What do you know?</titleEn>
+                        <titleAr>ماذا تعرف؟</titleAr>
+                        <category>1</category>
+                        <nbQuestions>10</nbQuestions>
+                        <appearInSingleGame>1</appearInSingleGame>
+                        <answerTimer>30</answerTimer>
+                  </challenge>
+                  <!-- <challenge>
+                        <titleEn>Bell</titleEn>
+                        <titleAr>الجرس</titleAr>
+                        <category>2</category>
+                        <nbQuestions>3</nbQuestions>
+                        <appearInSingleGame>0</appearInSingleGame>
+                        <bellTimer>60</bellTimer>
+                        <answerTimer>30</answerTimer>
+                  </challenge> -->
+          </challenges>
+     </onlineGame>
+</app-config>

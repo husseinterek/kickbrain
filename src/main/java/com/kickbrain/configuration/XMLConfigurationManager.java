@@ -2,11 +2,7 @@ package com.kickbrain.configuration;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
@@ -21,7 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
 import com.kickbrain.beans.configuration.AppConfiguration;
-import com.kickbrain.beans.configuration.Question;
+import com.kickbrain.beans.configuration.ChallengeConfig;
+import com.kickbrain.beans.configuration.GameConfig;
 
 @Service
 public class XMLConfigurationManager {
@@ -52,32 +49,40 @@ public class XMLConfigurationManager {
 			xmlConfiguration.setDelimiterParsingDisabled(true);
 			xmlConfiguration.load(xmlFile);
 			
-			List<HierarchicalConfiguration> questionsConfig = (List<HierarchicalConfiguration>)xmlConfiguration.configurationsAt("question");
-			int i=1;
-			Map<Integer, Question> questionsMap = new HashMap<Integer, Question>();
-			List<Question> questions = new ArrayList<Question>();
-			for(HierarchicalConfiguration questionConfig : questionsConfig)
+			int answerFullMatchRatio = xmlConfiguration.getInt("answerFullMatchRatio");
+			int answerPartMatchRatio = xmlConfiguration.getInt("answerPartMatchRatio");
+			int delayNextChallenge = xmlConfiguration.getInt("delayNextChallenge");
+			
+			appConfiguration.setAnswerFullMatchRatio(answerFullMatchRatio);
+			appConfiguration.setAnswerPartMatchRatio(answerPartMatchRatio);
+			appConfiguration.setDelayNextChallenge(delayNextChallenge);
+			
+			GameConfig onlineGameConfig = new GameConfig();
+			HierarchicalConfiguration onlineConfig = xmlConfiguration.configurationAt("onlineGame");
+			List<HierarchicalConfiguration> challengesConfig = (List<HierarchicalConfiguration>)onlineConfig.configurationsAt("challenges.challenge");
+			List<ChallengeConfig> challenges = new ArrayList<ChallengeConfig>();
+			for(HierarchicalConfiguration challengeConfig : challengesConfig)
 			{
-				Question question = new Question();
+				ChallengeConfig onlineChallengeConfig = new ChallengeConfig();
 				
-				String promptEn = questionConfig.getString("prompt-en").trim();
-				String promptAr = questionConfig.getString("prompt-ar").trim();
-				List<String> answers= Stream.of(questionConfig.getString("answers").split(","))
-					     .map(String::trim)
-					     .collect(Collectors.toList());
+				int category = challengeConfig.getInt("category");
+				onlineChallengeConfig.setCategory(category);
+				onlineChallengeConfig.setNbQuestions(challengeConfig.getInt("nbQuestions"));
+
+				onlineChallengeConfig.setTitleEn(challengeConfig.getString("titleEn"));
+				onlineChallengeConfig.setTitleAr(challengeConfig.getString("titleAr"));
+				onlineChallengeConfig.setAppearInSingleGame(challengeConfig.getInt("appearInSingleGame"));
+				onlineChallengeConfig.setAnswerTimer(challengeConfig.getInt("answerTimer"));
 				
-				question.setPromptAr(promptAr);
-				question.setPromptEn(promptEn);
-				question.setAnswers(answers);
-				question.setId(i++);
-				
-				questionsMap.put(question.getId(), question);
-				
-				questions.add(question);
+				if(category == 2)
+				{
+					onlineChallengeConfig.setBellTimer(challengeConfig.getInt("bellTimer"));
+				}
+				challenges.add(onlineChallengeConfig);
 			}
 			
-			appConfiguration.setQuestionsMap(questionsMap);
-			appConfiguration.setQuestions(questions);
+			onlineGameConfig.setChallenges(challenges);
+			appConfiguration.setOnlineGameConfig(onlineGameConfig);
 		}
 		catch(Exception ex)
 		{

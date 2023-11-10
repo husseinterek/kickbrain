@@ -6,6 +6,7 @@ public class SkipQuestionRequest {
 	private String roomId;
 	private String submittedPlayerId;
 	private String questionId;
+	private Integer challengeCategory;
 
 	public int getCurrentQuestionIndex() {
 		return currentQuestionIndex;
@@ -37,6 +38,14 @@ public class SkipQuestionRequest {
 
 	public void setQuestionId(String questionId) {
 		this.questionId = questionId;
+	}
+
+	public Integer getChallengeCategory() {
+		return challengeCategory;
+	}
+
+	public void setChallengeCategory(Integer challengeCategory) {
+		this.challengeCategory = challengeCategory;
 	}
 
 }

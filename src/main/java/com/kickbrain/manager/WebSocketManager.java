@@ -1,9 +1,13 @@
 package com.kickbrain.manager;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,8 +18,8 @@ public class WebSocketManager {
 	@Autowired
 	private GameRoomManager gameRoomManager;
 	
-	private final List<String> activeSessions = new ArrayList<String>();
-	private final List<String> waitingSessions = new ArrayList<String>();
+	private final Queue<String> activeSessions = new ConcurrentLinkedQueue<String>();
+	private final Queue<String> waitingSessions = new ConcurrentLinkedQueue<String>();
     private final Map<String, Long> lastPingTimes = new ConcurrentHashMap<String, Long>();
     private final Map<String, Long> lastWaitPingTimes = new ConcurrentHashMap<String, Long>();
     private final ConcurrentHashMap<String, String> sessionToPlayerMap = new ConcurrentHashMap<String, String>();
@@ -51,6 +55,23 @@ public class WebSocketManager {
         lastPingTimes.put(session, System.currentTimeMillis());
     }
     
+    public List<String> getActiveSessionsByPlayer(String playerId)
+    {
+    	List<String> result = new ArrayList<String>();
+    	
+    	for(Entry<String,String> entry : sessionToPlayerMap.entrySet())
+    	{
+    		String session = entry.getKey();
+    		String sessionPlayer = entry.getValue();
+    		if(sessionPlayer.equalsIgnoreCase(playerId))
+    		{
+    			result.add(session);
+    		}
+    	}
+    	
+    	return result;
+    }
+    
     public void addWaitingSession(String session, String playerId) {
     	
     	waitingSessions.add(session);
@@ -60,21 +81,17 @@ public class WebSocketManager {
 
     public void removeSession(String sessionId) {
     	
-    	Integer indexToBeRemoved = null;
-    	for(int i=0; i<activeSessions.size(); i++)
+    	Iterator<String> iterator = activeSessions.iterator();
+    	while (iterator.hasNext()) 
     	{
-    		String session = activeSessions.get(i);
+    		String session = iterator.next();
     		if(session.equalsIgnoreCase(sessionId))
     		{
-    			indexToBeRemoved = i;
+    			iterator.remove();
     			break;
     		}
     	}
     	
-    	if(indexToBeRemoved != null)
-    	{
-    		activeSessions.remove((int)indexToBeRemoved);
-    	}
         sessionToPlayerMap.remove(sessionId);
     }
 
@@ -86,11 +103,19 @@ public class WebSocketManager {
         return waitingSessionToPlayerMap.get(sessionId);
     }
     
-    public List<String> getActiveSessions() {
+    public Queue<String> getActiveSessions() {
 		return activeSessions;
 	}
     
-    public List<String> getWaitingSessions() {
+    public Queue<String> getWaitingSessions() {
 		return waitingSessions;
+	}
+    
+    public ConcurrentHashMap<String, String> getWaitingSessionToPlayerMap() {
+		return waitingSessionToPlayerMap;
+	}
+    
+    public ConcurrentHashMap<String, String> getSessionToPlayerMap() {
+		return sessionToPlayerMap;
 	}
 }

@@ -1,22 +1,24 @@
+
 package com.kickbrain;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.kickbrain.beans.GameReport;
 import com.kickbrain.beans.GameRoom;
+import com.kickbrain.beans.WaitingGameVO;
 import com.kickbrain.manager.GameRoomManager;
 import com.kickbrain.manager.WebSocketManager;
 
 @Service
 public class WebSocketCleanupTask {
 
-    private static final long INACTIVE_THRESHOLD_ACTIVE = 10000; // 10 seconds (adjust as needed)
-    private static final long INACTIVE_THRESHOLD_WAIT = 900000; // 15 mins (adjust as needed)
+    private static final long INACTIVE_THRESHOLD_ACTIVE = 30000; // 20 seconds (adjust as needed)
+    private static final long INACTIVE_THRESHOLD_WAIT = 600000; // 15 mins (adjust as needed)
 
     @Autowired
     private WebSocketManager webSocketManager;
@@ -32,8 +34,10 @@ public class WebSocketCleanupTask {
         long currentTime = System.currentTimeMillis();
         if(webSocketManager.getActiveSessions() != null)
         {
-        	List<String> sessionsToBeRemoved = new ArrayList<>();
-        	for (String session : webSocketManager.getActiveSessions()) {
+        	Iterator<String> iterator = webSocketManager.getActiveSessions().iterator();
+        	while (iterator.hasNext()) 
+        	{
+        		String session = iterator.next();
         		if(session != null)
         		{
         			Long lastPingTime = webSocketManager.getLastpingtimes().get(session);
@@ -44,48 +48,42 @@ public class WebSocketCleanupTask {
                         	GameRoom gameRoom = gameRoomManager.getGameByPlayerId(playerId);
                         	if(gameRoom != null)
                         	{
-                        		gameRoomManager.flushGame(gameRoom.getRoomId());
+                        		System.out.println("Killing active room with Id: " + gameRoom.getRoomId() + " due to inactivity");
+                        		
+                        		// Save the game details in the database
+                				GameReport gameReport = gameRoomManager.getGameReport(gameRoom.getRoomId());
+                				gameRoomManager.persistGameRoom(gameRoom, gameReport);
+                				
+                        		gameRoomManager.flushGame(gameRoom);
                                 notifyOtherPlayersAboutDisconnection(gameRoom);
-                                
-                                sessionsToBeRemoved.addAll(gameRoom.getPlayersSessions());
                         	}
                         }
                     }
         		}
-            }
-        	
-        	for(String sessionToBeRemoved : sessionsToBeRemoved)
-        	{
-        		webSocketManager.getActiveSessions().remove(sessionToBeRemoved);
-        		webSocketManager.getLastpingtimes().remove(sessionToBeRemoved);
         	}
         }
         
         if(webSocketManager.getWaitingSessions() != null)
         {
-        	List<String> sessionsToBeRemoved = new ArrayList<>();
-        	for (String session : webSocketManager.getWaitingSessions()) {
+        	Iterator<String> iterator = webSocketManager.getWaitingSessions().iterator();
+        	while (iterator.hasNext())
+        	{
+        		String session = iterator.next();
         		if(session != null)
         		{
         			Long lastPingTime = webSocketManager.getLastWaitPingTimes().get(session);
         			if (lastPingTime != null && currentTime - lastPingTime > INACTIVE_THRESHOLD_WAIT) {
         				String playerId = getPlayerIdFromWaitingSession(session);
         				if (playerId != null) {
-        					GameRoom gameRoom = gameRoomManager.getWaitingGameByPlayerId(playerId);
+        					WaitingGameVO gameRoom = gameRoomManager.getWaitingGameByPlayerId(playerId);
         					if(gameRoom != null)
                         	{
-        						gameRoomManager.flushWaitingGame(gameRoom.getRoomId());
-        						sessionsToBeRemoved.addAll(gameRoom.getPlayersSessions());
+        						System.out.println("Killing waiting room with Id: " + gameRoom.getId() + " due to inactivity!");
+        						gameRoomManager.cancelWaitingGame(String.valueOf(gameRoom.getId()));
                         	}
         				}
         			}
         		}
-        	}
-        	
-        	for(String sessionToBeRemoved : sessionsToBeRemoved)
-        	{
-        		webSocketManager.getWaitingSessions().remove(sessionToBeRemoved);
-        		webSocketManager.getLastWaitPingTimes().remove(sessionToBeRemoved);
         	}
         }
     }

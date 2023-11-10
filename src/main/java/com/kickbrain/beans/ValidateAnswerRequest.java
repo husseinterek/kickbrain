@@ -9,6 +9,7 @@ public class ValidateAnswerRequest {
 	private String opponentPlayerId;
 	private String capturedAnswer;
 	private String answerElementId;
+	private Integer challengeCategory;
 
 	public String getQuestionId() {
 		return questionId;
@@ -64,5 +65,13 @@ public class ValidateAnswerRequest {
 
 	public void setAnswerElementId(String answerElementId) {
 		this.answerElementId = answerElementId;
+	}
+
+	public Integer getChallengeCategory() {
+		return challengeCategory;
+	}
+
+	public void setChallengeCategory(Integer challengeCategory) {
+		this.challengeCategory = challengeCategory;
 	}
 }

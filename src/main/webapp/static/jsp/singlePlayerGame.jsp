@@ -102,12 +102,14 @@
 					<div class='col-2 header-logo'>
 						<a class="brand-logo" href="/?lang=${language}"><img class="img-fluid" src="<c:url value="${pageContext.request.contextPath}/static/images/kickbrain-logo.png"/>">
 	                    </a>
-	                    <div class='mt-1'>
-	    					<span style='font-size: 10px; color: #eacc9a; font-style: italic'><spring:message code="home.mobileVersionLabel"/></span>                
-	                    </div>
 					</div>
 					<div class='col-8 text-center pt-2'>
-						<h1 style='color: #F0F0F0'><spring:message code="wdk.title"/> <span style='font-size: 12px; color: #FFA500'><spring:message code="home.betaVersion"/></span></h1>
+						<h1 style='color: #F0F0F0'><spring:message code="wdk.title"/> <%-- <span style='font-size: 12px; color: #FFA500'><spring:message code="home.betaVersion"/></span> --%></h1>
+					</div>
+					<div class='col-1 text-right pt-2 header-flags pl-0 pr-0'>
+						<a class="img-fluid" href='https://apps.apple.com/sa/app/kickbrain/id6464127361' target='_blank'>
+							<img style='width: 150px' src="<c:url value="${pageContext.request.contextPath}/static/images/download-app-store.png"/>">
+						</a>
 					</div>
 				</div>
 				<div class="row mt-3" >
@@ -139,6 +141,16 @@
 									</div>
 								</div>
 							</div> 
+						</div>
+					</div>
+				</div>
+				<div class='row'>
+					<div class="col-6" style="float: none; margin: 0 auto;">
+						<div style="float: none; margin: 0 auto; padding-bottom: 15px;" class='text-center'>
+							<span style='color: #F8F8F8; font-size: 12px; font-weight: bold'><spring:message code="home.mobileAppDownload"/></span> 
+								<a class="img-fluid" href='https://apps.apple.com/sa/app/kickbrain/id6464127361' target='_blank'>
+									<img style='width: 90px' src="<c:url value="${pageContext.request.contextPath}/static/images/download-app-store.png"/>">
+								</a>					
 						</div>
 					</div>
 				</div>

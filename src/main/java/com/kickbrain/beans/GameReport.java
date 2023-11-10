@@ -7,7 +7,7 @@ import java.util.Map;
 public class GameReport {
 
 	private String roomId;
-	private Map<String, Map<String, List<String>>> playersAnswersByQuestion = new HashMap<String, Map<String, List<String>>>();
+	private Map<String, Map<String, List<AnswerVO>>> playersAnswersByQuestion = new HashMap<String, Map<String, List<AnswerVO>>>();
 	private Map<String, Map<String, Integer>> playersStrikesByQuestion = new HashMap<String, Map<String, Integer>>();
 	private Map<String, Integer> playersScore = new HashMap<String, Integer>();
 	private Map<String, String> questionsResult = new HashMap<String, String>();
@@ -20,11 +20,11 @@ public class GameReport {
 		this.roomId = roomId;
 	}
 
-	public Map<String, Map<String, List<String>>> getPlayersAnswersByQuestion() {
+	public Map<String, Map<String, List<AnswerVO>>> getPlayersAnswersByQuestion() {
 		return playersAnswersByQuestion;
 	}
 
-	public void setPlayersAnswersByQuestion(Map<String, Map<String, List<String>>> playersAnswersByQuestion) {
+	public void setPlayersAnswersByQuestion(Map<String, Map<String, List<AnswerVO>>> playersAnswersByQuestion) {
 		this.playersAnswersByQuestion = playersAnswersByQuestion;
 	}
 

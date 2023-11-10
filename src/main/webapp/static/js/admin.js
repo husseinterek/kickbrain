@@ -9,9 +9,10 @@ function submitQuestion()
 {
 	var questionEn = $('#questionEn').val().trim();
 	var questionAr = $('#questionAr').val().trim();
-	var answers = $('#answers').val().trim();
+	var answersEn = $('#english-answers').val().trim();
+	var answersAr = $('#arabic-answers').val().trim();
 	
-	if(!questionEn || !questionAr || !answers)
+	if(!questionEn || !questionAr || !answersEn || !answersAr)
 	{
 		toastr.warning("Please fill the mandatory fields!", 'Mandatory fields!');
 		return;
@@ -21,7 +22,8 @@ function submitQuestion()
 		var request = {};
 		request.questionEn = questionEn;
 		request.questionAr = questionAr;
-		request.answers = answers;
+		request.answersEn = answersEn;
+		request.answersAr = answersAr;
 		
 		$('#submitQuestion').append("<i class='la la-spinner spinner'></i>");
 		$('#submitQuestion').prop("disabled", true);
@@ -40,7 +42,8 @@ function submitQuestion()
 				  {
 					  $('#questionEn').val('');
 					  $('#questionAr').val('');
-					  $('#answers').val('');
+					  $('#english-answers').val('');
+					  $('#arabic-answers').val('');
 					  toastr.success("Question is added successfully", 'Success!');
 				  }
 				  else

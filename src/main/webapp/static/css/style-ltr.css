@@ -489,6 +489,18 @@ ul[role=alert]{
     opacity: 0.6; 
 }
 
+#waiting-room-list ul .hostName{
+	font-weight: bold;
+}
+
+#waiting-room-list .list-group-item{
+	padding-bottom: 5px !important;
+}
+
+#waiting-room-list .list-group{
+	max-height: 400px;
+}
+
 @keyframes shine {
 		100% {
     background-position: -200% 0;

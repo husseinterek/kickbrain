@@ -1,27 +1,42 @@
 package com.kickbrain.beans.configuration;
 
-import java.util.List;
-import java.util.Map;
-
 public class AppConfiguration {
 
-	private Map<Integer, Question> questionsMap;
-	private List<Question> questions;
+	private int answerFullMatchRatio;
+	private int answerPartMatchRatio;
+	private int delayNextChallenge;
+	private GameConfig onlineGameConfig;
 
-	public List<Question> getQuestions() {
-		return questions;
+	public int getAnswerFullMatchRatio() {
+		return answerFullMatchRatio;
 	}
 
-	public void setQuestions(List<Question> questions) {
-		this.questions = questions;
+	public void setAnswerFullMatchRatio(int answerFullMatchRatio) {
+		this.answerFullMatchRatio = answerFullMatchRatio;
 	}
 
-	public Map<Integer, Question> getQuestionsMap() {
-		return questionsMap;
+	public int getAnswerPartMatchRatio() {
+		return answerPartMatchRatio;
 	}
 
-	public void setQuestionsMap(Map<Integer, Question> questionsMap) {
-		this.questionsMap = questionsMap;
+	public void setAnswerPartMatchRatio(int answerPartMatchRatio) {
+		this.answerPartMatchRatio = answerPartMatchRatio;
+	}
+
+	public GameConfig getOnlineGameConfig() {
+		return onlineGameConfig;
+	}
+
+	public void setOnlineGameConfig(GameConfig onlineGameConfig) {
+		this.onlineGameConfig = onlineGameConfig;
+	}
+
+	public int getDelayNextChallenge() {
+		return delayNextChallenge;
+	}
+
+	public void setDelayNextChallenge(int delayNextChallenge) {
+		this.delayNextChallenge = delayNextChallenge;
 	}
 
 }

@@ -96,7 +96,10 @@
 							                             <input type="text" class="form-control form-control-lg input-lg" id="questionAr" placeholder="Arabic Question">
 							                         </fieldset>
 							                         <fieldset class="form-group position-relative mb-1">
-							                             <textarea rows="5" class="form-control form-control-lg input-lg" id="answers" placeholder="Place Answers Here"></textarea>
+							                             <textarea rows="5" class="form-control form-control-lg input-lg" id="english-answers" placeholder="Place English Answers Here"></textarea>
+							                         </fieldset>
+							                         <fieldset class="form-group position-relative mb-1">
+							                             <textarea rows="5" class="form-control form-control-lg input-lg" id="arabic-answers" placeholder="Place Arabic Answers Here"></textarea>
 							                         </fieldset>
 							                         <button id='submitQuestion' type="button" class="btn btn-block" style='background-color: #FFA500 !important; border-color: #FFA500 !important; color: #F0F0F0'>Submit Question</button>
 							                     </form>

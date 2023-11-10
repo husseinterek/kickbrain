@@ -501,6 +501,22 @@ ul[role=alert]{
 	color: black;
 }
 
+#waiting-room-list ul .hostName{
+	font-weight: bold;
+}
+
+#waiting-room-list .list-group-item{
+	padding-bottom: 5px !important;
+}
+
+#waiting-room-list .list-group{
+	max-height: 400px;
+}
+
+#challengeRules li{
+	font-size: 13px;
+}
+
 @keyframes shine {
   100% {
     background-position: -200% 0;

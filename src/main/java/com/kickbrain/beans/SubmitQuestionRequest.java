@@ -4,7 +4,8 @@ public class SubmitQuestionRequest {
 
 	private String questionEn;
 	private String questionAr;
-	private String answers;
+	private String answersEn;
+	private String answersAr;
 
 	public String getQuestionEn() {
 		return questionEn;
@@ -22,12 +23,20 @@ public class SubmitQuestionRequest {
 		this.questionAr = questionAr;
 	}
 
-	public String getAnswers() {
-		return answers;
+	public String getAnswersEn() {
+		return answersEn;
 	}
 
-	public void setAnswers(String answers) {
-		this.answers = answers;
+	public void setAnswersEn(String answersEn) {
+		this.answersEn = answersEn;
 	}
 
+	public String getAnswersAr() {
+		return answersAr;
+	}
+
+	public void setAnswersAr(String answersAr) {
+		this.answersAr = answersAr;
+	}
+	
 }

@@ -6,18 +6,19 @@ import com.kickbrain.beans.GameTimerEvent;
 
 public class GameTimerTask implements Runnable {
 
-	private static int timer = 30;
+	private int timer = 30;
 	private SimpMessagingTemplate messagingTemplate;
 	private String roomId;
 	private String currentTurn;
 	private String questionId;
 	private boolean shutdown;
 	
-    public GameTimerTask(SimpMessagingTemplate messagingTemplate, String roomId, String currentTurn, String questionId) {
+    public GameTimerTask(SimpMessagingTemplate messagingTemplate, String roomId, String currentTurn, String questionId, int timer) {
         this.messagingTemplate = messagingTemplate;
         this.roomId = roomId;
         this.currentTurn = currentTurn;
         this.questionId = questionId;
+        this.timer = timer;
     }
 	
 	@Override

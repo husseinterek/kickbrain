@@ -2,12 +2,15 @@ package com.kickbrain.beans.configuration;
 
 import java.util.List;
 
-public class Question {
+import com.kickbrain.beans.AnswerVO;
+
+public class QuestionVO {
 
 	private int id;
 	private String promptEn;
 	private String promptAr;
-	private List<String> answers;
+	private int category;
+	private List<AnswerVO> answers;
 
 	public int getId() {
 		return id;
@@ -33,12 +36,20 @@ public class Question {
 		this.promptAr = promptAr;
 	}
 
-	public List<String> getAnswers() {
+	public List<AnswerVO> getAnswers() {
 		return answers;
 	}
 
-	public void setAnswers(List<String> answers) {
+	public void setAnswers(List<AnswerVO> answers) {
 		this.answers = answers;
+	}
+
+	public int getCategory() {
+		return category;
+	}
+
+	public void setCategory(int category) {
+		this.category = category;
 	}
 
 }

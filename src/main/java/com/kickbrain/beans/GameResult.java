@@ -9,6 +9,7 @@ public class GameResult extends BaseResult {
 	private Player player2;
 	private String currentTurn;
 	private List<QuestionResult> questions;
+	private List<ChallengeBean> challenges;
 
 	public List<QuestionResult> getQuestions() {
 		return questions;
@@ -48,6 +49,14 @@ public class GameResult extends BaseResult {
 
 	public void setCurrentTurn(String currentTurn) {
 		this.currentTurn = currentTurn;
+	}
+
+	public List<ChallengeBean> getChallenges() {
+		return challenges;
+	}
+
+	public void setChallenges(List<ChallengeBean> challenges) {
+		this.challenges = challenges;
 	}
 
 }

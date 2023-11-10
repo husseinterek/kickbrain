@@ -6,6 +6,7 @@ public class QuestionResult {
 	private String questionEn;
 	private String questionAr;
 	private int possibleAnswers;
+	private int challengeCategory;
 
 	public int getId() {
 		return id;
@@ -37,6 +38,14 @@ public class QuestionResult {
 
 	public void setPossibleAnswers(int possibleAnswers) {
 		this.possibleAnswers = possibleAnswers;
+	}
+
+	public int getChallengeCategory() {
+		return challengeCategory;
+	}
+
+	public void setChallengeCategory(int challengeCategory) {
+		this.challengeCategory = challengeCategory;
 	}
 
 }

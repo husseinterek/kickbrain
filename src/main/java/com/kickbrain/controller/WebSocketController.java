@@ -1,5 +1,6 @@
 package com.kickbrain.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,12 +9,19 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import com.kickbrain.beans.ChallengeBean;
+import com.kickbrain.beans.GameReport;
 import com.kickbrain.beans.GameReportResult;
 import com.kickbrain.beans.GameRoom;
-import com.kickbrain.beans.GameStartEvent;
 import com.kickbrain.beans.Player;
+import com.kickbrain.beans.QuestionResult;
+import com.kickbrain.beans.RingBellRequest;
+import com.kickbrain.beans.SkipQuestionEvent;
 import com.kickbrain.beans.SkipQuestionRequest;
 import com.kickbrain.beans.WaitingRoom;
+import com.kickbrain.beans.configuration.ChallengeConfig;
+import com.kickbrain.beans.configuration.GameConfig;
+import com.kickbrain.configuration.XMLConfigurationManager;
 import com.kickbrain.manager.GameRoomManager;
 import com.kickbrain.manager.GameTimerManager;
 import com.kickbrain.manager.WebSocketManager;
@@ -25,57 +33,38 @@ public class WebSocketController {
 	private SimpMessagingTemplate messagingTemplate;
     private WebSocketManager websocketManager;
     private GameTimerManager gameTimerManager;
+    private XMLConfigurationManager xmlConfigurationManager;
 	
     @Autowired
-    public WebSocketController(GameRoomManager gameRoomManager, SimpMessagingTemplate messagingTemplate, WebSocketManager websocketManager, GameTimerManager gameTimerManager) {
+    public WebSocketController(GameRoomManager gameRoomManager, SimpMessagingTemplate messagingTemplate, WebSocketManager websocketManager, GameTimerManager gameTimerManager, XMLConfigurationManager xmlConfigurationManager) {
         this.gameRoomManager = gameRoomManager;
         this.messagingTemplate = messagingTemplate;
         this.websocketManager = websocketManager;
         this.gameTimerManager = gameTimerManager;
+        this.xmlConfigurationManager = xmlConfigurationManager;
     }
     
     @MessageMapping("/startGame")
     public void startGame(Player player, SimpMessageHeaderAccessor headerAccessor) {
-    	// Check if there is an available game room to join
-        GameRoom availableGameRoom = gameRoomManager.findAvailableGameRoom(player.getUsername());
+
         String playerId = null;
         try
         {
-        	if (availableGameRoom != null) {
-        		// An available game room is found, add the player to the room as player2
-            	GameRoom activeRoom = gameRoomManager.createActiveGameRoom(availableGameRoom, player);
-            	playerId = activeRoom.getPlayer2().getPlayerId();
-            	
-            	// Send push notification to player1 who initiated the game
-            	if(activeRoom.getPlayer1().getDeviceToken() != null)
-            	{
-            		gameRoomManager.sendPushNotificationToWaitingPlayer(activeRoom.getPlayer1(), activeRoom.getRoomId());
-            	}
-            	
-                // Notify both players in the room about the game start
-                notifyGameStart(availableGameRoom);
-                
-                // Start answer timer
-                gameTimerManager.refreshGameTimer(availableGameRoom.getRoomId(), availableGameRoom.getPlayer1().getPlayerId(), String.valueOf(activeRoom.getQuestions().get(0).getId()));
-            } else {
-            	
-            	String sessionId = headerAccessor.getSessionId();
-                // No available game room found, create a new game room and add the player as player1
-                GameRoom newGameRoom = gameRoomManager.createWaitingGameRoom(player, sessionId);
-                playerId = newGameRoom.getPlayer1().getPlayerId();
-                
-                // Add the sessionId and playerId to the WebSocketSessionManager
-                websocketManager.addWaitingSession(sessionId, playerId);
-                
-                // Wait for the second player to join the room
-                waitForSecondPlayer(newGameRoom);
-            }
+        	String sessionId = headerAccessor.getSessionId();
+        	
+            GameRoom newGameRoom = gameRoomManager.createWaitingGameRoom(player, sessionId);
+            playerId = newGameRoom.getPlayer1().getPlayerId();
+            
+            // Add the sessionId and playerId to the WebSocketSessionManager
+            websocketManager.addWaitingSession(sessionId, playerId);
+            
+            System.out.println("A new waiting game has been created with the following id: " + newGameRoom.getRoomId() + " for player: " + newGameRoom.getPlayer1().getUsername());
+            // Wait for the second player to join the room
+            waitForSecondPlayer(newGameRoom);
         }
         catch(Exception ex)
         {
         	ex.printStackTrace();
-        	GameRoom gameRoom = gameRoomManager.getGameByPlayerId(playerId);
-        	gameRoomManager.flushGame(gameRoom.getRoomId());
         }
     }
     
@@ -84,50 +73,150 @@ public class WebSocketController {
     	
     	GameRoom gameRoom = gameRoomManager.getGameRoomById(request.getRoomId());
     	
-    	// add point to the opponent
-		if(gameRoom.getPlayer1().getPlayerId().equals(request.getSubmittedPlayerId()))
-		{
-			gameRoomManager.addPlayerScoreToGameReport(request.getRoomId(), gameRoom.getPlayer2().getPlayerId(), request.getQuestionId());
-		}
-		else
-		{
-			gameRoomManager.addPlayerScoreToGameReport(request.getRoomId(), gameRoom.getPlayer1().getPlayerId(), request.getQuestionId());
-		}
-    	
-		if(request.getCurrentQuestionIndex() == 10)
-		{
-			// complete the game
-			GameReportResult gameReportResult = gameRoomManager.generateGameReportResult(request.getRoomId());
-			gameRoomManager.flushGame(request.getRoomId());
-			gameTimerManager.removeGameTimer(request.getRoomId());
-			
-			messagingTemplate.convertAndSend("/topic/game/" + request.getRoomId() + "/complete", gameReportResult);
-		}
-		else
-		{
-			Map<String, Integer> playersScores = gameRoomManager.getPlayersScoresPerGame(request.getRoomId());
-			messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/updateScore", playersScores);
-			messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/newQuestion", request.getCurrentQuestionIndex() + 1);
-			messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/switchTurn", request.getSubmittedPlayerId());
-			
-			String currentTurn = request.getSubmittedPlayerId();
-			int nextQuestionId = gameRoom.getQuestions().get(request.getCurrentQuestionIndex()).getId();
-			gameTimerManager.refreshGameTimer(request.getRoomId(), currentTurn, String.valueOf(nextQuestionId));
-		}
+    	if(gameRoom != null)
+    	{
+    		// add point to the opponent
+    		if(gameRoom.getPlayer1().getPlayerId().equals(request.getSubmittedPlayerId()))
+    		{
+    			gameRoomManager.addPlayerScoreToGameReport(request.getRoomId(), gameRoom.getPlayer2().getPlayerId(), request.getQuestionId());
+    		}
+    		else
+    		{
+    			gameRoomManager.addPlayerScoreToGameReport(request.getRoomId(), gameRoom.getPlayer1().getPlayerId(), request.getQuestionId());
+    		}
+    		
+    		boolean isGameComplete = false;
+    		ChallengeBean returnedChallenge = new ChallengeBean();
+    		if(request.getChallengeCategory() != null)
+    		{
+    			Map<Integer, ChallengeBean> challengesMap = gameRoom.getChallengesMap();
+    			ChallengeBean currentChallenge = challengesMap.get(request.getChallengeCategory());
+    			
+				List<QuestionResult> challengeQuestions = currentChallenge.getQuestions();
+				if(request.getCurrentQuestionIndex() == challengeQuestions.size())
+				{
+					// Challenge is completed, move on to the next challenge in the game
+					returnedChallenge = challengesMap.get((request.getChallengeCategory() + 1));
+					isGameComplete = returnedChallenge == null;
+				}
+				else
+				{
+					returnedChallenge = currentChallenge;
+				}
+    		}
+    		else
+    		{
+    			returnedChallenge = gameRoom.getChallenges().get(0);
+    			isGameComplete = request.getCurrentQuestionIndex() == returnedChallenge.getQuestions().size();
+    		}
+    		
+    		if(isGameComplete)
+    		{
+    			// No more challenges in the list, so complete the game
+    			GameReportResult gameReportResult = gameRoomManager.generateGameReportResult(request.getRoomId());
+    			
+    			gameTimerManager.removeGameTimer(request.getRoomId());
+    			messagingTemplate.convertAndSend("/topic/game/" + request.getRoomId() + "/complete", gameReportResult);
+    			
+    			// Save the game details in the database
+    			GameReport gameReport = gameRoomManager.getGameReport(gameRoom.getRoomId());
+    			gameRoomManager.persistGameRoom(gameRoom, gameReport);
+    			
+    			gameRoomManager.flushGame(gameRoom);
+    		}
+    		else
+    		{
+    			Map<String, Integer> playersScores = gameRoomManager.getPlayersScoresPerGame(request.getRoomId());
+    			messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/updateScore", playersScores);
+    			
+    			SkipQuestionEvent skipQuestionEvent = new SkipQuestionEvent();
+    			QuestionResult nextQuestion = null;
+    			boolean delayNewQuestion = false;
+    			if(request.getChallengeCategory() != null)
+    			{
+    				if(returnedChallenge.getCategory() != request.getChallengeCategory())
+    				{
+    					// Challenge has been changed
+    					nextQuestion = returnedChallenge.getQuestions().get(0);
+    	    			skipQuestionEvent.setNextQuestionIndex(1);
+    	    			skipQuestionEvent.setLastQuestion(returnedChallenge.getQuestions().size() == 1);
+    	    			delayNewQuestion = true;
+    				}
+    				else
+    				{
+    					// Get next index for the same challenge
+    					skipQuestionEvent.setNextQuestionIndex(request.getCurrentQuestionIndex() + 1);
+    					nextQuestion = returnedChallenge.getQuestions().get(request.getCurrentQuestionIndex());
+    					
+    					boolean isLastQuestion = false;
+    					if((returnedChallenge.getQuestions().size() == (request.getCurrentQuestionIndex() + 1)) && (gameRoom.getChallengesMap().get((request.getChallengeCategory() + 1)) == null))
+    					{
+    						// If it is the last question in the current challenge and there are no remaining challenges
+    						isLastQuestion = true;
+    					}
+    					skipQuestionEvent.setLastQuestion(isLastQuestion);
+    				}
+    			}
+    			else
+    			{
+    				skipQuestionEvent.setNextQuestionIndex(request.getCurrentQuestionIndex() + 1);
+    				nextQuestion = returnedChallenge.getQuestions().get(request.getCurrentQuestionIndex());
+    				skipQuestionEvent.setLastQuestion(returnedChallenge.getQuestions().size() == (request.getCurrentQuestionIndex() + 1));
+    			}
+    			
+    			skipQuestionEvent.setChallengeCategory(returnedChallenge.getCategory());
+    			
+    			// Notify the other player that the opponent has skipped the question
+    			String opponentPlayerId = request.getSubmittedPlayerId().equals(gameRoom.getPlayer1().getPlayerId()) ? gameRoom.getPlayer2().getPlayerId() : gameRoom.getPlayer1().getPlayerId();
+    			messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+ "/" + opponentPlayerId + "/skipQuestion", "");
+
+    			if(delayNewQuestion)
+    			{
+    				messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/nextChallengePopup", returnedChallenge.getCategory());
+    				// delay the trigger of the new question by 5 seconds
+    				int delayInSecs = xmlConfigurationManager.getAppConfigurationBean().getDelayNextChallenge();
+    				try
+    				{
+    					Thread.sleep(delayInSecs * 1000);
+    				}
+    				catch (Exception e) {
+    					e.printStackTrace();
+					}
+    			}
+    			
+    			messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/newQuestion", skipQuestionEvent);
+    			messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/switchTurn", request.getSubmittedPlayerId());
+    			
+    			String currentTurn = request.getSubmittedPlayerId();
+    			
+    			//QuestionResult question = gameRoom.getQuestions().get(request.getCurrentQuestionIndex());
+    			int nextQuestionId = nextQuestion.getId();
+    			int challengeCategory = nextQuestion.getChallengeCategory();
+    			
+    			Integer nonAnswerTimer = null;
+    			if(challengeCategory == 2)
+    			{
+        			GameConfig gameConfig = xmlConfigurationManager.getAppConfigurationBean().getOnlineGameConfig();
+    				List<ChallengeConfig> challenges = gameConfig.getChallenges();
+    				for(ChallengeConfig challenge : challenges)
+    				{
+    					if(challenge.getCategory() == challengeCategory)
+    					{
+    						nonAnswerTimer = challenge.getBellTimer();
+    					}
+    				}
+    			}
+    			
+    			gameTimerManager.refreshGameTimer(request.getRoomId(), currentTurn, String.valueOf(nextQuestionId), challengeCategory, nonAnswerTimer);
+    		}
+    	}
     }
     
-    private void notifyGameStart(GameRoom gameRoom) {
-        // Send a WebSocket message to both players in the game room to notify them about the game start
-    	GameStartEvent gameStartEventP1 = new GameStartEvent();
-    	gameStartEventP1.setRoomId(gameRoom.getRoomId());
-    	gameStartEventP1.setPlayerId(gameRoom.getPlayer1().getPlayerId());
+    @MessageMapping("/game/bell/ring")
+    public void ringBell(RingBellRequest request) {
     	
-    	GameStartEvent gameStartEventP2 = new GameStartEvent();
-    	gameStartEventP2.setRoomId(gameRoom.getRoomId());
-    	gameStartEventP2.setPlayerId(gameRoom.getPlayer2().getPlayerId());
-    	
-        messagingTemplate.convertAndSend("/topic/game/start/" + gameRoom.getPlayer1().getUsername(), gameStartEventP1);
-        messagingTemplate.convertAndSend("/topic/game/start/" + gameRoom.getPlayer2().getUsername(), gameStartEventP2);
+    	messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/"+request.getQuestionId()+"/ringBell", request.getPlayerId());
+    	gameTimerManager.refreshGameTimer(String.valueOf(request.getRoomId()), request.getPlayerId(), String.valueOf(request.getQuestionId()), 2, null);
     }
     
     private void waitForSecondPlayer(GameRoom gameRoom) {
@@ -135,8 +224,20 @@ public class WebSocketController {
     	WaitingRoom waitingRoom = new WaitingRoom();
     	waitingRoom.setRoomId(gameRoom.getRoomId());
     	waitingRoom.setPlayerId(gameRoom.getPlayer1().getPlayerId());
+    	
         // Send a message to the player informing them that they need to wait for another player to join
         messagingTemplate.convertAndSend("/topic/game/wait/" + gameRoom.getPlayer1().getUsername(), waitingRoom);
+        System.out.println("/topic/game/wait/" + gameRoom.getPlayer1().getUsername());
+        
+        String playerName = gameRoom.getPlayer1().getUsername();
+    	if(playerName.contains(" "))
+    	{
+    		playerName = playerName.replaceAll("\\s+", "_");
+    		
+    		// workaround for Android
+    		System.out.println("Sending event to android: " + "/topic/game/wait/" + playerName);
+            messagingTemplate.convertAndSend("/topic/game/wait/" + playerName, waitingRoom);
+    	}
     }
     
     @MessageMapping("/ping")
@@ -154,6 +255,16 @@ public class WebSocketController {
     @MessageMapping("/connection")
     public void handleGameConnection(SimpMessageHeaderAccessor headerAccessor, String playerId) {
     	String sessionId = headerAccessor.getSessionId();
+    	
+    	// Remove previous active sessions for the same player
+    	List<String> activeSessions = websocketManager.getActiveSessionsByPlayer(playerId);
+    	if(activeSessions != null)
+    	{
+    		for(String activeSession : activeSessions)
+    		{
+    			websocketManager.removeSession(activeSession);
+    		}
+    	}
     	
     	// Add the sessionId and playerId to the WebSocketSessionManager
         websocketManager.addActiveSession(sessionId, playerId);

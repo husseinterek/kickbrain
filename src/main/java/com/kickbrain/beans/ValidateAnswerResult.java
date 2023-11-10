@@ -8,6 +8,8 @@ public class ValidateAnswerResult extends BaseResult {
 	private String currentTurn;
 	private String answerElementId;
 	private boolean allAnswersProvided;
+	private String winner;
+	private boolean isTie;
 
 	public boolean isCorrect() {
 		return isCorrect;
@@ -55,6 +57,22 @@ public class ValidateAnswerResult extends BaseResult {
 
 	public void setAllAnswersProvided(boolean allAnswersProvided) {
 		this.allAnswersProvided = allAnswersProvided;
+	}
+
+	public boolean isTie() {
+		return isTie;
+	}
+
+	public void setTie(boolean isTie) {
+		this.isTie = isTie;
+	}
+
+	public String getWinner() {
+		return winner;
+	}
+
+	public void setWinner(String winner) {
+		this.winner = winner;
 	}
 
 }

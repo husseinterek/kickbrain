@@ -11,8 +11,52 @@ $(document).ready(function() {
 		startSingleGame();
 	});
 	
-	$('#joinExistingGameBtn').click(function(e) {
-		joinExistingGame();
+	$('#joinExistingGameModal').on('click', '#joinGameBtn', function(e) {
+		joinExistingGame($(this).data('roomid'));
+	});
+	
+	$('#joinExistingGameModal').on('shown.bs.modal', function (e) {
+		$('#waiting-room-list').find('ul').append("<div class='ball-clip-rotate loader-primary float-right loader text-center'><div></div></div>");
+		
+		$.ajax({
+			  url:contextPath + "/game/waitingRooms",
+			  type:"GET",
+			  contentType:"application/json; charset=utf-8",
+			  dataType:"json",
+			  success: function(response){
+				  
+				  $('#waiting-room-list').find('ul').empty();
+				  
+				  var waitingRooms = response.waitingRooms;
+				  if(waitingRooms.length > 0)
+				  {
+					  $('#waiting-room-list').find('#joinExistingGame-username').show();
+					  for(var i in waitingRooms)
+					  {
+						  var room = waitingRooms[i];
+						  
+						  var roomElement = "<li class='list-group-item'>"
+                        		+ "<div class='row'>"
+                        			+ "<div class='col-10'>"
+                        				+ "<h4 class='hostName'>"+room.hostingPlayer.username+"</h4>"
+                        				+ "<p class='roomId'>" + (language == 'en' ? "Room Id: " : 'رقم التحدي: ') +room.roomId+"</p>"
+                        			+ "</div>"
+                        			+ "<div class='col-2'>"
+                        				+ "<a href='#' id='joinGameBtn' data-roomid='"+room.roomId+"' class='btn btn-float btn-round btn-warning'><i class='la la-gamepad'></i></a>"
+                        			+ "</div>"
+                        		+ "</div>"
+                        	+ "</li>";
+						  
+						  $('#waiting-room-list').find('ul').append(roomElement);
+					  }
+				  }
+				  else
+				  {
+					  $('#waiting-room-list').find('#joinExistingGame-username').hide();
+					  $('#waiting-room-list').find('ul').append("<label>"+(language =='en' ? "No waiting games have been found at the moment, please create a new game and invite other players to join!" : "لم يتم العثور على تحديات قيد الانتظار, بادر الى انشاء لعبة جديدة وأدعو أصدقائك للمشاركة!")+ "</label>");
+				  }
+			  }
+		});
 	});
 });
 
@@ -57,20 +101,19 @@ function startSingleGame()
     document.location = contextPath + "/generateSingleGame?lang="+language+"&mode="+selectedChallenge+"&username=" + username;
 }
 
-function joinExistingGame()
+function joinExistingGame(roomId)
 {
 	var username = $('#joinExistingGame-username').val().trim();
-	var roomId = $('#joinExistingGame-roomId').val().trim();
 	
-	if(!username || !roomId)
+	if(!username)
 	{
-		toastr.warning(language == 'en' ? "Please fill the mandatory fields!" : "الرجاء تعبئة كافة الحقول!", language == 'en' ? 'Mandatory fields!': 'حقول اجبارية!');
+		toastr.warning(language == 'en' ? "Please fill your name before starting the game!" : "من فضلك قم بإدخال اسمك قبل بدء اللعبة!", language == 'en' ? 'Mandatory fields!': 'حقول اجبارية!');
 		return;
 	}
 	else
 	{
-		$('#joinExistingGameBtn').append("<i class='la la-spinner spinner'></i>");
-		$('#joinExistingGameBtn').prop("disabled", true);
+		/*$('#joinExistingGameBtn').append("<i class='la la-spinner spinner'></i>");
+		$('#joinExistingGameBtn').prop("disabled", true);*/
 		$.ajax({
 			  url:contextPath + "/game/"+roomId+"/join?username=" + username,
 			  type:"POST",

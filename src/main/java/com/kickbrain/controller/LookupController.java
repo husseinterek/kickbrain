@@ -39,11 +39,13 @@ public class LookupController {
 		Map<String, String> homePageDictionaryEn = new HashMap<String, String>();
 		homePageDictionaryEn.put("title", messageSource.getMessage("home.title", null, Locale.forLanguageTag("en")));
 		homePageDictionaryEn.put("subTitle", messageSource.getMessage("home.subtitle", null, Locale.forLanguageTag("en")));
+		homePageDictionaryEn.put("loginMessage", messageSource.getMessage("login.message", null, Locale.forLanguageTag("en")));
 		
 		// Populate home page dictionary - Arabic
 		Map<String, String> homePageDictionaryAr = new HashMap<String, String>();
 		homePageDictionaryAr.put("title", messageSource.getMessage("home.title", null, Locale.forLanguageTag("ar")));
 		homePageDictionaryAr.put("subTitle", messageSource.getMessage("home.subtitle", null, Locale.forLanguageTag("ar")));
+		homePageDictionaryAr.put("loginMessage", messageSource.getMessage("login.message", null, Locale.forLanguageTag("ar")));
 		
 		homePageTranslations.put("en", homePageDictionaryEn);
 		homePageTranslations.put("ar", homePageDictionaryAr);
@@ -58,10 +60,19 @@ public class LookupController {
 		gameRoomDictionaryEn.put("strike2", messageSource.getMessage("gameRoom.strike2", null, Locale.forLanguageTag("en")));
 		gameRoomDictionaryEn.put("strike3", messageSource.getMessage("gameRoom.strike3", null, Locale.forLanguageTag("en")));
 		gameRoomDictionaryEn.put("allAnswersProvided", messageSource.getMessage("gameRoom.allAnswersProvided", null, Locale.forLanguageTag("en")));
+		gameRoomDictionaryEn.put("allAnswersProvidedByOpponent", messageSource.getMessage("gameRoom.allAnswersProvidedByOpponent", null, Locale.forLanguageTag("en")));
+		gameRoomDictionaryEn.put("allAnswersProvidedTie", messageSource.getMessage("gameRoom.allAnswersProvidedTie", null, Locale.forLanguageTag("en")));
+		gameRoomDictionaryEn.put("skipQuestionNotification", messageSource.getMessage("gameRoom.skipQuestionNotification", null, Locale.forLanguageTag("en")));
+		gameRoomDictionaryEn.put("allStrikesCommitted", messageSource.getMessage("gameRoom.allStrikesCommitted", null, Locale.forLanguageTag("en")));
 		gameRoomDictionaryEn.put("gameComplete", messageSource.getMessage("gameRoom.gameComplete", null, Locale.forLanguageTag("en")));
 		gameRoomDictionaryEn.put("waitingMessage", messageSource.getMessage("gameRoom.waitingMessage", null, Locale.forLanguageTag("en")));
 		gameRoomDictionaryEn.put("gameEnd", messageSource.getMessage("gameRoom.gameEnd", null, Locale.forLanguageTag("en")));
 		gameRoomDictionaryEn.put("shareRoomLabel", messageSource.getMessage("waitingRoom.shareLabel", null, Locale.forLanguageTag("en")));
+		gameRoomDictionaryEn.put("bellNoAnswer", messageSource.getMessage("gameRoom.bellNoAnswer", null, Locale.forLanguageTag("en")));
+		gameRoomDictionaryEn.put("bellNoWinner", messageSource.getMessage("gameRoom.bellNoWinner", null, Locale.forLanguageTag("en")));
+		gameRoomDictionaryEn.put("bellStrike", messageSource.getMessage("gameRoom.bellStrike", null, Locale.forLanguageTag("en")));
+		gameRoomDictionaryEn.put("startGamePopup", messageSource.getMessage("gameRoom.startGamePopup", null, Locale.forLanguageTag("en")));
+		gameRoomDictionaryEn.put("nextChallengePopup", messageSource.getMessage("gameRoom.nextChallengePopup", null, Locale.forLanguageTag("en")));
 		
 		// Populate home page dictionary - Arabic
 		Map<String, String> gameRoomDictionaryAr = new HashMap<String, String>();
@@ -69,10 +80,19 @@ public class LookupController {
 		gameRoomDictionaryAr.put("strike2", messageSource.getMessage("gameRoom.strike2", null, Locale.forLanguageTag("ar")));
 		gameRoomDictionaryAr.put("strike3", messageSource.getMessage("gameRoom.strike3", null, Locale.forLanguageTag("ar")));
 		gameRoomDictionaryAr.put("allAnswersProvided", messageSource.getMessage("gameRoom.allAnswersProvided", null, Locale.forLanguageTag("ar")));
+		gameRoomDictionaryAr.put("allAnswersProvidedByOpponent", messageSource.getMessage("gameRoom.allAnswersProvidedByOpponent", null, Locale.forLanguageTag("ar")));
+		gameRoomDictionaryAr.put("allAnswersProvidedTie", messageSource.getMessage("gameRoom.allAnswersProvidedTie", null, Locale.forLanguageTag("ar")));
+		gameRoomDictionaryAr.put("skipQuestionNotification", messageSource.getMessage("gameRoom.skipQuestionNotification", null, Locale.forLanguageTag("ar")));
+		gameRoomDictionaryAr.put("allStrikesCommitted", messageSource.getMessage("gameRoom.allStrikesCommitted", null, Locale.forLanguageTag("ar")));
 		gameRoomDictionaryAr.put("gameComplete", messageSource.getMessage("gameRoom.gameComplete", null, Locale.forLanguageTag("ar")));
 		gameRoomDictionaryAr.put("waitingMessage", messageSource.getMessage("gameRoom.waitingMessage", null, Locale.forLanguageTag("ar")));
 		gameRoomDictionaryAr.put("gameEnd", messageSource.getMessage("gameRoom.gameEnd", null, Locale.forLanguageTag("ar")));
 		gameRoomDictionaryAr.put("shareRoomLabel", messageSource.getMessage("waitingRoom.shareLabel", null, Locale.forLanguageTag("ar")));
+		gameRoomDictionaryAr.put("bellNoAnswer", messageSource.getMessage("gameRoom.bellNoAnswer", null, Locale.forLanguageTag("ar")));
+		gameRoomDictionaryAr.put("bellNoWinner", messageSource.getMessage("gameRoom.bellNoWinner", null, Locale.forLanguageTag("ar")));
+		gameRoomDictionaryAr.put("bellStrike", messageSource.getMessage("gameRoom.bellStrike", null, Locale.forLanguageTag("ar")));
+		gameRoomDictionaryAr.put("startGamePopup", messageSource.getMessage("gameRoom.startGamePopup", null, Locale.forLanguageTag("ar")));
+		gameRoomDictionaryAr.put("nextChallengePopup", messageSource.getMessage("gameRoom.nextChallengePopup", null, Locale.forLanguageTag("ar")));
 		
 		gameRoomTranslations.put("en", gameRoomDictionaryEn);
 		gameRoomTranslations.put("ar", gameRoomDictionaryAr);
@@ -110,6 +130,7 @@ public class LookupController {
 		
 		ChallengeLookup challenge2 = new ChallengeLookup();
 		challenge2.setId(2);
+		challenge2.setActive(true);
 		challenge2.setTitleAr(messageSource.getMessage("home.challenge2Title", null, Locale.forLanguageTag("ar")));
 		challenge2.setTitleEn(messageSource.getMessage("home.challenge2Title", null, Locale.forLanguageTag("en")));
 		
@@ -158,12 +179,39 @@ public class LookupController {
 		challenge3.setRules(challenge3Rules);
 		challenges.add(challenge3);
 		
+		ChallengeLookup challenge4 = new ChallengeLookup();
+		challenge4.setId(4);
+		challenge4.setTitleAr(messageSource.getMessage("home.challenge4Title", null, Locale.forLanguageTag("ar")));
+		challenge4.setTitleEn(messageSource.getMessage("home.challenge4Title", null, Locale.forLanguageTag("en")));
+		
+		List<String> challenge4RulesAr = new ArrayList<String>();
+		challenge4RulesAr.add(messageSource.getMessage("home.challenge4Rule1", null, Locale.forLanguageTag("ar")));
+		challenge4RulesAr.add(messageSource.getMessage("home.challenge4Rule2", null, Locale.forLanguageTag("ar")));
+		challenge4RulesAr.add(messageSource.getMessage("home.challenge4Rule3", null, Locale.forLanguageTag("ar")));
+		challenge4RulesAr.add(messageSource.getMessage("home.challenge4Rule4", null, Locale.forLanguageTag("ar")));
+		
+		List<String> challenge4RulesEn = new ArrayList<String>();
+		challenge4RulesEn.add(messageSource.getMessage("home.challenge4Rule1", null, Locale.forLanguageTag("en")));
+		challenge4RulesEn.add(messageSource.getMessage("home.challenge4Rule2", null, Locale.forLanguageTag("en")));
+		challenge4RulesEn.add(messageSource.getMessage("home.challenge4Rule3", null, Locale.forLanguageTag("en")));
+		challenge4RulesEn.add(messageSource.getMessage("home.challenge4Rule4", null, Locale.forLanguageTag("en")));
+		
+		Map<String, List<String>> challenge4Rules = new HashMap<String, List<String>>();
+		challenge4Rules.put("ar", challenge4RulesAr);
+		challenge4Rules.put("en", challenge4RulesEn);
+		
+		challenge4.setRules(challenge4Rules);
+		challenges.add(challenge4);
+		
 		Map<String, String> flags = new HashMap<String, String>();
 		String defaultLanguage = String.valueOf(env.getProperty("home.defaultLanguage"));
 		flags.put("defaultLanguage", defaultLanguage);
 		
 		String latestiOSVersion = String.valueOf(env.getProperty("home.latestiOSVersion"));
 		flags.put("latestiOSVersion", latestiOSVersion);
+		
+		String latestAndroidVersion = String.valueOf(env.getProperty("home.latestAndroidVersion"));
+		flags.put("latestAndroidVersion", latestAndroidVersion);
 		
 		result.setFlags(flags);
 		

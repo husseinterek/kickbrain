@@ -318,6 +318,38 @@ function completeGame()
 	$('#resultReportModal').find('#player1-score').html("( " + totalScore + " "+(language == 'en' ? "pts" : "نقطة")+" )");
 	
 	$('#resultReportModal').modal('show');
+	
+	// persist game report
+	var request = {};
+	
+	var playerTmp = player1;
+	playerTmp.playerId = null;
+	
+	request.player = playerTmp;
+	request.totalScore = totalScore;
+	
+	var questionsResultLst = [];
+	for(var i in questionsResult)
+	{
+		var questionResult = questionsResult[i];
+		var questionResultObj = {};
+		questionResultObj.questionId = i;
+		questionResultObj.isPassed = questionResult;
+		
+		questionsResultLst.push(questionResultObj);
+	}
+	request.questionsResult = questionsResultLst;
+	
+	$.ajax({
+		  url:contextPath + "/game/singleGameReport",
+		  type:"POST",
+		  data:JSON.stringify(request),
+		  contentType:"application/json; charset=utf-8",
+		  dataType:"json",
+		  async: true,
+		  success: function(response){
+		  }
+	});
 }
 
 function Proceed()

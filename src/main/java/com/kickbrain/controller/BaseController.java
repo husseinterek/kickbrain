@@ -36,6 +36,12 @@ public class BaseController {
 		return "admin";
 	}
 	
+	@RequestMapping(value = "/admin-import", method = RequestMethod.GET)
+	public String adminImport(Locale locale, Model model, HttpSession session, Device device) {
+		
+		return "admin-import";
+	}
+	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String login(Locale locale, Model model, HttpSession session, Device device) {
 		
@@ -103,7 +109,7 @@ public class BaseController {
 				throw new Exception();
 			}
 			
-			gameRoom = gameRoomManager.createSingleGameRoom(username);
+			gameRoom = gameRoomManager.createSingleGameRoom(username, null);
 			if(gameRoom != null)
 			{
 				result.setQuestions(gameRoom.getQuestions());

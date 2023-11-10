@@ -6,6 +6,7 @@ public class StrikeRequest {
 	private String questionId;
 	private String submittedPlayer;
 	private int currentQuestionIdx;
+	private Integer challengeCategory;
 
 	public String getRoomId() {
 		return roomId;
@@ -37,6 +38,14 @@ public class StrikeRequest {
 
 	public void setCurrentQuestionIdx(int currentQuestionIdx) {
 		this.currentQuestionIdx = currentQuestionIdx;
+	}
+	
+	public void setChallengeCategory(Integer challengeCategory) {
+		this.challengeCategory = challengeCategory;
+	}
+	
+	public Integer getChallengeCategory() {
+		return challengeCategory;
 	}
 
 }
