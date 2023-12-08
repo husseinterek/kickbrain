@@ -95,4 +95,9 @@ public class UserMysqlService implements UserService {
 		return result;
 	}
 	
+	@Override
+	public void deleteUser(long id) {
+		userDao.deleteById(id);
+	}
+	
 }

@@ -66,8 +66,11 @@ public class GameTimerManager {
 	
 	public void removeGameTimer(String roomId)
 	{
-		GameTimerTask t = timersPerGame.get(roomId);
-		t.shutdown();
-		timersPerGame.remove(roomId);
+		if(timersPerGame.get(roomId) != null)
+		{
+			GameTimerTask t = timersPerGame.get(roomId);
+			t.shutdown();
+			timersPerGame.remove(roomId);
+		}
 	}
 }

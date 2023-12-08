@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.kickbrain.beans.SubscribeRequest;
 import com.kickbrain.beans.SubscribeResult;
 import com.kickbrain.beans.UserVO;
+import com.kickbrain.db.service.GameService;
 import com.kickbrain.db.service.UserService;
 
 @Component
@@ -16,6 +17,9 @@ public class UserManager{
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private GameService gameService;
 	
 	public SubscribeResult subscribe(SubscribeRequest request)
 	{
@@ -58,5 +62,11 @@ public class UserManager{
 	public List<UserVO> retrieveUsersWithScores()
 	{
 		return userService.retrieveUsersWithScores();
+	}
+	
+	public void deleteUser(String id)
+	{
+		userService.deleteUser(Long.valueOf(id));
+		gameService.deleteWaitingGamesForPlayer(Long.valueOf(id));
 	}
 }

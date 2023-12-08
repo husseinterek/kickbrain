@@ -74,10 +74,15 @@ public class XMLConfigurationManager {
 				onlineChallengeConfig.setAppearInSingleGame(challengeConfig.getInt("appearInSingleGame"));
 				onlineChallengeConfig.setAnswerTimer(challengeConfig.getInt("answerTimer"));
 				
-				if(category == 2)
+				if(category == 3)
 				{
 					onlineChallengeConfig.setBellTimer(challengeConfig.getInt("bellTimer"));
 				}
+				if(category == 2)
+				{
+					onlineChallengeConfig.setBidTimer(challengeConfig.getInt("bidTimer"));
+				}
+				
 				challenges.add(onlineChallengeConfig);
 			}
 			

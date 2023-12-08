@@ -11,6 +11,7 @@ public class GameReport {
 	private Map<String, Map<String, Integer>> playersStrikesByQuestion = new HashMap<String, Map<String, Integer>>();
 	private Map<String, Integer> playersScore = new HashMap<String, Integer>();
 	private Map<String, String> questionsResult = new HashMap<String, String>();
+	private Map<String, Map<String, Integer>> playersBidByQuestion = new HashMap<String, Map<String, Integer>>();
 
 	public String getRoomId() {
 		return roomId;
@@ -50,6 +51,14 @@ public class GameReport {
 
 	public void setQuestionsResult(Map<String, String> questionsResult) {
 		this.questionsResult = questionsResult;
+	}
+
+	public Map<String, Map<String, Integer>> getPlayersBidByQuestion() {
+		return playersBidByQuestion;
+	}
+
+	public void setPlayersBidByQuestion(Map<String, Map<String, Integer>> playersBidByQuestion) {
+		this.playersBidByQuestion = playersBidByQuestion;
 	}
 
 }

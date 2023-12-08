@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.core.env.Environment;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.kickbrain.beans.AnswerVO;
 import com.kickbrain.beans.ChallengeBean;
@@ -29,6 +30,7 @@ public abstract class ChallengeManager {
 	protected GameTimerManager gameTimerManager;
 	protected XMLConfigurationManager xmlConfigurationManager;
 	protected SimpMessagingTemplate messagingTemplate;
+	protected ThreadPoolTaskExecutor executor;
 	
 	public ValidateAnswerResult validateAnswer(ValidateAnswerRequest request)
 	{
@@ -139,23 +141,38 @@ public abstract class ChallengeManager {
 			
 			SkipQuestionEvent skipQuestionEvent = new SkipQuestionEvent();
 			QuestionResult nextQuestion = null;
-			boolean delayNewQuestion = false;
+			boolean delayNewChallenge = false;
 			if(challengeCategory != null)
 			{
 				if(returnedChallenge.getCategory() != challengeCategory)
 				{
 					// Challenge has been changed
 					skipQuestionEvent.setNextQuestionIndex(1);
-					skipQuestionEvent.setLastQuestion(returnedChallenge.getQuestions().size() == 1);
+					
+					boolean isLastQuestion = false;
+					if(returnedChallenge.getQuestions().size() == 1 && (gameRoom.getChallengesMap().get((challengeCategory + 1)) == null))
+					{
+						// If it is the last question in the current challenge and there are no remaining challenges
+						isLastQuestion = true;
+					}
+					skipQuestionEvent.setLastQuestion(isLastQuestion);
+					
 					nextQuestion = returnedChallenge.getQuestions().get(0);
-					delayNewQuestion = true;
+					delayNewChallenge = true;
 				}
 				else
 				{
 					// Get next index for the same challenge
 					skipQuestionEvent.setNextQuestionIndex(currentQuestionIndex + 1);
-					skipQuestionEvent.setLastQuestion(returnedChallenge.getQuestions().size() == (currentQuestionIndex + 1));
 					nextQuestion = returnedChallenge.getQuestions().get(currentQuestionIndex);
+					
+					boolean isLastQuestion = false;
+					if((returnedChallenge.getQuestions().size() == (currentQuestionIndex + 1)) && (gameRoom.getChallengesMap().get((currentQuestionIndex + 1)) == null))
+					{
+						// If it is the last question in the current challenge and there are no remaining challenges
+						isLastQuestion = true;
+					}
+					skipQuestionEvent.setLastQuestion(isLastQuestion);
 				}
 			}
 			else
@@ -165,7 +182,7 @@ public abstract class ChallengeManager {
 				nextQuestion = returnedChallenge.getQuestions().get(currentQuestionIndex);
 			}
 			
-			if(delayNewQuestion)
+			if(delayNewChallenge)
 			{
 				messagingTemplate.convertAndSend("/topic/game/"+gameRoom.getRoomId()+"/nextChallengePopup", returnedChallenge.getCategory());
 				// delay the trigger of the new question by 5 seconds
@@ -192,18 +209,31 @@ public abstract class ChallengeManager {
 			int nextQuestionId = nextQuestion.getId();
 			
 			Integer nonAnswerTimer = null;
-			if(challengeCategory == 2)
+			if(returnedChallenge.getCategory() == 2)
 			{
     			GameConfig gameConfig = xmlConfigurationManager.getAppConfigurationBean().getOnlineGameConfig();
 				List<ChallengeConfig> challenges = gameConfig.getChallenges();
 				for(ChallengeConfig challenge : challenges)
 				{
-					if(challenge.getCategory() == challengeCategory)
+					if(challenge.getCategory() == returnedChallenge.getCategory())
+					{
+						nonAnswerTimer = challenge.getBidTimer();
+					}
+				}
+			}
+			if(returnedChallenge.getCategory() == 3)
+			{
+    			GameConfig gameConfig = xmlConfigurationManager.getAppConfigurationBean().getOnlineGameConfig();
+				List<ChallengeConfig> challenges = gameConfig.getChallenges();
+				for(ChallengeConfig challenge : challenges)
+				{
+					if(challenge.getCategory() == returnedChallenge.getCategory())
 					{
 						nonAnswerTimer = challenge.getBellTimer();
 					}
 				}
 			}
+			
 			gameTimerManager.refreshGameTimer(roomId, currentTurn, String.valueOf(nextQuestionId), nextQuestion.getChallengeCategory(), nonAnswerTimer);
 		}
 	}

@@ -46,6 +46,18 @@ public class Main extends SpringBootServletInitializer{
     }
 	
 	@Bean
+    public ThreadPoolTaskExecutor gameProceedExecutor() {
+         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+         executor.setCorePoolSize(5);
+         executor.setBeanName("threadPoolTaskExecutor");
+         executor.setMaxPoolSize(10);
+         executor.setQueueCapacity(50);
+         executor.setThreadNamePrefix("GameProceedThread-");
+         executor.initialize();
+         return executor;
+    }
+	
+	@Bean
 	public FirebaseMessaging firebaseMessaging() throws IOException {
 	    GoogleCredentials googleCredentials = GoogleCredentials
 	            .fromStream(new ClassPathResource("firebase-service-account.json").getInputStream());

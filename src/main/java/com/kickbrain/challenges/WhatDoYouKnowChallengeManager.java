@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.core.env.Environment;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.kickbrain.beans.AnswerVO;
 import com.kickbrain.beans.GameRoom;
@@ -17,17 +18,21 @@ import com.kickbrain.manager.GameTimerManager;
 
 public class WhatDoYouKnowChallengeManager extends ChallengeManager{
 	
-	public WhatDoYouKnowChallengeManager(Environment env, GameRoomManager gameRoomManager, GameTimerManager gameTimerManager, XMLConfigurationManager xmlConfigurationManager, SimpMessagingTemplate messagingTemplate)
+	public WhatDoYouKnowChallengeManager(Environment env, GameRoomManager gameRoomManager, GameTimerManager gameTimerManager, XMLConfigurationManager xmlConfigurationManager, SimpMessagingTemplate messagingTemplate, ThreadPoolTaskExecutor executor)
 	{
 		super.env = env;
 		super.gameRoomManager = gameRoomManager;
 		super.gameTimerManager = gameTimerManager;
 		super.xmlConfigurationManager = xmlConfigurationManager;
 		super.messagingTemplate = messagingTemplate;
+		super.executor = executor;
 	}
 
 	public ValidateAnswerResult processCorrectAnswer(ValidateAnswerRequest request, ValidateAnswerResult result, GameRoom gameRoom, AnswerVO matchingAnswer, int numOfPossibleAnswers, List<AnswerVO> submittedPlayerAnswers, List<AnswerVO> opponentPlayerAnswers) {
 		
+		// stop the timer
+		gameTimerManager.removeGameTimer(request.getRoomId());
+				
 		// What do you know challenge
 		List<AnswerVO> allSubmittedAnswers = new ArrayList<AnswerVO>();
 		allSubmittedAnswers.add(matchingAnswer);
@@ -53,32 +58,43 @@ public class WhatDoYouKnowChallengeManager extends ChallengeManager{
 		result.setStatus(1);
 		messagingTemplate.convertAndSend("/topic/game/" + request.getRoomId() + "/answer", result);
 		
+		final List<AnswerVO> submittedPlayerAnswersFinal = submittedPlayerAnswers;
+		final List<AnswerVO> opponentPlayerAnswersFinal = opponentPlayerAnswers;
 		if(submittedAnswers == numOfPossibleAnswers)
 		{
-			// All possible answers are submitted. Give the point of the question to the player who gave more answers. In case of tie, both players get the point
-			if(submittedPlayerAnswers.size() > opponentPlayerAnswers.size())
-			{
-				// Submitted player wins the point
-				gameRoomManager.addPlayerScoreToGameReport(request.getRoomId(), request.getSubmittedPlayerId(), request.getQuestionId());
-				proceed(gameRoom, request.getQuestionId(), request.getCurrentQuestionIdx(), request.getSubmittedPlayerId(), request.getChallengeCategory());
-			}
-			else
-			{
-				if(opponentPlayerAnswers.size() > submittedPlayerAnswers.size())
-				{
-					// opponent player wins the point
-					gameRoomManager.addPlayerScoreToGameReport(gameRoom.getRoomId(), request.getOpponentPlayerId(), request.getQuestionId());
-					proceed(gameRoom, request.getQuestionId(), request.getCurrentQuestionIdx(), request.getOpponentPlayerId(), request.getChallengeCategory());
-				}
-				else
-				{
-					// both players take the point
-					gameRoomManager.addPlayerScoreToGameReport(gameRoom.getRoomId(), request.getSubmittedPlayerId(), request.getQuestionId());
-					gameRoomManager.addPlayerScoreToGameReport(gameRoom.getRoomId(), request.getOpponentPlayerId(), request.getQuestionId());
-					gameRoomManager.setQuestionResultasTie(gameRoom.getRoomId(), request.getQuestionId(), request.getSubmittedPlayerId(), request.getOpponentPlayerId());
-					proceed(gameRoom, request.getQuestionId(), request.getCurrentQuestionIdx(), request.getOpponentPlayerId(), request.getChallengeCategory());
-				}
-			}
+			// Schedule the 'proceed' function to run in a separate thread=
+			executor.execute(() -> {
+	            try {
+	                Thread.sleep(2000);
+	                
+	                // All possible answers are submitted. Give the point of the question to the player who gave more answers. In case of tie, both players get the point
+	    			if(submittedPlayerAnswersFinal.size() > opponentPlayerAnswersFinal.size())
+	    			{
+	    				// Submitted player wins the point
+	    				gameRoomManager.addPlayerScoreToGameReport(request.getRoomId(), request.getSubmittedPlayerId(), request.getQuestionId());
+	    				proceed(gameRoom, request.getQuestionId(), request.getCurrentQuestionIdx(), request.getSubmittedPlayerId(), request.getChallengeCategory());
+	    			}
+	    			else
+	    			{
+	    				if(opponentPlayerAnswersFinal.size() > submittedPlayerAnswersFinal.size())
+	    				{
+	    					// opponent player wins the point
+	    					gameRoomManager.addPlayerScoreToGameReport(gameRoom.getRoomId(), request.getOpponentPlayerId(), request.getQuestionId());
+	    					proceed(gameRoom, request.getQuestionId(), request.getCurrentQuestionIdx(), request.getOpponentPlayerId(), request.getChallengeCategory());
+	    				}
+	    				else
+	    				{
+	    					// both players take the point
+	    					gameRoomManager.addPlayerScoreToGameReport(gameRoom.getRoomId(), request.getSubmittedPlayerId(), request.getQuestionId());
+	    					gameRoomManager.addPlayerScoreToGameReport(gameRoom.getRoomId(), request.getOpponentPlayerId(), request.getQuestionId());
+	    					gameRoomManager.setQuestionResultasTie(gameRoom.getRoomId(), request.getQuestionId(), request.getSubmittedPlayerId(), request.getOpponentPlayerId());
+	    					proceed(gameRoom, request.getQuestionId(), request.getCurrentQuestionIdx(), request.getOpponentPlayerId(), request.getChallengeCategory());
+	    				}
+	    			}
+	            } catch (InterruptedException e) {
+	                Thread.currentThread().interrupt();
+	            }
+	        });
 		}
 		else
 		{
@@ -119,11 +135,12 @@ public class WhatDoYouKnowChallengeManager extends ChallengeManager{
 			}
 			
 			gameRoomManager.addPlayerScoreToGameReport(gameRoom.getRoomId(), playerId, questionId);
-			proceed(gameRoom, questionId, currentQuestionIndex, playerId, 1);
 			
 			// notify player that opponent committed all strikes
 			String opponentPlayerId = submittedPlayerId.equals(gameRoom.getPlayer1().getPlayerId()) ? gameRoom.getPlayer2().getPlayerId() : gameRoom.getPlayer1().getPlayerId();
 			messagingTemplate.convertAndSend("/topic/game/"+gameRoom.getRoomId()+ "/" + opponentPlayerId + "/allStrikesCommitted", "");
+						
+			proceed(gameRoom, questionId, currentQuestionIndex, playerId, 1);
 		}
 	}
 }

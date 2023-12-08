@@ -9,19 +9,36 @@
                         <titleEn>What do you know?</titleEn>
                         <titleAr>ماذا تعرف؟</titleAr>
                         <category>1</category>
-                        <nbQuestions>10</nbQuestions>
+                        <nbQuestions>5</nbQuestions>
                         <appearInSingleGame>1</appearInSingleGame>
                         <answerTimer>30</answerTimer>
                   </challenge>
-                  <!-- <challenge>
+                  <challenge>
                         <titleEn>Bell</titleEn>
                         <titleAr>الجرس</titleAr>
                         <category>2</category>
-                        <nbQuestions>3</nbQuestions>
+                        <nbQuestions>5</nbQuestions>
                         <appearInSingleGame>0</appearInSingleGame>
                         <bellTimer>60</bellTimer>
                         <answerTimer>30</answerTimer>
-                  </challenge> -->
+                  </challenge>
+                  <challenge>
+                        <titleEn>Who am I?</titleEn>
+                        <titleAr>من أنا؟</titleAr>
+                        <category>3</category>
+                        <nbQuestions>5</nbQuestions>
+                        <appearInSingleGame>1</appearInSingleGame>
+                        <answerTimer>60</answerTimer>
+                  </challenge>
+                  <challenge>
+                        <titleEn>Auction</titleEn>
+                        <titleAr>المزاد</titleAr>
+                        <category>4</category>
+                        <nbQuestions>5</nbQuestions>
+                        <appearInSingleGame>0</appearInSingleGame>
+                        <bidTimer>10</bidTimer>
+                        <answerTimer>30</answerTimer>
+                  </challenge>
           </challenges>
      </onlineGame>
 </app-config>

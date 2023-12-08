@@ -73,6 +73,15 @@ public class LookupController {
 		gameRoomDictionaryEn.put("bellStrike", messageSource.getMessage("gameRoom.bellStrike", null, Locale.forLanguageTag("en")));
 		gameRoomDictionaryEn.put("startGamePopup", messageSource.getMessage("gameRoom.startGamePopup", null, Locale.forLanguageTag("en")));
 		gameRoomDictionaryEn.put("nextChallengePopup", messageSource.getMessage("gameRoom.nextChallengePopup", null, Locale.forLanguageTag("en")));
+		gameRoomDictionaryEn.put("whoAmIStrike", messageSource.getMessage("gameRoom.whoAmIStrike", null, Locale.forLanguageTag("en")));
+		gameRoomDictionaryEn.put("whoAmINoWinner", messageSource.getMessage("gameRoom.whoAmINoWinner", null, Locale.forLanguageTag("en")));
+		gameRoomDictionaryEn.put("whoAmIOpponentWrongAnswer", messageSource.getMessage("gameRoom.whoAmIOpponentWrongAnswer", null, Locale.forLanguageTag("en")));
+		gameRoomDictionaryEn.put("submitBid", messageSource.getMessage("gameRoom.submitBid", null, Locale.forLanguageTag("en")));
+		gameRoomDictionaryEn.put("endBid", messageSource.getMessage("gameRoom.endBid", null, Locale.forLanguageTag("en")));
+		gameRoomDictionaryEn.put("bidSuccess", messageSource.getMessage("gameRoom.bidSuccess", null, Locale.forLanguageTag("en")));
+		gameRoomDictionaryEn.put("bidQuestionWinner", messageSource.getMessage("gameRoom.bidQuestionWinner", null, Locale.forLanguageTag("en")));
+		gameRoomDictionaryEn.put("auctionStrike", messageSource.getMessage("gameRoom.auctionStrike", null, Locale.forLanguageTag("en")));
+		gameRoomDictionaryEn.put("allBidAnswersProvidedByOpponent", messageSource.getMessage("gameRoom.allBidAnswersProvidedByOpponent", null, Locale.forLanguageTag("en")));
 		
 		// Populate home page dictionary - Arabic
 		Map<String, String> gameRoomDictionaryAr = new HashMap<String, String>();
@@ -93,6 +102,15 @@ public class LookupController {
 		gameRoomDictionaryAr.put("bellStrike", messageSource.getMessage("gameRoom.bellStrike", null, Locale.forLanguageTag("ar")));
 		gameRoomDictionaryAr.put("startGamePopup", messageSource.getMessage("gameRoom.startGamePopup", null, Locale.forLanguageTag("ar")));
 		gameRoomDictionaryAr.put("nextChallengePopup", messageSource.getMessage("gameRoom.nextChallengePopup", null, Locale.forLanguageTag("ar")));
+		gameRoomDictionaryAr.put("whoAmIStrike", messageSource.getMessage("gameRoom.whoAmIStrike", null, Locale.forLanguageTag("ar")));
+		gameRoomDictionaryAr.put("whoAmINoWinner", messageSource.getMessage("gameRoom.whoAmINoWinner", null, Locale.forLanguageTag("ar")));
+		gameRoomDictionaryAr.put("whoAmIOpponentWrongAnswer", messageSource.getMessage("gameRoom.whoAmIOpponentWrongAnswer", null, Locale.forLanguageTag("ar")));
+		gameRoomDictionaryAr.put("submitBid", messageSource.getMessage("gameRoom.submitBid", null, Locale.forLanguageTag("ar")));
+		gameRoomDictionaryAr.put("endBid", messageSource.getMessage("gameRoom.endBid", null, Locale.forLanguageTag("ar")));
+		gameRoomDictionaryAr.put("bidSuccess", messageSource.getMessage("gameRoom.bidSuccess", null, Locale.forLanguageTag("ar")));
+		gameRoomDictionaryAr.put("bidQuestionWinner", messageSource.getMessage("gameRoom.bidQuestionWinner", null, Locale.forLanguageTag("ar")));
+		gameRoomDictionaryAr.put("auctionStrike", messageSource.getMessage("gameRoom.auctionStrike", null, Locale.forLanguageTag("ar")));
+		gameRoomDictionaryAr.put("allBidAnswersProvidedByOpponent", messageSource.getMessage("gameRoom.allBidAnswersProvidedByOpponent", null, Locale.forLanguageTag("ar")));
 		
 		gameRoomTranslations.put("en", gameRoomDictionaryEn);
 		gameRoomTranslations.put("ar", gameRoomDictionaryAr);
@@ -108,14 +126,12 @@ public class LookupController {
 		challenge.setTitleEn(messageSource.getMessage("home.challenge1Title", null, Locale.forLanguageTag("en")));
 		
 		List<String> challenge1RulesAr = new ArrayList<String>();
-		challenge1RulesAr.add(messageSource.getMessage("home.challenge1Rule1", null, Locale.forLanguageTag("ar")));
 		challenge1RulesAr.add(messageSource.getMessage("home.challenge1Rule2", null, Locale.forLanguageTag("ar")));
 		challenge1RulesAr.add(messageSource.getMessage("home.challenge1Rule3", null, Locale.forLanguageTag("ar")));
 		challenge1RulesAr.add(messageSource.getMessage("home.challenge1Rule4", null, Locale.forLanguageTag("ar")));
 		challenge1RulesAr.add(messageSource.getMessage("home.challenge1Rule5", null, Locale.forLanguageTag("ar")));
 		
 		List<String> challenge1RulesEn = new ArrayList<String>();
-		challenge1RulesEn.add(messageSource.getMessage("home.challenge1Rule1", null, Locale.forLanguageTag("en")));
 		challenge1RulesEn.add(messageSource.getMessage("home.challenge1Rule2", null, Locale.forLanguageTag("en")));
 		challenge1RulesEn.add(messageSource.getMessage("home.challenge1Rule3", null, Locale.forLanguageTag("en")));
 		challenge1RulesEn.add(messageSource.getMessage("home.challenge1Rule4", null, Locale.forLanguageTag("en")));
@@ -139,14 +155,12 @@ public class LookupController {
 		challenge2RulesAr.add(messageSource.getMessage("home.challenge2Rule2", null, Locale.forLanguageTag("ar")));
 		challenge2RulesAr.add(messageSource.getMessage("home.challenge2Rule3", null, Locale.forLanguageTag("ar")));
 		challenge2RulesAr.add(messageSource.getMessage("home.challenge2Rule4", null, Locale.forLanguageTag("ar")));
-		challenge2RulesAr.add(messageSource.getMessage("home.challenge2Rule5", null, Locale.forLanguageTag("ar")));
 		
 		List<String> challenge2RulesEn = new ArrayList<String>();
 		challenge2RulesEn.add(messageSource.getMessage("home.challenge2Rule1", null, Locale.forLanguageTag("en")));
 		challenge2RulesEn.add(messageSource.getMessage("home.challenge2Rule2", null, Locale.forLanguageTag("en")));
 		challenge2RulesEn.add(messageSource.getMessage("home.challenge2Rule3", null, Locale.forLanguageTag("en")));
 		challenge2RulesEn.add(messageSource.getMessage("home.challenge2Rule4", null, Locale.forLanguageTag("en")));
-		challenge2RulesEn.add(messageSource.getMessage("home.challenge2Rule5", null, Locale.forLanguageTag("en")));
 		
 		Map<String, List<String>> challenge2Rules = new HashMap<String, List<String>>();
 		challenge2Rules.put("ar", challenge2RulesAr);
@@ -157,6 +171,7 @@ public class LookupController {
 		
 		ChallengeLookup challenge3 = new ChallengeLookup();
 		challenge3.setId(3);
+		challenge3.setActive(true);
 		challenge3.setTitleAr(messageSource.getMessage("home.challenge3Title", null, Locale.forLanguageTag("ar")));
 		challenge3.setTitleEn(messageSource.getMessage("home.challenge3Title", null, Locale.forLanguageTag("en")));
 		
@@ -181,6 +196,7 @@ public class LookupController {
 		
 		ChallengeLookup challenge4 = new ChallengeLookup();
 		challenge4.setId(4);
+		challenge4.setActive(true);
 		challenge4.setTitleAr(messageSource.getMessage("home.challenge4Title", null, Locale.forLanguageTag("ar")));
 		challenge4.setTitleEn(messageSource.getMessage("home.challenge4Title", null, Locale.forLanguageTag("en")));
 		

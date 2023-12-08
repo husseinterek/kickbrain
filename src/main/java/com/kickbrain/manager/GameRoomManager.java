@@ -629,7 +629,7 @@ public class GameRoomManager {
 		return questionService.retrieveQuestionAnswers(questionId);
 	}
 	
-	public void persistGameRoom(GameRoom gameRoom, GameReport gameReport)
+	public GameVO persistGameRoom(GameRoom gameRoom, GameReport gameReport)
 	{
 		GameVO gameVO = new GameVO();
 		gameVO.setType(2);
@@ -682,7 +682,7 @@ public class GameRoomManager {
 		
 		gameVO.setGameDetails(gameDetailsVOLst);
 		
-		gameService.createGame(gameVO);
+		GameVO savedGame = gameService.createGame(gameVO);
 		
 		if(gameVO.getAnonymousPlayer1() == null)
 		{
@@ -693,6 +693,8 @@ public class GameRoomManager {
 		{
 			userService.addUserScore(Long.valueOf(gameRoom.getPlayer2().getPlayerId()), gameReport.getPlayersScore().get(gameRoom.getPlayer2().getPlayerId()));
 		}
+		
+		return savedGame;
 	}
 	
 	public void persistSingleGame(SingleGameReport gameReport)
@@ -734,10 +736,10 @@ public class GameRoomManager {
 		
 		gameService.createGame(gameVO);
 		
-		if(!gameReport.getPlayer().isAnonymous())
+		/*if(!gameReport.getPlayer().isAnonymous())
 		{
 			userService.addUserScore(Long.valueOf(gameReport.getPlayer().getPlayerId()), gameReport.getTotalScore());
-		}
+		}*/
 	}
 	
 	public GameReport getGameReport(String gameRoomId)
@@ -828,6 +830,52 @@ public class GameRoomManager {
 		result.setGameDetails(gameVO.getGameDetails());
 		
 		return result;
+	}
+	
+	public void addBidToGameReport(String roomId, String questionId, Integer bid, String playerId)
+	{
+		GameReport gameReport = gameReports.get(roomId);
+		if(gameReport == null)
+		{
+			gameReport = new GameReport();
+			gameReport.setRoomId(roomId);
+		}
+		Map<String, Map<String, Integer>> playersBidByQuestion = gameReport.getPlayersBidByQuestion();
+		
+		Map<String, Integer> playersBids = playersBidByQuestion.get(questionId);
+		if(playersBids == null)
+		{
+			playersBids = new HashMap<String, Integer>();
+		}
+		
+		playersBids.put(playerId, bid);
+		playersBidByQuestion.put(questionId, playersBids);
+		gameReport.setPlayersBidByQuestion(playersBidByQuestion);
+		
+		gameReports.put(roomId, gameReport);
+	}
+	
+	public Map<String, Integer> getPlayerBidsFromGameReport(String roomId, String questionId)
+	{
+		GameReport gameReport = gameReports.get(roomId);
+		Map<String, Map<String, Integer>> playersBidByQuestion = gameReport.getPlayersBidByQuestion();
+		Map<String, Integer> playersBids = playersBidByQuestion.get(questionId);
+		if(playersBids == null)
+		{
+			playersBids = new HashMap<String, Integer>();
+		}
+		
+		return playersBids;
+	}
+	
+	public void cancelActiveGame(String roomId, String playerId)
+	{
+		gameService.cancelActiveGame(Long.valueOf(roomId), playerId);
+	}
+	
+	public void cleanActiveGame(String roomId, String playerId)
+	{
+		gameService.cleanActiveGame(Long.valueOf(roomId), playerId);
 	}
 	
 	private List<QuestionVO> generateGameQuestions(String playerId, int category, int limit)

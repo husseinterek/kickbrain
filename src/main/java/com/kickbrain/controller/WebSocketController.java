@@ -1,15 +1,22 @@
 package com.kickbrain.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
 import com.kickbrain.beans.ChallengeBean;
+import com.kickbrain.beans.ChatRequest;
+import com.kickbrain.beans.EndBidEvent;
+import com.kickbrain.beans.EndBidRequest;
 import com.kickbrain.beans.GameReport;
 import com.kickbrain.beans.GameReportResult;
 import com.kickbrain.beans.GameRoom;
@@ -18,6 +25,8 @@ import com.kickbrain.beans.QuestionResult;
 import com.kickbrain.beans.RingBellRequest;
 import com.kickbrain.beans.SkipQuestionEvent;
 import com.kickbrain.beans.SkipQuestionRequest;
+import com.kickbrain.beans.SubmitBidEvent;
+import com.kickbrain.beans.SubmitBidRequest;
 import com.kickbrain.beans.WaitingRoom;
 import com.kickbrain.beans.configuration.ChallengeConfig;
 import com.kickbrain.beans.configuration.GameConfig;
@@ -34,6 +43,8 @@ public class WebSocketController {
     private WebSocketManager websocketManager;
     private GameTimerManager gameTimerManager;
     private XMLConfigurationManager xmlConfigurationManager;
+    
+    private Map<String, Long> ringBellRequests = new ConcurrentHashMap<String, Long>();
 	
     @Autowired
     public WebSocketController(GameRoomManager gameRoomManager, SimpMessagingTemplate messagingTemplate, WebSocketManager websocketManager, GameTimerManager gameTimerManager, XMLConfigurationManager xmlConfigurationManager) {
@@ -139,7 +150,15 @@ public class WebSocketController {
     					// Challenge has been changed
     					nextQuestion = returnedChallenge.getQuestions().get(0);
     	    			skipQuestionEvent.setNextQuestionIndex(1);
-    	    			skipQuestionEvent.setLastQuestion(returnedChallenge.getQuestions().size() == 1);
+    	    			
+    	    			boolean isLastQuestion = false;
+    					if(returnedChallenge.getQuestions().size() == 1 && (gameRoom.getChallengesMap().get((request.getChallengeCategory() + 1)) == null))
+    					{
+    						// If it is the last question in the current challenge and there are no remaining challenges
+    						isLastQuestion = true;
+    					}
+    					skipQuestionEvent.setLastQuestion(isLastQuestion);
+    	    			
     	    			delayNewQuestion = true;
     				}
     				else
@@ -202,6 +221,18 @@ public class WebSocketController {
     				{
     					if(challenge.getCategory() == challengeCategory)
     					{
+    						nonAnswerTimer = challenge.getBidTimer();
+    					}
+    				}
+    			}
+    			if(challengeCategory == 3)
+    			{
+        			GameConfig gameConfig = xmlConfigurationManager.getAppConfigurationBean().getOnlineGameConfig();
+    				List<ChallengeConfig> challenges = gameConfig.getChallenges();
+    				for(ChallengeConfig challenge : challenges)
+    				{
+    					if(challenge.getCategory() == challengeCategory)
+    					{
     						nonAnswerTimer = challenge.getBellTimer();
     					}
     				}
@@ -212,11 +243,78 @@ public class WebSocketController {
     	}
     }
     
+    @MessageMapping("/game/chat")
+    public void chat(ChatRequest request) {
+    	
+    	GameRoom gameRoom = gameRoomManager.getGameRoomById(String.valueOf(request.getRoomId()));
+    	String opponentPlayerId = request.getPlayerId().equals(gameRoom.getPlayer1().getPlayerId()) ? gameRoom.getPlayer2().getPlayerId() : gameRoom.getPlayer1().getPlayerId();
+		
+    	messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/"+opponentPlayerId+"/chat", request.getMessage());
+    }
+    
     @MessageMapping("/game/bell/ring")
     public void ringBell(RingBellRequest request) {
     	
-    	messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/"+request.getQuestionId()+"/ringBell", request.getPlayerId());
-    	gameTimerManager.refreshGameTimer(String.valueOf(request.getRoomId()), request.getPlayerId(), String.valueOf(request.getQuestionId()), 2, null);
+    	String ringBellRequest = request.getRoomId() + "_" + request.getQuestionId();
+		if(ringBellRequests.get(ringBellRequest) == null)
+		{
+			ringBellRequests.put(ringBellRequest, System.currentTimeMillis());
+			messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/"+request.getQuestionId()+"/ringBell", request.getPlayerId());
+	    	gameTimerManager.refreshGameTimer(String.valueOf(request.getRoomId()), request.getPlayerId(), String.valueOf(request.getQuestionId()), 3, null);
+		}
+		else
+		{
+			System.out.println("Duplicate ring bell requests are captured");
+		}
+    }
+    
+    @MessageMapping("/game/auction/end")
+    public void endBid(EndBidRequest request) {
+    	
+    	GameRoom gameRoom = gameRoomManager.getGameRoomById(String.valueOf(request.getRoomId()));
+    	String winningBidder = request.getPlayerId().equals(gameRoom.getPlayer1().getPlayerId()) ? gameRoom.getPlayer2().getPlayerId() : gameRoom.getPlayer1().getPlayerId();
+    	
+    	EndBidEvent endBidEvent = new EndBidEvent();
+    	endBidEvent.setWinningBidder(winningBidder);
+    	
+    	int winningBid = request.getWinningBid() == 0 ? 1 : request.getWinningBid();
+    	endBidEvent.setWinningBid(winningBid);
+    	
+    	gameRoomManager.addBidToGameReport(String.valueOf(request.getRoomId()), String.valueOf(request.getQuestionId()), winningBid, winningBidder);
+    	
+    	messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/"+request.getQuestionId()+"/endBid", endBidEvent);
+		gameTimerManager.refreshGameTimer(String.valueOf(request.getRoomId()), request.getPlayerId(), String.valueOf(request.getQuestionId()), 2, null);
+    }
+    
+    @MessageMapping("/game/auction/submit")
+    public void submitBid(SubmitBidRequest request) {
+    	
+    	gameRoomManager.addBidToGameReport(String.valueOf(request.getRoomId()), String.valueOf(request.getQuestionId()), request.getBid(), request.getPlayerId());
+    	
+    	GameRoom gameRoom = gameRoomManager.getGameRoomById(String.valueOf(request.getRoomId()));
+    	String currentTurn = request.getPlayerId().equals(gameRoom.getPlayer1().getPlayerId()) ? gameRoom.getPlayer2().getPlayerId() : gameRoom.getPlayer1().getPlayerId();
+    	
+    	SubmitBidEvent submitBidEvent = new SubmitBidEvent();
+    	submitBidEvent.setCurrentTurn(currentTurn);
+    	submitBidEvent.setOpponentLatestBid(request.getBid());
+    	
+    	Map<String, Integer> playersBids = gameRoomManager.getPlayerBidsFromGameReport(String.valueOf(request.getRoomId()), String.valueOf(request.getQuestionId()));
+    	Integer currentTurnLatestBid = playersBids.get(currentTurn) == null ? 0 : playersBids.get(currentTurn);
+    	submitBidEvent.setCurrentTurnLatestBid(currentTurnLatestBid);
+    	
+    	messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/"+request.getQuestionId()+"/submitBid", submitBidEvent);
+    	
+    	int bidTimer = 0;
+    	GameConfig gameConfig = xmlConfigurationManager.getAppConfigurationBean().getOnlineGameConfig();
+		List<ChallengeConfig> challenges = gameConfig.getChallenges();
+		for(ChallengeConfig challenge : challenges)
+		{
+			if(challenge.getCategory() == 2)
+			{
+				bidTimer = challenge.getBidTimer();
+			}
+		}
+		gameTimerManager.refreshGameTimer(String.valueOf(request.getRoomId()), request.getPlayerId(), String.valueOf(request.getQuestionId()), 2, bidTimer);
     }
     
     private void waitForSecondPlayer(GameRoom gameRoom) {
@@ -243,6 +341,8 @@ public class WebSocketController {
     @MessageMapping("/ping")
     public void handlePingMessage(SimpMessageHeaderAccessor headerAccessor) {
     	String sessionId = headerAccessor.getSessionId();
+    	
+    	System.out.println("Ping request is received from session: " + sessionId);
     	websocketManager.handlePingMessage(sessionId);
     }
     
@@ -269,5 +369,28 @@ public class WebSocketController {
     	// Add the sessionId and playerId to the WebSocketSessionManager
         websocketManager.addActiveSession(sessionId, playerId);
     }
+    
+    @Scheduled(fixedRate = 3000) // Run every 3 sec (adjust as needed)
+    public void cleanRingBellRequests() {
+		
+		long RING_BELL_REQUEST_THRESHOLD = 10000;
+		long currentTime = System.currentTimeMillis();
+		
+		List<String> toBeRemovedLst = new ArrayList<String>();
+		for(Entry<String, Long> entry : ringBellRequests.entrySet())
+		{
+			String ringBellRequest = entry.getKey();
+			Long requestTime = entry.getValue();
+			
+			if (requestTime != null && currentTime - requestTime > RING_BELL_REQUEST_THRESHOLD) {
+				toBeRemovedLst.add(ringBellRequest);
+			}
+		}
+		
+		for(String toBeRemovedRequest : toBeRemovedLst)
+		{
+			ringBellRequests.remove(toBeRemovedRequest);
+		}
+	}
     
 }

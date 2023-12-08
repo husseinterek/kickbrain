@@ -53,6 +53,17 @@ public class UserController {
 		return result;
 	}
 	
+	@RequestMapping(value = "/delete/{id}", method = RequestMethod.POST, produces="application/json")
+	public BaseResult deleteUser(@PathVariable String id) {
+		
+		BaseResult result = new BaseResult();
+		
+		userManager.deleteUser(id);
+		
+		result.setStatus(1);
+		return result;
+	}
+	
 	@RequestMapping(value = "/{id}/games", method = RequestMethod.GET, produces="application/json")
 	public GamesHistoryResult gamesHistory(@PathVariable long id) {
 		

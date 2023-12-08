@@ -9,6 +9,7 @@ public class ChallengeConfig {
 	private int appearInSingleGame;
 	private int bellTimer;
 	private int answerTimer;
+	private int bidTimer;
 
 	public int getCategory() {
 		return category;
@@ -64,6 +65,14 @@ public class ChallengeConfig {
 
 	public void setAnswerTimer(int answerTimer) {
 		this.answerTimer = answerTimer;
+	}
+
+	public int getBidTimer() {
+		return bidTimer;
+	}
+
+	public void setBidTimer(int bidTimer) {
+		this.bidTimer = bidTimer;
 	}
 
 }

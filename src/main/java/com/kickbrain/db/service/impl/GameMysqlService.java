@@ -27,7 +27,7 @@ public class GameMysqlService implements GameService {
 	private WaitingGameRepository waitingGameDao;
 	
 	@Override
-	public void createGame(GameVO gameVO) {
+	public GameVO createGame(GameVO gameVO) {
 		Game game = Utility.convertGameVOToGameModel(gameVO);
 		
 		// Remove non-BMP characters
@@ -41,7 +41,8 @@ public class GameMysqlService implements GameService {
 			game.setAnonymousPlayer2(game.getAnonymousPlayer2().replaceAll("[^\u0000-\uFFFF]", ""));
 		}
 		
-		gameDao.save(game);
+		Game savedGame = gameDao.save(game);
+		return Utility.convertGameModelToGameVO(savedGame);
 	}
 	
 	@Override
@@ -129,5 +130,30 @@ public class GameMysqlService implements GameService {
 		}
 		
 		return result;
+	}
+	
+	@Override
+	public void deleteWaitingGamesForPlayer(long playerId) {
+		
+		List<WaitingGame> waitingGames = waitingGameDao.findSqlQuery("SELECT * FROM WAITING_GAMES where player_id = "+playerId+" and status = 1", WaitingGame.class);
+		waitingGameDao.deleteAll(waitingGames);
+	}
+	
+	@Override
+	public void cancelActiveGame(long roomId, String playerId) {
+		Game game = gameDao.findById(roomId).get();
+		game.setIsCancelled(1);
+		game.setCancelledBy(playerId);
+		
+		gameDao.save(game);
+	}
+	
+	@Override
+	public void cleanActiveGame(long roomId, String playerId) {
+		Game game = gameDao.findById(roomId).get();
+		game.setIsCleaned(1);
+		game.setCleanedBy(playerId);
+		
+		gameDao.save(game);
 	}
 }

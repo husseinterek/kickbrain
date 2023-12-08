@@ -19,7 +19,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-    <meta name="description" content="analytics,dashboard &amp; data dashboard.">
+    <meta name="description" content="First online football challenge application">
     <meta name="keywords" content="">
     <meta name="author" content="">
     <title>Kick Brain</title>
@@ -84,11 +84,11 @@
 					</div>
 				</div>
 				<div class='row mt-5'>
-					<div class='col-8 offset-2 my-auto'>
+					<div class='col-10 offset-1 my-auto'>
 						<div class='row'>
 							<div class='col-12'>
 								<div class='card-group'>
-									<div class='card game-rules-card rounded game-rules-card-selected' id='whatDoYouKnow' style='background-color: #EDEDED;'>
+									<div class='card ml-4 game-rules-card rounded game-rules-card-selected' id='whatDoYouKnow' style='background-color: #EDEDED;'>
 										<div class="card-content">
 											<div class="card-body" style='color: #000000;'>
 												<div class="bs-callout-warning">
@@ -105,11 +105,8 @@
 											</div>
 										</div>
 									</div>
-									<div class='card ml-3 game-rules-card rounded' id='auction' style='background-color: #c5c5c5; cursor: default !important'>
+									<div class='card ml-4 game-rules-card rounded game-rules-card-selected' id='auction' style='background-color: #EDEDED; cursor: default !important'>
 										<div class="card-content position-relative">
-											<div class='text-right'>
-												<span class="badge badge-pill badge-border badge-square position-absolute coming-soon-badge"><spring:message code="home.comingSoon"/></span>	
-											</div>
 											<div class="card-body" style='color: #000000;'>
 												<div class="bs-callout-warning">
 													<p><strong><spring:message code="home.challenge2Title"/></strong></p>
@@ -120,6 +117,22 @@
 														<li><spring:message code="home.challenge2Rule3"/></li>
 														<li><spring:message code="home.challenge2Rule4"/></li>
 														<li><spring:message code="home.challenge2Rule5"/></li>
+													</ol>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class='card ml-4 game-rules-card rounded game-rules-card-selected' id='auction' style='background-color: #EDEDED; cursor: default !important'>
+										<div class="card-content position-relative">
+											<div class="card-body" style='color: #000000;'>
+												<div class="bs-callout-warning">
+													<p><strong><spring:message code="home.challenge3Title"/></strong></p>
+													<p id='challengeRulesTitle'><span style='text-decoration:underline'><spring:message code="home.challenge3RulesTitle"/></span></p>
+													<ol id='challengeRules'>
+														<li><spring:message code="home.challenge3Rule1"/></li>
+														<li><spring:message code="home.challenge3Rule2"/></li>
+														<li><spring:message code="home.challenge3Rule3"/></li>
+														<li><spring:message code="home.challenge3Rule4"/></li>
 													</ol>
 												</div>
 											</div>

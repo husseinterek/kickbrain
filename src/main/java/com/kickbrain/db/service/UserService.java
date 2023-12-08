@@ -12,4 +12,5 @@ public interface UserService {
 	public UserVO findById(long id);
 	public void addUserScore(long userId, int score);
 	public List<UserVO> retrieveUsersWithScores();
+	public void deleteUser(long id);
 }

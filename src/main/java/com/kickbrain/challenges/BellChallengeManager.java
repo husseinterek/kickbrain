@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.core.env.Environment;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.kickbrain.beans.AnswerVO;
 import com.kickbrain.beans.GameRoom;
@@ -16,16 +17,20 @@ import com.kickbrain.manager.GameTimerManager;
 
 public class BellChallengeManager extends ChallengeManager{
 
-	public BellChallengeManager(Environment env, GameRoomManager gameRoomManager, GameTimerManager gameTimerManager, XMLConfigurationManager xmlConfigurationManager, SimpMessagingTemplate messagingTemplate)
+	public BellChallengeManager(Environment env, GameRoomManager gameRoomManager, GameTimerManager gameTimerManager, XMLConfigurationManager xmlConfigurationManager, SimpMessagingTemplate messagingTemplate, ThreadPoolTaskExecutor executor)
 	{
 		super.env = env;
 		super.gameRoomManager = gameRoomManager;
 		super.gameTimerManager = gameTimerManager;
 		super.xmlConfigurationManager = xmlConfigurationManager;
 		super.messagingTemplate = messagingTemplate;
+		super.executor = executor;
 	}
 	
 	public ValidateAnswerResult processCorrectAnswer(ValidateAnswerRequest request, ValidateAnswerResult result, GameRoom gameRoom, AnswerVO matchingAnswer, int numOfPossibleAnswers, List<AnswerVO> submittedPlayerAnswers, List<AnswerVO> opponentPlayerAnswers) {
+		
+		// stop the timer
+		gameTimerManager.removeGameTimer(request.getRoomId());
 		
 		// Bell Challenge
 		result.setAllAnswersProvided(true);
@@ -35,7 +40,16 @@ public class BellChallengeManager extends ChallengeManager{
 		
 		// Submitted player wins the point
 		gameRoomManager.addPlayerScoreToGameReport(gameRoom.getRoomId(), request.getSubmittedPlayerId(), request.getQuestionId());
-		proceed(gameRoom, request.getQuestionId(), request.getCurrentQuestionIdx(), request.getSubmittedPlayerId(), request.getChallengeCategory());
+		
+		// Schedule the 'proceed' function to run in a separate thread after 8 seconds
+		executor.execute(() -> {
+            try {
+                Thread.sleep(2000);
+                proceed(gameRoom, request.getQuestionId(), request.getCurrentQuestionIdx(), request.getSubmittedPlayerId(), request.getChallengeCategory());
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        });
 		
 		return result;
 	}
@@ -52,10 +66,11 @@ public class BellChallengeManager extends ChallengeManager{
 		{
 			// end the question and no one gets the point
 			gameRoomManager.addNoAnswerToGameReport(roomId, String.valueOf(questionId));
-			proceed(gameRoom, questionId, currentQuestionIndex, opponentPlayer, 2);
 			
 			// notify player that opponent committed all strikes
 			messagingTemplate.convertAndSend("/topic/game/"+gameRoom.getRoomId()+ "/bellNoWinner", "");
+						
+			proceed(gameRoom, questionId, currentQuestionIndex, opponentPlayer, 3);
 		}
 		else
 		{
@@ -66,7 +81,7 @@ public class BellChallengeManager extends ChallengeManager{
 			strikeResult.setNbStrikes(1);
 			messagingTemplate.convertAndSend("/topic/game/" + roomId + "/bellStrike", strikeResult);
 			
-			gameTimerManager.refreshGameTimer(roomId, opponentPlayer, questionId, 2, null);
+			gameTimerManager.refreshGameTimer(roomId, opponentPlayer, questionId, 3, null);
 		}
 	}
 	
@@ -75,6 +90,9 @@ public class BellChallengeManager extends ChallengeManager{
 		gameRoomManager.addNoAnswerToGameReport(roomId, String.valueOf(questionId));
 		
 		GameRoom gameRoom = gameRoomManager.getGameRoomById(roomId);
-		proceed(gameRoom, String.valueOf(questionId), currentQuestionIndex, null, 2);
+		if(gameRoom != null)
+		{
+			proceed(gameRoom, String.valueOf(questionId), currentQuestionIndex, null, 3);
+		}
 	}
 }

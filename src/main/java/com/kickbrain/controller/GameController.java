@@ -9,9 +9,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,11 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ibm.icu.text.Transliterator;
 import com.kickbrain.beans.AnswerVO;
+import com.kickbrain.beans.AuctionTimerCompleteRequest;
 import com.kickbrain.beans.BaseResult;
 import com.kickbrain.beans.GameReport;
 import com.kickbrain.beans.GameResult;
 import com.kickbrain.beans.GameRoom;
 import com.kickbrain.beans.GameStartEvent;
+import com.kickbrain.beans.GameVO;
 import com.kickbrain.beans.JoinGameResult;
 import com.kickbrain.beans.Player;
 import com.kickbrain.beans.QuestionResult;
@@ -39,9 +43,11 @@ import com.kickbrain.beans.ValidateSinglePlayerAnswerResult;
 import com.kickbrain.beans.WaitingGameVO;
 import com.kickbrain.beans.WaitingRoomResult;
 import com.kickbrain.beans.WaitingRoomResultBean;
+import com.kickbrain.challenges.AuctionChallengeManager;
 import com.kickbrain.challenges.BellChallengeManager;
 import com.kickbrain.challenges.ChallengeManager;
 import com.kickbrain.challenges.WhatDoYouKnowChallengeManager;
+import com.kickbrain.challenges.WhoAmIChallengeManager;
 import com.kickbrain.configuration.XMLConfigurationManager;
 import com.kickbrain.manager.GameRoomManager;
 import com.kickbrain.manager.GameTimerManager;
@@ -72,6 +78,10 @@ public class GameController {
 	@Autowired
 	private Environment env;
 	
+	@Autowired
+	@Qualifier("gameProceedExecutor")
+	private ThreadPoolTaskExecutor executor;
+	
 	private Map<String, Long> validateAnswerRequests = new ConcurrentHashMap<String, Long>();
 	
 	@RequestMapping(value = "/validateAnswer", method = RequestMethod.POST, consumes="application/json")
@@ -98,19 +108,25 @@ public class GameController {
 			{
 				switch (request.getChallengeCategory()) {
 					case 1:
-						challengeManager = new WhatDoYouKnowChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate);
+						challengeManager = new WhatDoYouKnowChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
 						break;
 					case 2:
-						challengeManager = new BellChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate);
+						challengeManager = new BellChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
+						break;
+					case 3:
+						challengeManager = new WhoAmIChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
+						break;
+					case 4:
+						challengeManager = new AuctionChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
 						break;
 					default:
-						challengeManager = new WhatDoYouKnowChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate);
+						challengeManager = new WhatDoYouKnowChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
 						break;
 				}
 			}
 			else
 			{
-				challengeManager = new WhatDoYouKnowChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate);
+				challengeManager = new WhatDoYouKnowChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
 			}
 			
 			result = challengeManager.validateAnswer(request);
@@ -189,19 +205,25 @@ public class GameController {
 			{
 				switch (request.getChallengeCategory()) {
 					case 1:
-						challengeManager = new WhatDoYouKnowChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate);
+						challengeManager = new WhatDoYouKnowChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
 						break;
 					case 2:
-						challengeManager = new BellChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate);
+						challengeManager = new BellChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
+						break;
+					case 3:
+						challengeManager = new WhoAmIChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
+						break;
+					case 4:
+						challengeManager = new AuctionChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
 						break;
 					default:
-						challengeManager = new WhatDoYouKnowChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate);
+						challengeManager = new WhatDoYouKnowChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
 						break;
 				}
 			}
 			else
 			{
-				challengeManager = new WhatDoYouKnowChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate);
+				challengeManager = new WhatDoYouKnowChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
 			}
 			
 			challengeManager.strike(request.getRoomId(), request.getSubmittedPlayer(), request.getQuestionId(), request.getCurrentQuestionIdx(), gameRoom);
@@ -214,8 +236,25 @@ public class GameController {
 		// notify players that no one answered the Bell question
 		messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+ "/bellNoAnswer", "");
 		
-		BellChallengeManager challengeManager = new BellChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate);
+		BellChallengeManager challengeManager = new BellChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
 		challengeManager.skipBell(request.getRoomId(), request.getQuestionId(), request.getCurrentQuestionIndex());
+	}
+	
+	@RequestMapping(value = "/whoAmITimerComplete", method = RequestMethod.POST, consumes="application/json")
+	public void whoAmITimerComplete(@RequestBody SkipBellRequest request) {
+		
+		// notify players that no one answered the Bell question
+		messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+ "/whoAmINoWinner", "");
+		
+		WhoAmIChallengeManager challengeManager = new WhoAmIChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
+		challengeManager.whoAmITimerComplete(request.getRoomId(), request.getQuestionId(), request.getCurrentQuestionIndex());
+	}
+	
+	@RequestMapping(value = "/auctionTimerComplete", method = RequestMethod.POST, consumes="application/json")
+	public void auctionTimerComplete(@RequestBody AuctionTimerCompleteRequest request) {
+		
+		AuctionChallengeManager challengeManager = new AuctionChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
+		challengeManager.auctionTimerComplete(request.getRoomId(), String.valueOf(request.getQuestionId()), request.getPlayerId(), request.getCurrentQuestionIndex());
 	}
 	
 	@RequestMapping(value = "/singleGameReport", method = RequestMethod.POST, consumes="application/json")
@@ -235,48 +274,56 @@ public class GameController {
 		WaitingGameVO waitingGame = gameRoomManager.getWaitingGameById(roomId);
 		if(waitingGame != null)
 		{
-			String player1Session = waitingGame.getSessionId();
+			if(playerId != null && waitingGame.getPlayer().getPlayerId() != null && playerId.equalsIgnoreCase(waitingGame.getPlayer().getPlayerId()))
+			{
+				result.setStatus(0);
+				result.setErrorMessage("Can't play with yourself!");
+			}
+			else
+			{
+				String player1Session = waitingGame.getSessionId();
 
-			// An available game room is found, add the player to the room as player2
-			Player player = new Player(playerId, username);
-        	GameRoom activeRoom = gameRoomManager.createActiveGameRoom(waitingGame, player);
-        	
-        	// Temporarily add the waiting session as active session. This is to handle the scenario where player1 was in the background and he didn't join
-        	webSocketManager.addActiveSession(player1Session, activeRoom.getPlayer1().getPlayerId());
-        	
-        	GameStartEvent gameStartEventP1 = new GameStartEvent();
-        	gameStartEventP1.setRoomId(activeRoom.getRoomId());
-        	gameStartEventP1.setPlayerId(activeRoom.getPlayer1().getPlayerId());
-        	
-        	GameStartEvent gameStartEventP2 = new GameStartEvent();
-        	gameStartEventP2.setRoomId(activeRoom.getRoomId());
-        	gameStartEventP2.setPlayerId(activeRoom.getPlayer2().getPlayerId());
-        	
-            // Notify both players in the room about the game start
-        	messagingTemplate.convertAndSend("/topic/game/start/" + activeRoom.getPlayer1().getUsername(), gameStartEventP1);
-            messagingTemplate.convertAndSend("/topic/game/start/" + activeRoom.getPlayer2().getUsername(), gameStartEventP2);
-            
-            String player1Name = activeRoom.getPlayer1().getUsername();
-        	if(player1Name.contains(" "))
-        	{
-        		player1Name = player1Name.replaceAll("\\s+", "_");
-        		
-        		// workaround for Android
-                messagingTemplate.convertAndSend("/topic/game/start/" + player1Name, gameStartEventP1);
-                System.out.println("Notification for room "+ activeRoom.getRoomId() +" has been sent to: " + player1Name);
-        	}
-            
-            // Send push notification to player1 who initiated the game
-            if(activeRoom.getPlayer1().getDeviceToken() != null)
-            {
-            	gameRoomManager.sendPushNotificationToWaitingPlayer(activeRoom.getPlayer1(), activeRoom.getRoomId());
-            }
-            
-            // Start answer timer
-            gameTimerManager.refreshGameTimer(activeRoom.getRoomId(), activeRoom.getPlayer1().getPlayerId(), String.valueOf(activeRoom.getQuestions().get(0).getId()), 1, null);
-            
-            result.setPlayerId(activeRoom.getPlayer2().getPlayerId());
-            result.setStatus(1);
+				// An available game room is found, add the player to the room as player2
+				Player player = new Player(playerId, username);
+	        	GameRoom activeRoom = gameRoomManager.createActiveGameRoom(waitingGame, player);
+	        	
+	        	// Temporarily add the waiting session as active session. This is to handle the scenario where player1 was in the background and he didn't join
+	        	webSocketManager.addActiveSession(player1Session, activeRoom.getPlayer1().getPlayerId());
+	        	
+	        	GameStartEvent gameStartEventP1 = new GameStartEvent();
+	        	gameStartEventP1.setRoomId(activeRoom.getRoomId());
+	        	gameStartEventP1.setPlayerId(activeRoom.getPlayer1().getPlayerId());
+	        	
+	        	GameStartEvent gameStartEventP2 = new GameStartEvent();
+	        	gameStartEventP2.setRoomId(activeRoom.getRoomId());
+	        	gameStartEventP2.setPlayerId(activeRoom.getPlayer2().getPlayerId());
+	        	
+	            // Notify both players in the room about the game start
+	        	messagingTemplate.convertAndSend("/topic/game/start/" + activeRoom.getPlayer1().getUsername(), gameStartEventP1);
+	            messagingTemplate.convertAndSend("/topic/game/start/" + activeRoom.getPlayer2().getUsername(), gameStartEventP2);
+	            
+	            String player1Name = activeRoom.getPlayer1().getUsername();
+	        	if(player1Name.contains(" "))
+	        	{
+	        		player1Name = player1Name.replaceAll("\\s+", "_");
+	        		
+	        		// workaround for Android
+	                messagingTemplate.convertAndSend("/topic/game/start/" + player1Name, gameStartEventP1);
+	                System.out.println("Notification for room "+ activeRoom.getRoomId() +" has been sent to: " + player1Name);
+	        	}
+	            
+	            // Send push notification to player1 who initiated the game
+	            if(activeRoom.getPlayer1().getDeviceToken() != null)
+	            {
+	            	gameRoomManager.sendPushNotificationToWaitingPlayer(activeRoom.getPlayer1(), activeRoom.getRoomId());
+	            }
+	            
+	            // Start answer timer
+	            gameTimerManager.refreshGameTimer(activeRoom.getRoomId(), activeRoom.getPlayer1().getPlayerId(), String.valueOf(activeRoom.getQuestions().get(0).getId()), 1, null);
+	            
+	            result.setPlayerId(activeRoom.getPlayer2().getPlayerId());
+	            result.setStatus(1);
+			}
 		}
 		else
 		{
@@ -290,7 +337,7 @@ public class GameController {
 	@RequestMapping(value = "/cancelGame", method = RequestMethod.POST, consumes="application/json")
 	public BaseResult cancelGame(@RequestParam(value = "roomId") String roomId, @RequestParam(name="submittedPlayerId",required=false) String submittedPlayerId) {
 	
-		System.out.println("Cancel game request has been received for room: " + roomId);
+		System.out.println("Cancel game request has been received for room: " + roomId + " and player: " + submittedPlayerId);
 		
 		BaseResult result = new BaseResult();
 		if(StringUtils.isNotEmpty(roomId))
@@ -328,7 +375,8 @@ public class GameController {
 						}
 					}
 					
-					gameRoomManager.persistGameRoom(gameRoom, gameReport);
+					GameVO savedGame = gameRoomManager.persistGameRoom(gameRoom, gameReport);
+					gameRoomManager.cancelActiveGame(String.valueOf(savedGame.getId()), submittedPlayerId);
 					
 					gameRoomManager.flushGame(gameRoom);
 					messagingTemplate.convertAndSend("/topic/game/"+gameRoom.getRoomId()+"/end", "");
