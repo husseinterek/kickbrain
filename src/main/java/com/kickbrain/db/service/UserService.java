@@ -13,4 +13,5 @@ public interface UserService {
 	public void addUserScore(long userId, int score);
 	public List<UserVO> retrieveUsersWithScores();
 	public void deleteUser(long id);
+	public void addUserPremiumPoints(long userId, float premiumPoints);
 }

@@ -262,59 +262,84 @@ public class WebSocketController {
 			messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/"+request.getQuestionId()+"/ringBell", request.getPlayerId());
 	    	gameTimerManager.refreshGameTimer(String.valueOf(request.getRoomId()), request.getPlayerId(), String.valueOf(request.getQuestionId()), 3, null);
 		}
-		else
-		{
-			System.out.println("Duplicate ring bell requests are captured");
-		}
     }
     
     @MessageMapping("/game/auction/end")
     public void endBid(EndBidRequest request) {
-    	
-    	GameRoom gameRoom = gameRoomManager.getGameRoomById(String.valueOf(request.getRoomId()));
-    	String winningBidder = request.getPlayerId().equals(gameRoom.getPlayer1().getPlayerId()) ? gameRoom.getPlayer2().getPlayerId() : gameRoom.getPlayer1().getPlayerId();
-    	
-    	EndBidEvent endBidEvent = new EndBidEvent();
-    	endBidEvent.setWinningBidder(winningBidder);
-    	
-    	int winningBid = request.getWinningBid() == 0 ? 1 : request.getWinningBid();
-    	endBidEvent.setWinningBid(winningBid);
-    	
-    	gameRoomManager.addBidToGameReport(String.valueOf(request.getRoomId()), String.valueOf(request.getQuestionId()), winningBid, winningBidder);
-    	
-    	messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/"+request.getQuestionId()+"/endBid", endBidEvent);
-		gameTimerManager.refreshGameTimer(String.valueOf(request.getRoomId()), request.getPlayerId(), String.valueOf(request.getQuestionId()), 2, null);
+    	try
+    	{
+    		GameRoom gameRoom = gameRoomManager.getGameRoomById(String.valueOf(request.getRoomId()));
+    		if(gameRoom != null)
+    		{
+    			// if the winning bid parameter is equal to the max possible answers, then we consider the winning bidder as the submitting player
+            	int maxPossibleAnswers = gameRoom.getAnswersByQuestion().get(request.getQuestionId()).size();
+            	
+            	String winningBidder = null;
+            	if(request.getWinningBid() == maxPossibleAnswers)
+            	{
+            		winningBidder = request.getPlayerId();
+            	}
+            	else
+            	{
+            		winningBidder = request.getPlayerId().equals(gameRoom.getPlayer1().getPlayerId()) ? gameRoom.getPlayer2().getPlayerId() : gameRoom.getPlayer1().getPlayerId();
+            	}
+            	
+            	EndBidEvent endBidEvent = new EndBidEvent();
+            	endBidEvent.setWinningBidder(winningBidder);
+            	
+            	int winningBid = request.getWinningBid() == 0 ? 1 : request.getWinningBid();
+            	endBidEvent.setWinningBid(winningBid);
+            	
+            	gameRoomManager.addBidToGameReport(String.valueOf(request.getRoomId()), String.valueOf(request.getQuestionId()), winningBid, winningBidder);
+            	
+            	messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/"+request.getQuestionId()+"/endBid", endBidEvent);
+        		gameTimerManager.refreshGameTimer(String.valueOf(request.getRoomId()), request.getPlayerId(), String.valueOf(request.getQuestionId()), 2, null);
+    		}
+    	}
+    	catch(Exception ex)
+    	{
+    		System.out.println("An exception has been occurred while processing endBid request for player: " + request.getPlayerId() + " ,question: " + request.getQuestionId() + " and room: " + request.getRoomId());
+    		ex.printStackTrace();
+    	}
     }
     
     @MessageMapping("/game/auction/submit")
     public void submitBid(SubmitBidRequest request) {
     	
-    	gameRoomManager.addBidToGameReport(String.valueOf(request.getRoomId()), String.valueOf(request.getQuestionId()), request.getBid(), request.getPlayerId());
-    	
-    	GameRoom gameRoom = gameRoomManager.getGameRoomById(String.valueOf(request.getRoomId()));
-    	String currentTurn = request.getPlayerId().equals(gameRoom.getPlayer1().getPlayerId()) ? gameRoom.getPlayer2().getPlayerId() : gameRoom.getPlayer1().getPlayerId();
-    	
-    	SubmitBidEvent submitBidEvent = new SubmitBidEvent();
-    	submitBidEvent.setCurrentTurn(currentTurn);
-    	submitBidEvent.setOpponentLatestBid(request.getBid());
-    	
-    	Map<String, Integer> playersBids = gameRoomManager.getPlayerBidsFromGameReport(String.valueOf(request.getRoomId()), String.valueOf(request.getQuestionId()));
-    	Integer currentTurnLatestBid = playersBids.get(currentTurn) == null ? 0 : playersBids.get(currentTurn);
-    	submitBidEvent.setCurrentTurnLatestBid(currentTurnLatestBid);
-    	
-    	messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/"+request.getQuestionId()+"/submitBid", submitBidEvent);
-    	
-    	int bidTimer = 0;
-    	GameConfig gameConfig = xmlConfigurationManager.getAppConfigurationBean().getOnlineGameConfig();
-		List<ChallengeConfig> challenges = gameConfig.getChallenges();
-		for(ChallengeConfig challenge : challenges)
-		{
-			if(challenge.getCategory() == 2)
-			{
-				bidTimer = challenge.getBidTimer();
-			}
-		}
-		gameTimerManager.refreshGameTimer(String.valueOf(request.getRoomId()), request.getPlayerId(), String.valueOf(request.getQuestionId()), 2, bidTimer);
+    	try
+    	{
+    		gameRoomManager.addBidToGameReport(String.valueOf(request.getRoomId()), String.valueOf(request.getQuestionId()), request.getBid(), request.getPlayerId());
+        	
+        	GameRoom gameRoom = gameRoomManager.getGameRoomById(String.valueOf(request.getRoomId()));
+        	String currentTurn = request.getPlayerId().equals(gameRoom.getPlayer1().getPlayerId()) ? gameRoom.getPlayer2().getPlayerId() : gameRoom.getPlayer1().getPlayerId();
+        	
+        	SubmitBidEvent submitBidEvent = new SubmitBidEvent();
+        	submitBidEvent.setCurrentTurn(currentTurn);
+        	submitBidEvent.setOpponentLatestBid(request.getBid());
+        	
+        	Map<String, Integer> playersBids = gameRoomManager.getPlayerBidsFromGameReport(String.valueOf(request.getRoomId()), String.valueOf(request.getQuestionId()));
+        	Integer currentTurnLatestBid = playersBids.get(currentTurn) == null ? 0 : playersBids.get(currentTurn);
+        	submitBidEvent.setCurrentTurnLatestBid(currentTurnLatestBid);
+        	
+        	messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/"+request.getQuestionId()+"/submitBid", submitBidEvent);
+        	
+        	int bidTimer = 0;
+        	GameConfig gameConfig = xmlConfigurationManager.getAppConfigurationBean().getOnlineGameConfig();
+    		List<ChallengeConfig> challenges = gameConfig.getChallenges();
+    		for(ChallengeConfig challenge : challenges)
+    		{
+    			if(challenge.getCategory() == 2)
+    			{
+    				bidTimer = challenge.getBidTimer();
+    			}
+    		}
+    		gameTimerManager.refreshGameTimer(String.valueOf(request.getRoomId()), request.getPlayerId(), String.valueOf(request.getQuestionId()), 2, bidTimer);
+    	}
+    	catch(Exception ex)
+    	{
+    		System.out.println("An exception has occurred while processing submitBid request for player: " + request.getPlayerId() + " ,question: " + request.getQuestionId() + " and room: " + request.getRoomId());
+    		ex.printStackTrace();
+    	}
     }
     
     private void waitForSecondPlayer(GameRoom gameRoom) {
@@ -342,7 +367,6 @@ public class WebSocketController {
     public void handlePingMessage(SimpMessageHeaderAccessor headerAccessor) {
     	String sessionId = headerAccessor.getSessionId();
     	
-    	System.out.println("Ping request is received from session: " + sessionId);
     	websocketManager.handlePingMessage(sessionId);
     }
     

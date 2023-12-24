@@ -52,10 +52,12 @@ public class XMLConfigurationManager {
 			int answerFullMatchRatio = xmlConfiguration.getInt("answerFullMatchRatio");
 			int answerPartMatchRatio = xmlConfiguration.getInt("answerPartMatchRatio");
 			int delayNextChallenge = xmlConfiguration.getInt("delayNextChallenge");
+			float premiumPointsRatio = xmlConfiguration.getFloat("premiumPointsRatio");
 			
 			appConfiguration.setAnswerFullMatchRatio(answerFullMatchRatio);
 			appConfiguration.setAnswerPartMatchRatio(answerPartMatchRatio);
 			appConfiguration.setDelayNextChallenge(delayNextChallenge);
+			appConfiguration.setPremiumPointsRatio(premiumPointsRatio);
 			
 			GameConfig onlineGameConfig = new GameConfig();
 			HierarchicalConfiguration onlineConfig = xmlConfiguration.configurationAt("onlineGame");

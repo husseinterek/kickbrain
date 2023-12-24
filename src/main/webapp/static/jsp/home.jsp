@@ -116,7 +116,6 @@
 														<li><spring:message code="home.challenge2Rule2"/></li>
 														<li><spring:message code="home.challenge2Rule3"/></li>
 														<li><spring:message code="home.challenge2Rule4"/></li>
-														<li><spring:message code="home.challenge2Rule5"/></li>
 													</ol>
 												</div>
 											</div>

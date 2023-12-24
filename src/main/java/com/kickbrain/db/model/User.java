@@ -48,6 +48,9 @@ public class User implements Serializable {
 	
 	@Column(name = "TOTAL_SCORE")
 	private int totalScore;
+	
+	@Column(name = "PREMIUM_POINTS")
+	private float premiumPoints;
 
 	public long getId() {
 		return id;
@@ -95,6 +98,14 @@ public class User implements Serializable {
 	
 	public void setTotalScore(int totalScore) {
 		this.totalScore = totalScore;
+	}
+	
+	public float getPremiumPoints() {
+		return premiumPoints;
+	}
+	
+	public void setPremiumPoints(float premiumPoints) {
+		this.premiumPoints = premiumPoints;
 	}
 	
 }

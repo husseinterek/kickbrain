@@ -1,5 +1,6 @@
 package com.kickbrain.manager;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -13,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -32,6 +34,7 @@ import com.kickbrain.beans.GameRoom;
 import com.kickbrain.beans.GameVO;
 import com.kickbrain.beans.GamesHistoryResult;
 import com.kickbrain.beans.Player;
+import com.kickbrain.beans.PremiumPointsHistoryVO;
 import com.kickbrain.beans.QuestionResult;
 import com.kickbrain.beans.SingleGameReport;
 import com.kickbrain.beans.UserVO;
@@ -50,6 +53,7 @@ public class GameRoomManager {
 	private Map<String, GameRoom> activeGameRooms = new ConcurrentHashMap<String, GameRoom>();
 	//private Map<String, GameRoom> waitingGameRooms = new ConcurrentHashMap<String, GameRoom>();
 	private Map<String, GameReport> gameReports = new ConcurrentHashMap<String, GameReport>();
+	private DecimalFormat df = new DecimalFormat("0.00");
 	
 	@Autowired
 	private QuestionService questionService;
@@ -571,23 +575,34 @@ public class GameRoomManager {
 
 	public void addPlayerSessionToGame(String playerId, String session) {
 		
-		GameRoom gameRoom = getGameByPlayerId(playerId);
-		List<String> playersSessions = gameRoom.getPlayersSessions();
-		if(playersSessions == null)
+		try
 		{
-			playersSessions = new ArrayList<String>();
+			GameRoom gameRoom = getGameByPlayerId(playerId);
+			if(gameRoom != null)
+			{
+				List<String> playersSessions = gameRoom.getPlayersSessions();
+				if(playersSessions == null)
+				{
+					playersSessions = new ArrayList<String>();
+				}
+				playersSessions.add(session);
+				gameRoom.setPlayersSessions(playersSessions);
+				
+				activeGameRooms.put(gameRoom.getRoomId(), gameRoom);
+			}
 		}
-		playersSessions.add(session);
-		gameRoom.setPlayersSessions(playersSessions);
-		
-		activeGameRooms.put(gameRoom.getRoomId(), gameRoom);
+		catch(Exception ex)
+		{
+			System.out.println("An error ocurred while adding the session of player: " + playerId);
+			ex.printStackTrace();
+		}
 	}
 	
 	public void sendPushNotificationToWaitingPlayer(Player player, String roomId)
 	{
 		try
 		{
-			if(player.getDeviceToken() != null)
+			if(StringUtils.isNotEmpty(player.getDeviceToken()))
 			{
 				String notificationContent = messageSource.getMessage("waitingRoom.pushNotificationContent", null, Locale.forLanguageTag("ar"));
 				String notificationSubject = messageSource.getMessage("waitingRoom.pushNotificationSubject", null, Locale.forLanguageTag("ar"));
@@ -615,6 +630,7 @@ public class GameRoomManager {
 		}
 		catch(Exception ex)
 		{
+			System.out.println("Failed to send push notification to player: " + player.getPlayerId() + " , token: "+player.getDeviceToken()+" and room: " + roomId);
 			ex.printStackTrace();
 		}
 	}
@@ -631,67 +647,92 @@ public class GameRoomManager {
 	
 	public GameVO persistGameRoom(GameRoom gameRoom, GameReport gameReport)
 	{
-		GameVO gameVO = new GameVO();
-		gameVO.setType(2);
-		
-		gameVO.setPlayer1(gameRoom.getPlayer1());
-		gameVO.setPlayer1Score(gameReport.getPlayersScore().get(gameRoom.getPlayer1().getPlayerId()));
-		
-		gameVO.setPlayer2(gameRoom.getPlayer2());
-		gameVO.setPlayer2Score(gameReport.getPlayersScore().get(gameRoom.getPlayer2().getPlayerId()));
-		
-		if(gameRoom.getPlayer1().getFirstName() == null && gameRoom.getPlayer1().getLastName() == null)
+		GameVO savedGame = null;
+		try
 		{
-			gameVO.setAnonymousPlayer1(gameRoom.getPlayer1().getUsername());
-		}
-		
-		if(gameRoom.getPlayer2().getFirstName() == null && gameRoom.getPlayer2().getLastName() == null)
-		{
-			gameVO.setAnonymousPlayer2(gameRoom.getPlayer2().getUsername());
-		}
-		
-		List<GameDetailsVO> gameDetailsVOLst = new ArrayList<GameDetailsVO>();
-		Map<String, Map<String, List<AnswerVO>>> playersAnswersByQuestion = gameReport.getPlayersAnswersByQuestion();
-		
-		Map<String, String> questionsResult = gameReport.getQuestionsResult();
-		for(Entry<String, String> entry : questionsResult.entrySet())
-		{
-			String questionId = entry.getKey();
-			String playerId = entry.getValue();
+			GameVO gameVO = new GameVO();
+			gameVO.setType(2);
 			
-			GameDetailsVO gameDetailsVO = new GameDetailsVO();
+			gameVO.setPlayer1(gameRoom.getPlayer1());
+			gameVO.setPlayer1Score(gameReport.getPlayersScore().get(gameRoom.getPlayer1().getPlayerId()));
 			
-			QuestionVO questionVO = new QuestionVO();
-			questionVO.setId( Integer.valueOf(questionId));
-			gameDetailsVO.setQuestion(questionVO);
+			gameVO.setPlayer2(gameRoom.getPlayer2());
+			gameVO.setPlayer2Score(gameReport.getPlayersScore().get(gameRoom.getPlayer2().getPlayerId()));
 			
-			gameDetailsVO.setWinnerId(playerId);
-			
-			Map<String, List<AnswerVO>> playersAnswers = playersAnswersByQuestion.get(questionId);
-			if(playersAnswers != null)
+			if(gameRoom.getPlayer1().getFirstName() == null && gameRoom.getPlayer1().getLastName() == null)
 			{
-				List<AnswerVO> player1Answers = playersAnswers.get(gameRoom.getPlayer1().getPlayerId());
-				List<AnswerVO> player2Answers = playersAnswers.get(gameRoom.getPlayer2().getPlayerId());
-				
-				gameDetailsVO.setPlayer1Score(player1Answers != null ? player1Answers.size() : 0);
-				gameDetailsVO.setPlayer2Score(player2Answers != null ? player2Answers.size() : 0);
+				gameVO.setAnonymousPlayer1(gameRoom.getPlayer1().getUsername());
 			}
 			
-			gameDetailsVOLst.add(gameDetailsVO);
+			if(gameRoom.getPlayer2().getFirstName() == null && gameRoom.getPlayer2().getLastName() == null)
+			{
+				gameVO.setAnonymousPlayer2(gameRoom.getPlayer2().getUsername());
+			}
+			
+			List<GameDetailsVO> gameDetailsVOLst = new ArrayList<GameDetailsVO>();
+			Map<String, Map<String, List<AnswerVO>>> playersAnswersByQuestion = gameReport.getPlayersAnswersByQuestion();
+			
+			Map<String, String> questionsResult = gameReport.getQuestionsResult();
+			for(Entry<String, String> entry : questionsResult.entrySet())
+			{
+				String questionId = entry.getKey();
+				String playerId = entry.getValue();
+				
+				GameDetailsVO gameDetailsVO = new GameDetailsVO();
+				
+				QuestionVO questionVO = new QuestionVO();
+				questionVO.setId( Integer.valueOf(questionId));
+				gameDetailsVO.setQuestion(questionVO);
+				
+				gameDetailsVO.setWinnerId(playerId);
+				
+				Map<String, List<AnswerVO>> playersAnswers = playersAnswersByQuestion.get(questionId);
+				if(playersAnswers != null)
+				{
+					List<AnswerVO> player1Answers = playersAnswers.get(gameRoom.getPlayer1().getPlayerId());
+					List<AnswerVO> player2Answers = playersAnswers.get(gameRoom.getPlayer2().getPlayerId());
+					
+					gameDetailsVO.setPlayer1Score(player1Answers != null ? player1Answers.size() : 0);
+					gameDetailsVO.setPlayer2Score(player2Answers != null ? player2Answers.size() : 0);
+				}
+				
+				gameDetailsVOLst.add(gameDetailsVO);
+			}
+			
+			gameVO.setGameDetails(gameDetailsVOLst);
+			
+			savedGame = gameService.createGame(gameVO);
+			
+			if(gameVO.getAnonymousPlayer1() == null)
+			{
+				int gameScore = gameReport.getPlayersScore().get(gameRoom.getPlayer1().getPlayerId());
+				long playerId = Long.valueOf(gameRoom.getPlayer1().getPlayerId());
+				userService.addUserScore(playerId, gameScore);
+				
+				// Convert game score to premium points
+				if(gameScore > 0)
+				{
+					savePremiumPoints(gameScore, playerId, savedGame.getId());
+				}
+			}
+			
+			if(gameVO.getAnonymousPlayer2() == null)
+			{
+				int gameScore = gameReport.getPlayersScore().get(gameRoom.getPlayer2().getPlayerId());
+				long playerId = Long.valueOf(gameRoom.getPlayer2().getPlayerId());
+				userService.addUserScore(playerId, gameScore);
+				
+				// Convert game score to premium points
+				if(gameScore > 0)
+				{
+					savePremiumPoints(gameScore, playerId, savedGame.getId());
+				}
+			}
 		}
-		
-		gameVO.setGameDetails(gameDetailsVOLst);
-		
-		GameVO savedGame = gameService.createGame(gameVO);
-		
-		if(gameVO.getAnonymousPlayer1() == null)
+		catch(Exception ex)
 		{
-			userService.addUserScore(Long.valueOf(gameRoom.getPlayer1().getPlayerId()), gameReport.getPlayersScore().get(gameRoom.getPlayer1().getPlayerId()));
-		}
-		
-		if(gameVO.getAnonymousPlayer2() == null)
-		{
-			userService.addUserScore(Long.valueOf(gameRoom.getPlayer2().getPlayerId()), gameReport.getPlayersScore().get(gameRoom.getPlayer2().getPlayerId()));
+			System.out.println("An error occurred while persisting game: " + gameRoom.getRoomId());
+			ex.printStackTrace();
 		}
 		
 		return savedGame;
@@ -905,5 +946,27 @@ public class GameRoomManager {
 		}
 		
 		return storeQuestions;
+	}
+	
+	private void savePremiumPoints(int gameScore, long playerId, long roomId)
+	{
+		// Convert the earned game score to premium points
+		float premiumPointsRatio = xmlConfigurationManager.getAppConfigurationBean().getPremiumPointsRatio();
+		float premiumPoints = gameScore * premiumPointsRatio;
+		premiumPoints = Float.valueOf(df.format(premiumPoints));
+		
+		// Add premium points to the user's record
+		userService.addUserPremiumPoints(playerId, premiumPoints);
+		
+		// Save history record
+		PremiumPointsHistoryVO premiumPointsHistoryVO = new PremiumPointsHistoryVO();
+		premiumPointsHistoryVO.setPlayerId(playerId);
+		premiumPointsHistoryVO.setGameId(roomId);
+		premiumPointsHistoryVO.setScorePoints(gameScore);
+		premiumPointsHistoryVO.setPremiumPoints(premiumPoints);
+		premiumPointsHistoryVO.setConversionRatio(premiumPointsRatio);
+		premiumPointsHistoryVO.setCreationDate(new Date());
+		
+		gameService.addPremiumPointsHistoryRecord(premiumPointsHistoryVO);
 	}
 }

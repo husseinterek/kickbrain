@@ -1,5 +1,6 @@
 package com.kickbrain.manager;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +21,8 @@ public class UserManager{
 	
 	@Autowired
 	private GameService gameService;
+	
+	private DecimalFormat df = new DecimalFormat("0.00");
 	
 	public SubscribeResult subscribe(SubscribeRequest request)
 	{
@@ -51,7 +54,13 @@ public class UserManager{
 	
 	public UserVO retrieveUser(long id)
 	{
-		return userService.findById(id);
+		UserVO user = userService.findById(id);
+		
+		float premiumPoints = user.getPremiumPoints();
+		premiumPoints = Float.valueOf(df.format(premiumPoints));
+		user.setPremiumPoints(premiumPoints);
+		
+		return user;
 	}
 	
 	public void modifyUser(String id, UserVO user)

@@ -74,7 +74,6 @@
 					</div>
 					<div class='col-8 text-center pt-2'>
 						<h4 style='color: #F0F0F0'><spring:message code="home.title"/></h4>
-						<span style='font-size: 9px; color: #FFA500'><spring:message code="home.betaVersion"/></span>
 						<p class='pt-1' style='color: #F8F8F8; font-size: 8px'><spring:message code="home.subtitle"/></p>
 					</div>
 					<div class='col-2 pl-0 pr-0'>
@@ -84,69 +83,77 @@
 				</div>
 				<div class='row h-100 m-1' id='game-rules'>
 					<div class='col-12'>
-						<div class='row'>
-							<div class='col-12'>
-								<div class='card-group'>
-									<div class='card game-rules-card rounded game-rules-card-selected' id='whatDoYouKnow' style='background-color: #EDEDED;'>
-										<div class="card-content">
-											<div class="card-body" style='color: #000000;'>
-												<div class="bs-callout-warning">
-													<p style='font-size: 10px;'><strong><spring:message code="home.challenge1Title"/></strong></p>
-													<p id='challengeRulesTitle' style='font-size: 8px;'><span style='text-decoration:underline'><spring:message code="home.challenge1RulesTitle"/></span></p>
-													<ol id='challengeRules' style='font-size: 8px;'>
-														<li><spring:message code="home.challenge1Rule1"/></li>
-														<li><spring:message code="home.challenge1Rule2"/></li>
-														<li><spring:message code="home.challenge1Rule3"/></li>
-														<li><spring:message code="home.challenge1Rule4"/></li>
-														<li><spring:message code="home.challenge1Rule5"/></li>
-													</ol>
+								<div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
+									<div class="carousel-inner">
+										<div class='card-group'>
+										<div class='carousel-item active card game-rules-card rounded game-rules-card-selected' id='whatDoYouKnow' style='background-color: #EDEDED;'>
+											<div class="d-block w-100 card-content">
+												<div class="card-body" style='color: #000000;'>
+													<div class="bs-callout-warning">
+														<p style='font-size: 11px;'><strong><spring:message code="home.challenge1Title"/></strong></p>
+														<p id='challengeRulesTitle' style='font-size: 9px;'><span style='text-decoration:underline'><spring:message code="home.challenge1RulesTitle"/></span></p>
+														<ol id='challengeRules' style='font-size: 9px;'>
+															<li><spring:message code="home.challenge1Rule1"/></li>
+															<li><spring:message code="home.challenge1Rule2"/></li>
+															<li><spring:message code="home.challenge1Rule3"/></li>
+															<li><spring:message code="home.challenge1Rule4"/></li>
+															<li><spring:message code="home.challenge1Rule5"/></li>
+														</ol>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class='carousel-item card game-rules-card rounded game-rules-card-selected' id='auction' style='background-color: #EDEDED; cursor: default !important'>
+											<div class="d-block w-100 card-content">
+												<div class="card-body" style='color: #000000;'>
+													<div class="bs-callout-warning">
+														<p style='font-size: 11px;'><strong><spring:message code="home.challenge2Title"/></strong></p>
+														<p id='challengeRulesTitle' style='font-size: 9px;'><span style='text-decoration:underline'><spring:message code="home.challenge2RulesTitle"/></span></p>
+														<ol id='challengeRules' style='font-size: 9px;'>
+															<li><spring:message code="home.challenge2Rule1"/></li>
+															<li><spring:message code="home.challenge2Rule2"/></li>
+															<li><spring:message code="home.challenge2Rule3"/></li>
+															<li><spring:message code="home.challenge2Rule4"/></li>
+														</ol>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class='carousel-item card game-rules-card rounded game-rules-card-selected' id='auction' style='background-color: #EDEDED; cursor: default !important'>
+											<div class="d-block w-100 card-content">
+												<div class="card-body" style='color: #000000;'>
+													<div class="bs-callout-warning">
+														<p style='font-size: 11px;'><strong><spring:message code="home.challenge3Title"/></strong></p>
+														<p id='challengeRulesTitle' style='font-size: 9px;'><span style='text-decoration:underline'><spring:message code="home.challenge3RulesTitle"/></span></p>
+														<ol id='challengeRules' style='font-size: 9px;'>
+															<li><spring:message code="home.challenge3Rule1"/></li>
+															<li><spring:message code="home.challenge3Rule2"/></li>
+															<li><spring:message code="home.challenge3Rule3"/></li>
+															<li><spring:message code="home.challenge3Rule4"/></li>
+														</ol>
+													</div>
 												</div>
 											</div>
 										</div>
 									</div>
-									<div class='card game-rules-card rounded' id='auction' style='background-color: #c5c5c5; cursor: default !important; margin-top: 5px'>
-										<div class="card-content position-relative">
-											<div class='text-right'>
-												<span class="badge badge-pill badge-border badge-square position-absolute coming-soon-badge" style='width: 70px; font-size: 10px;height: 20px;'><spring:message code="home.comingSoon"/></span>	
-											</div>
-											<div class="card-body" style='color: #000000;'>
-												<div class="bs-callout-warning">
-													<p style='font-size: 10px;'><strong><spring:message code="home.challenge2Title"/></strong></p>
-													<p id='challengeRulesTitle' style='font-size: 8px;'><span style='text-decoration:underline'><spring:message code="home.challenge2RulesTitle"/></span></p>
-													<ol id='challengeRules' style='font-size: 8px;'>
-														<li><spring:message code="home.challenge2Rule1"/></li>
-														<li><spring:message code="home.challenge2Rule2"/></li>
-														<li><spring:message code="home.challenge2Rule3"/></li>
-														<li><spring:message code="home.challenge2Rule4"/></li>
-														<li><spring:message code="home.challenge2Rule5"/></li>
-													</ol>
-												</div>
-											</div>
-										</div>
+							</div>
+							<div class='row mt-2'>
+								<div class='col-12'>
+									<div>
+										<span style='color: #F8F8F8; font-size: 16px; font-style: italic'><spring:message code="home.reflectingUpdates"/></span>
+									</div>
+									<div class='mt-1'>
+										<span style='color: #ffa500; font-size: 16px;'><spring:message code="home.redirectToMobile"/></span>
+									</div>
+									<div class='mt-1 text-center'>
+										<a class="img-fluid" href='https://apps.apple.com/sa/app/kickbrain/id6464127361' target='_blank'>
+											<img style='width: 150px' src="<c:url value="${pageContext.request.contextPath}/static/images/download-app-store.png"/>">
+										</a>
+										<a class="img-fluid" href='https://play.google.com/store/apps/details?id=com.app.kickbrain' target='_blank'>
+											<img style='width: 150px' src="<c:url value="${pageContext.request.contextPath}/static/images/download-google-play.png"/>">
+										</a>
 									</div>
 								</div>
-							</div>
-							<div class='col-12'>
-								<div>
-									<spring:message code="home.usernamePlaceholder" var="titleLabel" />
-									<input id='username' type="text" class="form-control" placeholder="${titleLabel}" style='background-color: #EDEDED; color: #000000'>
-								</div>
-								<div class='mt-1'>
-									<button id='newOnlineGameBtn' type="button" class="spinner-button btn" style='background-color: #FFA500 !important; border-color: #FFA500 !important; color: #F0F0F0'>
-										<i class='la la-globe'></i>
-										<spring:message code="home.startOnlineGameBtn"/>
-									</button>
-									<button id='newSingleGameBtn' type="button" class="btn btn-secondary ml-1" style='font-size: 10px'>
-										<i class='la la-user'></i>
-										<spring:message code="home.startSingleGameBtn"/>
-									</button>
-								</div>
-								<div style='padding-top: 5px;'>
-									<label style='color: #F8F8F8; font-size: 8px;'><spring:message code="home.gameBtnAlert"/></label>
-								</div>
-							</div>
-							<div class='col-12 text-center'>
-								<span style='font-size: 10px; color: #fbc02d; font-style: italic'><spring:message code="home.mobileVersionLabel"/></span>
 							</div>
 						</div>
 					</div>

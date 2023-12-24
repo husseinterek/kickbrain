@@ -31,40 +31,47 @@ public class AuctionChallengeManager extends ChallengeManager{
 	public ValidateAnswerResult processCorrectAnswer(ValidateAnswerRequest request, ValidateAnswerResult result, GameRoom gameRoom, AnswerVO matchingAnswer, int numOfPossibleAnswers, List<AnswerVO> submittedPlayerAnswers, List<AnswerVO> opponentPlayerAnswers) {
 
 		result.setStatus(1);
-		
-		List<AnswerVO> answers = gameRoomManager.getPlayerAnswersByGameAndQuestion(request.getRoomId(), request.getQuestionId(), request.getSubmittedPlayerId());
-		int nbAnswersProvided = answers.size();
-		
-		// Get player's total bid
-		Map<String, Integer> playersBids = gameRoomManager.getPlayerBidsFromGameReport(request.getRoomId(), request.getQuestionId());
-		int bid = playersBids.get(request.getSubmittedPlayerId());
-		
-		// If player already gave all answers as per his bid, then finish the question and give him the point
-		if(nbAnswersProvided == bid)
+		try
 		{
-			result.setAllAnswersProvided(true);
-			result.setWinner(request.getSubmittedPlayerId());
-		}
-		result.setCurrentTurn(request.getSubmittedPlayerId());
-		
-		messagingTemplate.convertAndSend("/topic/game/" + request.getRoomId() + "/answer", result);
-		
-		if(nbAnswersProvided == bid)
-		{
-			// stop the timer
-			gameTimerManager.removeGameTimer(request.getRoomId());
+			List<AnswerVO> answers = gameRoomManager.getPlayerAnswersByGameAndQuestion(request.getRoomId(), request.getQuestionId(), request.getSubmittedPlayerId());
+			int nbAnswersProvided = answers.size();
 			
-			// Schedule the 'proceed' function to run in a separate thread after 2 seconds
-			executor.execute(() -> {
-	            try {
-	                Thread.sleep(2000);
-	                
-	                gameRoomManager.addPlayerScoreToGameReport(request.getRoomId(), request.getSubmittedPlayerId(), request.getQuestionId());
-    				proceed(gameRoom, request.getQuestionId(), request.getCurrentQuestionIdx(), request.getSubmittedPlayerId(), request.getChallengeCategory());
-	            } catch (InterruptedException e) {
-	                Thread.currentThread().interrupt();
-	            }
-	        });
+			// Get player's total bid
+			Map<String, Integer> playersBids = gameRoomManager.getPlayerBidsFromGameReport(request.getRoomId(), request.getQuestionId());
+			int bid = playersBids.get(request.getSubmittedPlayerId());
+			
+			// If player already gave all answers as per his bid, then finish the question and give him the point
+			if(nbAnswersProvided == bid)
+			{
+				result.setAllAnswersProvided(true);
+				result.setWinner(request.getSubmittedPlayerId());
+			}
+			result.setCurrentTurn(request.getSubmittedPlayerId());
+			
+			messagingTemplate.convertAndSend("/topic/game/" + request.getRoomId() + "/answer", result);
+			
+			if(nbAnswersProvided == bid)
+			{
+				// stop the timer
+				gameTimerManager.removeGameTimer(request.getRoomId());
+				
+				// Schedule the 'proceed' function to run in a separate thread after 2 seconds
+				executor.execute(() -> {
+		            try {
+		                Thread.sleep(2000);
+		                
+		                gameRoomManager.addPlayerScoreToGameReport(request.getRoomId(), request.getSubmittedPlayerId(), request.getQuestionId());
+	    				proceed(gameRoom, request.getQuestionId(), request.getCurrentQuestionIdx(), request.getSubmittedPlayerId(), request.getChallengeCategory());
+		            } catch (InterruptedException e) {
+		                Thread.currentThread().interrupt();
+		            }
+		        });
+			}
+		}
+		catch(Exception ex)
+		{
+			System.out.println("An exception has occurred while processing auction correct answer for player: " + request.getSubmittedPlayerId() + " ,room: " + request.getRoomId() + " and question: " + request.getQuestionId());
+			ex.printStackTrace();
 		}
 		
 		return result;
@@ -80,17 +87,28 @@ public class AuctionChallengeManager extends ChallengeManager{
 	
 	public void auctionTimerComplete(String roomId, String questionId, String submittedPlayerId, int currentQuestionIndex)
 	{
-		// If timer completes without giving all bid answers, then the opponent gets the point of the question
-		GameRoom gameRoom = gameRoomManager.getGameRoomById(roomId);
-    	String winningPlayer = submittedPlayerId.equals(gameRoom.getPlayer1().getPlayerId()) ? gameRoom.getPlayer2().getPlayerId() : gameRoom.getPlayer1().getPlayerId();
-		
-    	gameRoomManager.addPlayerScoreToGameReport(roomId, winningPlayer, questionId);
-    	
-    	messagingTemplate.convertAndSend("/topic/game/" + roomId + "/"+questionId+"/"+winningPlayer+"/bidQuestionWinner", "");
-		
-		if(gameRoom != null)
+		try
 		{
-			proceed(gameRoom, String.valueOf(questionId), currentQuestionIndex, submittedPlayerId, 2);
+			// If timer completes without giving all bid answers, then the opponent gets the point of the question
+			GameRoom gameRoom = gameRoomManager.getGameRoomById(roomId);
+			if(gameRoom != null)
+			{
+				String winningPlayer = submittedPlayerId.equals(gameRoom.getPlayer1().getPlayerId()) ? gameRoom.getPlayer2().getPlayerId() : gameRoom.getPlayer1().getPlayerId();
+				
+		    	gameRoomManager.addPlayerScoreToGameReport(roomId, winningPlayer, questionId);
+		    	
+		    	messagingTemplate.convertAndSend("/topic/game/" + roomId + "/"+questionId+"/"+winningPlayer+"/bidQuestionWinner", "");
+				
+				if(gameRoom != null)
+				{
+					proceed(gameRoom, String.valueOf(questionId), currentQuestionIndex, submittedPlayerId, 2);
+				}
+			}
+		}
+		catch(Exception ex)
+		{
+			System.out.println("An error occurred while processing the auctionTimerComplete request for room: " + roomId + " and player: " + submittedPlayerId);
+			ex.printStackTrace();
 		}
 	}
 }

@@ -5,6 +5,7 @@ public class AppConfiguration {
 	private int answerFullMatchRatio;
 	private int answerPartMatchRatio;
 	private int delayNextChallenge;
+	private float premiumPointsRatio;
 	private GameConfig onlineGameConfig;
 
 	public int getAnswerFullMatchRatio() {
@@ -37,6 +38,14 @@ public class AppConfiguration {
 
 	public void setDelayNextChallenge(int delayNextChallenge) {
 		this.delayNextChallenge = delayNextChallenge;
+	}
+
+	public float getPremiumPointsRatio() {
+		return premiumPointsRatio;
+	}
+
+	public void setPremiumPointsRatio(float premiumPointsRatio) {
+		this.premiumPointsRatio = premiumPointsRatio;
 	}
 
 }

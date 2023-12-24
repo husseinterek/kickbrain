@@ -32,6 +32,7 @@ import com.kickbrain.beans.GameStartEvent;
 import com.kickbrain.beans.GameVO;
 import com.kickbrain.beans.JoinGameResult;
 import com.kickbrain.beans.Player;
+import com.kickbrain.beans.QuestionAnswersResult;
 import com.kickbrain.beans.QuestionResult;
 import com.kickbrain.beans.SingleGameReport;
 import com.kickbrain.beans.SkipBellRequest;
@@ -83,6 +84,7 @@ public class GameController {
 	private ThreadPoolTaskExecutor executor;
 	
 	private Map<String, Long> validateAnswerRequests = new ConcurrentHashMap<String, Long>();
+	private Map<String, Long> joinRoomRequests = new ConcurrentHashMap<String, Long>();
 	
 	@RequestMapping(value = "/validateAnswer", method = RequestMethod.POST, consumes="application/json")
 	public ValidateAnswerResult validateAnswer(@RequestBody ValidateAnswerRequest request) {
@@ -111,13 +113,13 @@ public class GameController {
 						challengeManager = new WhatDoYouKnowChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
 						break;
 					case 2:
-						challengeManager = new BellChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
+						challengeManager = new AuctionChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
 						break;
 					case 3:
-						challengeManager = new WhoAmIChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
+						challengeManager = new BellChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
 						break;
 					case 4:
-						challengeManager = new AuctionChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
+						challengeManager = new WhoAmIChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
 						break;
 					default:
 						challengeManager = new WhatDoYouKnowChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
@@ -208,13 +210,13 @@ public class GameController {
 						challengeManager = new WhatDoYouKnowChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
 						break;
 					case 2:
-						challengeManager = new BellChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
+						challengeManager = new AuctionChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
 						break;
 					case 3:
-						challengeManager = new WhoAmIChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
+						challengeManager = new BellChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
 						break;
 					case 4:
-						challengeManager = new AuctionChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
+						challengeManager = new WhoAmIChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
 						break;
 					default:
 						challengeManager = new WhatDoYouKnowChallengeManager(env, gameRoomManager, gameTimerManager, xmlConfigurationManager, messagingTemplate, executor);
@@ -271,64 +273,76 @@ public class GameController {
 	public JoinGameResult joinGame(@PathVariable String roomId, @RequestParam String username, @RequestParam(name="playerId",required=false) String playerId) {
 		
 		JoinGameResult result = new JoinGameResult();
-		WaitingGameVO waitingGame = gameRoomManager.getWaitingGameById(roomId);
-		if(waitingGame != null)
+		
+		if(joinRoomRequests.get(roomId) != null)
 		{
-			if(playerId != null && waitingGame.getPlayer().getPlayerId() != null && playerId.equalsIgnoreCase(waitingGame.getPlayer().getPlayerId()))
-			{
-				result.setStatus(0);
-				result.setErrorMessage("Can't play with yourself!");
-			}
-			else
-			{
-				String player1Session = waitingGame.getSessionId();
-
-				// An available game room is found, add the player to the room as player2
-				Player player = new Player(playerId, username);
-	        	GameRoom activeRoom = gameRoomManager.createActiveGameRoom(waitingGame, player);
-	        	
-	        	// Temporarily add the waiting session as active session. This is to handle the scenario where player1 was in the background and he didn't join
-	        	webSocketManager.addActiveSession(player1Session, activeRoom.getPlayer1().getPlayerId());
-	        	
-	        	GameStartEvent gameStartEventP1 = new GameStartEvent();
-	        	gameStartEventP1.setRoomId(activeRoom.getRoomId());
-	        	gameStartEventP1.setPlayerId(activeRoom.getPlayer1().getPlayerId());
-	        	
-	        	GameStartEvent gameStartEventP2 = new GameStartEvent();
-	        	gameStartEventP2.setRoomId(activeRoom.getRoomId());
-	        	gameStartEventP2.setPlayerId(activeRoom.getPlayer2().getPlayerId());
-	        	
-	            // Notify both players in the room about the game start
-	        	messagingTemplate.convertAndSend("/topic/game/start/" + activeRoom.getPlayer1().getUsername(), gameStartEventP1);
-	            messagingTemplate.convertAndSend("/topic/game/start/" + activeRoom.getPlayer2().getUsername(), gameStartEventP2);
-	            
-	            String player1Name = activeRoom.getPlayer1().getUsername();
-	        	if(player1Name.contains(" "))
-	        	{
-	        		player1Name = player1Name.replaceAll("\\s+", "_");
-	        		
-	        		// workaround for Android
-	                messagingTemplate.convertAndSend("/topic/game/start/" + player1Name, gameStartEventP1);
-	                System.out.println("Notification for room "+ activeRoom.getRoomId() +" has been sent to: " + player1Name);
-	        	}
-	            
-	            // Send push notification to player1 who initiated the game
-	            if(activeRoom.getPlayer1().getDeviceToken() != null)
-	            {
-	            	gameRoomManager.sendPushNotificationToWaitingPlayer(activeRoom.getPlayer1(), activeRoom.getRoomId());
-	            }
-	            
-	            // Start answer timer
-	            gameTimerManager.refreshGameTimer(activeRoom.getRoomId(), activeRoom.getPlayer1().getPlayerId(), String.valueOf(activeRoom.getQuestions().get(0).getId()), 1, null);
-	            
-	            result.setPlayerId(activeRoom.getPlayer2().getPlayerId());
-	            result.setStatus(1);
-			}
+			// duplicate requests detected
+			result.setStatus(0);
+			result.setErrorMessage("Duplicate Join Room requests detected!");
 		}
 		else
 		{
-			result.setStatus(0);
-			result.setErrorMessage("Game room is invalid!");
+			joinRoomRequests.put(roomId, System.currentTimeMillis());
+			
+			WaitingGameVO waitingGame = gameRoomManager.getWaitingGameById(roomId);
+			if(waitingGame != null)
+			{
+				if(playerId != null && waitingGame.getPlayer().getPlayerId() != null && playerId.equalsIgnoreCase(waitingGame.getPlayer().getPlayerId()))
+				{
+					result.setStatus(0);
+					result.setErrorMessage("Can't play with yourself!");
+				}
+				else
+				{
+					String player1Session = waitingGame.getSessionId();
+
+					// An available game room is found, add the player to the room as player2
+					Player player = new Player(playerId, username);
+		        	GameRoom activeRoom = gameRoomManager.createActiveGameRoom(waitingGame, player);
+		        	
+		        	// Temporarily add the waiting session as active session. This is to handle the scenario where player1 was in the background and he didn't join
+		        	webSocketManager.addActiveSession(player1Session, activeRoom.getPlayer1().getPlayerId());
+		        	
+		        	GameStartEvent gameStartEventP1 = new GameStartEvent();
+		        	gameStartEventP1.setRoomId(activeRoom.getRoomId());
+		        	gameStartEventP1.setPlayerId(activeRoom.getPlayer1().getPlayerId());
+		        	
+		        	GameStartEvent gameStartEventP2 = new GameStartEvent();
+		        	gameStartEventP2.setRoomId(activeRoom.getRoomId());
+		        	gameStartEventP2.setPlayerId(activeRoom.getPlayer2().getPlayerId());
+		        	
+		            // Notify both players in the room about the game start
+		        	messagingTemplate.convertAndSend("/topic/game/start/" + activeRoom.getPlayer1().getUsername(), gameStartEventP1);
+		            messagingTemplate.convertAndSend("/topic/game/start/" + activeRoom.getPlayer2().getUsername(), gameStartEventP2);
+		            
+		            String player1Name = activeRoom.getPlayer1().getUsername();
+		        	if(player1Name.contains(" "))
+		        	{
+		        		player1Name = player1Name.replaceAll("\\s+", "_");
+		        		
+		        		// workaround for Android
+		                messagingTemplate.convertAndSend("/topic/game/start/" + player1Name, gameStartEventP1);
+		                System.out.println("Notification for room "+ activeRoom.getRoomId() +" has been sent to: " + player1Name);
+		        	}
+		            
+		            // Send push notification to player1 who initiated the game
+		            if(activeRoom.getPlayer1().getDeviceToken() != null)
+		            {
+		            	gameRoomManager.sendPushNotificationToWaitingPlayer(activeRoom.getPlayer1(), activeRoom.getRoomId());
+		            }
+		            
+		            // Start answer timer
+		            gameTimerManager.refreshGameTimer(activeRoom.getRoomId(), activeRoom.getPlayer1().getPlayerId(), String.valueOf(activeRoom.getQuestions().get(0).getId()), 1, null);
+		            
+		            result.setPlayerId(activeRoom.getPlayer2().getPlayerId());
+		            result.setStatus(1);
+				}
+			}
+			else
+			{
+				result.setStatus(0);
+				result.setErrorMessage("Game room is invalid!");
+			}
 		}
 		
 		return result;
@@ -897,6 +911,41 @@ public class GameController {
 		for(String toBeRemovedRequest : toBeRemovedLst)
 		{
 			validateAnswerRequests.remove(toBeRemovedRequest);
+		}
+	}
+	
+	@RequestMapping(value = "/questionAnswers", method = RequestMethod.GET)
+	public QuestionAnswersResult retrieveQuestionAnswers(@RequestParam(value = "questionId") int questionId) {
+		
+		QuestionAnswersResult result = new QuestionAnswersResult();
+		
+		List<AnswerVO> answers = gameRoomManager.retrievePossibleAnswersByQuestionId(questionId);
+		result.setAnswers(answers);
+		result.setQuestionId(questionId);
+		
+		return result;
+	}
+	
+	@Scheduled(fixedRate = 3000) // Run every 3 sec (adjust as needed)
+    public void cleanJoinRoomRequests() {
+		
+		long JOIN_ROOM_REQUEST_THRESHOLD = 2000;
+		long currentTime = System.currentTimeMillis();
+		
+		List<String> toBeRemovedLst = new ArrayList<String>();
+		for(Entry<String, Long> entry : joinRoomRequests.entrySet())
+		{
+			String joinRoomRequest = entry.getKey();
+			Long requestTime = entry.getValue();
+			
+			if (requestTime != null && currentTime - requestTime > JOIN_ROOM_REQUEST_THRESHOLD) {
+				toBeRemovedLst.add(joinRoomRequest);
+			}
+		}
+		
+		for(String toBeRemovedRequest : toBeRemovedLst)
+		{
+			joinRoomRequests.remove(toBeRemovedRequest);
 		}
 	}
 

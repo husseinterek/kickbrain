@@ -3,6 +3,7 @@
      <answerFullMatchRatio>80</answerFullMatchRatio>
      <answerPartMatchRatio>80</answerPartMatchRatio>
      <delayNextChallenge>5</delayNextChallenge>
+     <premiumPointsRatio>0.03</premiumPointsRatio>
      <onlineGame>
           <challenges>
                   <challenge>

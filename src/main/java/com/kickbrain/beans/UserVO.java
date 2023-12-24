@@ -10,6 +10,7 @@ public class UserVO {
 	private String lastName;
 	private Date creationDate;
 	private int totalScore;
+	private float premiumPoints;
 	private int rank;
 
 	public long getId() {
@@ -66,6 +67,14 @@ public class UserVO {
 
 	public void setRank(int rank) {
 		this.rank = rank;
+	}
+
+	public float getPremiumPoints() {
+		return premiumPoints;
+	}
+
+	public void setPremiumPoints(float premiumPoints) {
+		this.premiumPoints = premiumPoints;
 	}
 
 }

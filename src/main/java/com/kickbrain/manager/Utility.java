@@ -10,11 +10,13 @@ import com.kickbrain.beans.AnswerVO;
 import com.kickbrain.beans.GameDetailsVO;
 import com.kickbrain.beans.GameVO;
 import com.kickbrain.beans.Player;
+import com.kickbrain.beans.PremiumPointsHistoryVO;
 import com.kickbrain.beans.UserVO;
 import com.kickbrain.beans.WaitingGameVO;
 import com.kickbrain.beans.configuration.QuestionVO;
 import com.kickbrain.db.model.Game;
 import com.kickbrain.db.model.GameDetails;
+import com.kickbrain.db.model.PremiumPointsHistory;
 import com.kickbrain.db.model.Question;
 import com.kickbrain.db.model.QuestionAnswers;
 import com.kickbrain.db.model.QuestionAnswersImport;
@@ -35,6 +37,7 @@ public class Utility {
 		userVO.setUsername(user.getUsername());
 		userVO.setCreationDate(user.getCreationDate());
 		userVO.setTotalScore(user.getTotalScore());
+		userVO.setPremiumPoints(user.getPremiumPoints());
 		
 		return userVO;
 	}
@@ -48,6 +51,7 @@ public class Utility {
 		user.setUsername(userVO.getUsername());
 		user.setCreationDate(userVO.getCreationDate());
 		user.setTotalScore(userVO.getTotalScore());
+		user.setPremiumPoints(userVO.getPremiumPoints());
 		
 		return user;
 	}
@@ -505,4 +509,32 @@ public class Utility {
 		
 		return matchingAnswer;
 	}
+	
+	public static PremiumPointsHistory convertPremiumPointsHistoryVOToModel(PremiumPointsHistoryVO premiumPointsHistoryVO)
+	{
+		PremiumPointsHistory premiumPointsHistory = new PremiumPointsHistory();
+		premiumPointsHistory.setPlayerId(premiumPointsHistoryVO.getPlayerId());
+		premiumPointsHistory.setGameId(premiumPointsHistoryVO.getGameId());
+		premiumPointsHistory.setScorePoints(premiumPointsHistoryVO.getScorePoints());
+		premiumPointsHistory.setPremiumPoints(premiumPointsHistoryVO.getPremiumPoints());
+		premiumPointsHistory.setConversionRatio(premiumPointsHistoryVO.getConversionRatio());
+		premiumPointsHistory.setCreationDate(premiumPointsHistoryVO.getCreationDate());
+		
+		return premiumPointsHistory;
+	}
+	
+	public static PremiumPointsHistoryVO convertPremiumPointsHistoryModelToVO(PremiumPointsHistory premiumPointsHistory)
+	{
+		PremiumPointsHistoryVO premiumPointsHistoryVO = new PremiumPointsHistoryVO();
+		premiumPointsHistoryVO.setId(premiumPointsHistory.getId());
+		premiumPointsHistoryVO.setPlayerId(premiumPointsHistory.getPlayerId());
+		premiumPointsHistoryVO.setGameId(premiumPointsHistory.getGameId());
+		premiumPointsHistoryVO.setScorePoints(premiumPointsHistory.getScorePoints());
+		premiumPointsHistoryVO.setPremiumPoints(premiumPointsHistory.getPremiumPoints());
+		premiumPointsHistoryVO.setConversionRatio(premiumPointsHistory.getConversionRatio());
+		premiumPointsHistoryVO.setCreationDate(premiumPointsHistory.getCreationDate());
+		
+		return premiumPointsHistoryVO;
+	}
+	
 }

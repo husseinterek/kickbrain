@@ -3,6 +3,7 @@ package com.kickbrain.db.service;
 import java.util.List;
 
 import com.kickbrain.beans.GameVO;
+import com.kickbrain.beans.PremiumPointsHistoryVO;
 import com.kickbrain.beans.WaitingGameVO;
 
 public interface GameService {
@@ -18,4 +19,5 @@ public interface GameService {
 	public void deleteWaitingGamesForPlayer(long playerId);
 	public void cancelActiveGame(long roomId, String playerId);
 	public void cleanActiveGame(long roomId, String playerId);
+	public void addPremiumPointsHistoryRecord(PremiumPointsHistoryVO premiumPointsHistoryVO);
 }

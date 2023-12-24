@@ -8,10 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kickbrain.beans.GameVO;
+import com.kickbrain.beans.PremiumPointsHistoryVO;
 import com.kickbrain.beans.WaitingGameVO;
 import com.kickbrain.db.model.Game;
+import com.kickbrain.db.model.PremiumPointsHistory;
 import com.kickbrain.db.model.WaitingGame;
 import com.kickbrain.db.repository.GameRepository;
+import com.kickbrain.db.repository.PremiumPointsHistoryRepository;
 import com.kickbrain.db.repository.WaitingGameRepository;
 import com.kickbrain.db.service.GameService;
 import com.kickbrain.manager.Utility;
@@ -25,6 +28,9 @@ public class GameMysqlService implements GameService {
 	
 	@Autowired
 	private WaitingGameRepository waitingGameDao;
+	
+	@Autowired
+	private PremiumPointsHistoryRepository premiumPointsHistoryDao;
 	
 	@Override
 	public GameVO createGame(GameVO gameVO) {
@@ -155,5 +161,12 @@ public class GameMysqlService implements GameService {
 		game.setCleanedBy(playerId);
 		
 		gameDao.save(game);
+	}
+	
+	@Override
+	public void addPremiumPointsHistoryRecord(PremiumPointsHistoryVO premiumPointsHistoryVO) {
+		
+		PremiumPointsHistory premiumPointsHistory = Utility.convertPremiumPointsHistoryVOToModel(premiumPointsHistoryVO);
+		premiumPointsHistoryDao.save(premiumPointsHistory);
 	}
 }

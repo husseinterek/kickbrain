@@ -52,6 +52,15 @@ public class UserMysqlService implements UserService {
 	}
 	
 	@Override
+	public void addUserPremiumPoints(long userId, float premiumPoints) {
+		
+		User user = userDao.findById(userId).get();
+		user.setPremiumPoints(user.getPremiumPoints() + premiumPoints);
+		
+		userDao.save(user);
+	}
+	
+	@Override
 	public UserVO createUser(UserVO userVO) {
 		
 		User user = Utility.convertUserVOToModel(userVO);
