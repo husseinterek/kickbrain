@@ -12,6 +12,7 @@ public class UserVO {
 	private int totalScore;
 	private float premiumPoints;
 	private int rank;
+	private String referredBy;
 
 	public long getId() {
 		return id;
@@ -75,6 +76,14 @@ public class UserVO {
 
 	public void setPremiumPoints(float premiumPoints) {
 		this.premiumPoints = premiumPoints;
+	}
+
+	public String getReferredBy() {
+		return referredBy;
+	}
+
+	public void setReferredBy(String referredBy) {
+		this.referredBy = referredBy;
 	}
 
 }

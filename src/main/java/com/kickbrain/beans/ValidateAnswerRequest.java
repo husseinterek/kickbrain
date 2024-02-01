@@ -10,6 +10,7 @@ public class ValidateAnswerRequest {
 	private String capturedAnswer;
 	private String answerElementId;
 	private Integer challengeCategory;
+	private String language;
 
 	public String getQuestionId() {
 		return questionId;
@@ -73,5 +74,13 @@ public class ValidateAnswerRequest {
 
 	public void setChallengeCategory(Integer challengeCategory) {
 		this.challengeCategory = challengeCategory;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 }

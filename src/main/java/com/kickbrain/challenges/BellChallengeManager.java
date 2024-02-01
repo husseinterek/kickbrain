@@ -92,7 +92,7 @@ public class BellChallengeManager extends ChallengeManager{
 		GameRoom gameRoom = gameRoomManager.getGameRoomById(roomId);
 		if(gameRoom != null)
 		{
-			proceed(gameRoom, String.valueOf(questionId), currentQuestionIndex, null, 3);
+			proceed(gameRoom, String.valueOf(questionId), currentQuestionIndex, gameRoom.getPlayer1().getPlayerId(), 3);
 		}
 	}
 }

@@ -6,6 +6,9 @@ public class AppConfiguration {
 	private int answerPartMatchRatio;
 	private int delayNextChallenge;
 	private float premiumPointsRatio;
+	private float minimumPremiumPointsPrivateGame;
+	private float adToPremiumPoints;
+	private int underMaintenance;
 	private GameConfig onlineGameConfig;
 
 	public int getAnswerFullMatchRatio() {
@@ -46,6 +49,30 @@ public class AppConfiguration {
 
 	public void setPremiumPointsRatio(float premiumPointsRatio) {
 		this.premiumPointsRatio = premiumPointsRatio;
+	}
+
+	public float getMinimumPremiumPointsPrivateGame() {
+		return minimumPremiumPointsPrivateGame;
+	}
+
+	public void setMinimumPremiumPointsPrivateGame(float minimumPremiumPointsPrivateGame) {
+		this.minimumPremiumPointsPrivateGame = minimumPremiumPointsPrivateGame;
+	}
+
+	public int getUnderMaintenance() {
+		return underMaintenance;
+	}
+
+	public void setUnderMaintenance(int underMaintenance) {
+		this.underMaintenance = underMaintenance;
+	}
+
+	public float getAdToPremiumPoints() {
+		return adToPremiumPoints;
+	}
+
+	public void setAdToPremiumPoints(float adToPremiumPoints) {
+		this.adToPremiumPoints = adToPremiumPoints;
 	}
 
 }

@@ -3,6 +3,8 @@ package com.kickbrain.db.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Tuple;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,10 +47,17 @@ public class UserMysqlService implements UserService {
 	@Override
 	public void addUserScore(long userId, int score) {
 		
-		User user = userDao.findById(userId).get();
-		user.setTotalScore(user.getTotalScore() + score);
-		
-		userDao.save(user);
+		try
+		{
+			User user = userDao.findById(userId).get();
+			user.setTotalScore(user.getTotalScore() + score);
+			
+			userDao.save(user);
+		}
+		catch(Exception ex)
+		{
+			System.out.println("An error occurred while adding the score of user: " + userId);
+		}
 	}
 	
 	@Override
@@ -56,6 +65,15 @@ public class UserMysqlService implements UserService {
 		
 		User user = userDao.findById(userId).get();
 		user.setPremiumPoints(user.getPremiumPoints() + premiumPoints);
+		
+		userDao.save(user);
+	}
+	
+	@Override
+	public void deductUserPremiumPoints(long userId, float premiumPoints) {
+		
+		User user = userDao.findById(userId).get();
+		user.setPremiumPoints(user.getPremiumPoints() - premiumPoints);
 		
 		userDao.save(user);
 	}
@@ -84,6 +102,8 @@ public class UserMysqlService implements UserService {
 			user.setLastName(userVO.getLastName().replaceAll("[^\u0000-\uFFFF]", ""));
 		}
 		
+		user.setReferredBy(userVO.getReferredBy());
+		
 		userDao.save(user);
 	}
 	
@@ -91,7 +111,7 @@ public class UserMysqlService implements UserService {
 	public List<UserVO> retrieveUsersWithScores() {
 		
 		List<UserVO> result = new ArrayList<UserVO>();
-		List<User> users = userDao.findSqlQuery("select * from USERS where id <> 1 and total_score > 0 order by total_score desc", User.class);
+		List<User> users = userDao.findSqlQuery("select * from USERS where id <> 1 and total_score > 0 order by total_score desc limit 50", User.class);
 		
 		for(int i=0; i<users.size(); i++)
 		{
@@ -99,6 +119,47 @@ public class UserMysqlService implements UserService {
 			UserVO userVO = Utility.convertUserModelToVO(user);
 			userVO.setRank((i+1));
 			result.add(userVO);
+		}
+		
+		return result;
+	}
+	
+	@Override
+	public List<UserVO> retrieveTopUsersThisMonth() {
+		
+		List<UserVO> result = new ArrayList<UserVO>();
+		
+		String queryFilter = "SELECT u.id, u.first_name, u.last_name , SUM(player_scores.player_score) AS player_total_score" + 
+				" FROM (" + 
+				"    SELECT player1_id AS player_id, player1_score AS player_score, creation_date" + 
+				"    FROM GAMES" + 
+				"    WHERE MONTH(creation_date) = MONTH(CURRENT_DATE())" + 
+				"    AND YEAR(CREATION_DATE) = YEAR(CURRENT_DATE())" + 
+				"    " + 
+				"    UNION ALL" + 
+				"    " + 
+				"    SELECT player2_id AS player_id, player2_score AS player_score, creation_date" + 
+				"    FROM GAMES" + 
+				"    WHERE MONTH(creation_date) = MONTH(CURRENT_DATE())" + 
+				"    AND YEAR(CREATION_DATE) = YEAR(CURRENT_DATE())" + 
+				" ) AS player_scores" + 
+				" join USERS u on u.id = player_scores.player_id and player_scores.player_score <> 0 and u.id <> 1" + 
+				" GROUP BY u.id, u.first_name, u.last_name" + 
+				" ORDER BY player_total_score DESC"
+				+ " limit 50";
+		
+		List<Tuple> records = userDao.findSqlQuery(queryFilter);
+		int i=0;
+		for(Tuple record : records)
+		{
+			UserVO user = new UserVO();
+			user.setId(Integer.valueOf(String.valueOf(record.get(0))));
+			user.setFirstName(String.valueOf(record.get(1)));
+			user.setLastName(String.valueOf(record.get(2)));
+			user.setTotalScore(Integer.valueOf(String.valueOf(record.get(3))));
+			user.setRank((++i));
+
+			result.add(user);
 		}
 		
 		return result;

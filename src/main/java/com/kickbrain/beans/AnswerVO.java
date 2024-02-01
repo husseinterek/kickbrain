@@ -6,6 +6,8 @@ public class AnswerVO {
 	private String answerEn;
 	private String answerAr;
 	private int questionId;
+	private int answerId;
+	private int type;
 
 	public String getAnswerEn() {
 		return answerEn;
@@ -37,6 +39,22 @@ public class AnswerVO {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public int getAnswerId() {
+		return answerId;
+	}
+
+	public void setAnswerId(int answerId) {
+		this.answerId = answerId;
+	}
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
 	}
 
 }

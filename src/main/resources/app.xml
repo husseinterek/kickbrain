@@ -2,44 +2,50 @@
 <app-config>
      <answerFullMatchRatio>80</answerFullMatchRatio>
      <answerPartMatchRatio>80</answerPartMatchRatio>
-     <delayNextChallenge>5</delayNextChallenge>
+     <delayNextChallenge>3</delayNextChallenge>
      <premiumPointsRatio>0.03</premiumPointsRatio>
+     <minimumPremiumPointsPrivateGame>1</minimumPremiumPointsPrivateGame>
+     <adToPremiumPoints>1</adToPremiumPoints>
+     <underMaintenance>0</underMaintenance>
+     
      <onlineGame>
           <challenges>
                   <challenge>
                         <titleEn>What do you know?</titleEn>
                         <titleAr>ماذا تعرف؟</titleAr>
                         <category>1</category>
-                        <nbQuestions>5</nbQuestions>
+                        <nbQuestions>2</nbQuestions>
                         <appearInSingleGame>1</appearInSingleGame>
-                        <answerTimer>30</answerTimer>
+                        <answerTimer>20</answerTimer>
+                  </challenge>
+		<challenge>
+                        <titleEn>Auction</titleEn>
+                        <titleAr>المزاد</titleAr>
+                        <category>2</category>
+                        <nbQuestions>3</nbQuestions>
+                        <appearInSingleGame>1</appearInSingleGame>
+			               <bidTimer>30</bidTimer>
+                        <answerTimer>60</answerTimer>
                   </challenge>
                   <challenge>
                         <titleEn>Bell</titleEn>
                         <titleAr>الجرس</titleAr>
-                        <category>2</category>
-                        <nbQuestions>5</nbQuestions>
+                        <category>3</category>
+                        <nbQuestions>3</nbQuestions>
                         <appearInSingleGame>0</appearInSingleGame>
-                        <bellTimer>60</bellTimer>
-                        <answerTimer>30</answerTimer>
+                        <bellTimer>30</bellTimer>
+                        <answerTimer>15</answerTimer>
                   </challenge>
-                  <challenge>
+		 <challenge>
                         <titleEn>Who am I?</titleEn>
                         <titleAr>من أنا؟</titleAr>
-                        <category>3</category>
-                        <nbQuestions>5</nbQuestions>
+                        <category>4</category>
+                        <nbQuestions>1</nbQuestions>
                         <appearInSingleGame>1</appearInSingleGame>
                         <answerTimer>60</answerTimer>
                   </challenge>
-                  <challenge>
-                        <titleEn>Auction</titleEn>
-                        <titleAr>المزاد</titleAr>
-                        <category>4</category>
-                        <nbQuestions>5</nbQuestions>
-                        <appearInSingleGame>0</appearInSingleGame>
-                        <bidTimer>10</bidTimer>
-                        <answerTimer>30</answerTimer>
-                  </challenge>
+		
+
           </challenges>
      </onlineGame>
 </app-config>

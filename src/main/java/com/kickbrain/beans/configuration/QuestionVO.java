@@ -10,6 +10,7 @@ public class QuestionVO {
 	private String promptEn;
 	private String promptAr;
 	private int category;
+	private int tag;
 	private List<AnswerVO> answers;
 
 	public int getId() {
@@ -50,6 +51,14 @@ public class QuestionVO {
 
 	public void setCategory(int category) {
 		this.category = category;
+	}
+
+	public int getTag() {
+		return tag;
+	}
+
+	public void setTag(int tag) {
+		this.tag = tag;
 	}
 
 }

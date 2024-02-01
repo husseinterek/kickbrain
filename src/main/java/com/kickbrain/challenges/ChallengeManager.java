@@ -56,7 +56,7 @@ public abstract class ChallengeManager {
 				{
 					gameRoomManager.addSuccessfulAnswerToGameReport(request.getRoomId(), request.getQuestionId(), matchingAnswer, request.getSubmittedPlayerId());
 					
-					result.setMatchingAnswer(matchingAnswer.getAnswerEn());
+					result.setMatchingAnswer((request.getLanguage() == null || request.getLanguage().equalsIgnoreCase("AR")) ? matchingAnswer.getAnswerAr() : matchingAnswer.getAnswerEn());
 					result.setCorrect(matchingAnswer != null);
 					result.setSubmittedPlayer(request.getSubmittedPlayerId());
 					result.setCurrentTurn(request.getSubmittedPlayerId().equals(gameRoom.getPlayer1().getPlayerId()) ? gameRoom.getPlayer2().getPlayerId() : gameRoom.getPlayer1().getPlayerId());
@@ -79,6 +79,7 @@ public abstract class ChallengeManager {
 		}
 		catch(Exception ex)
 		{
+			System.out.println("An error has occurred while validating an answer for question: " + request.getQuestionId() + " and room: " + request.getRoomId());
 			result.setErrorMessage("Error occured while validating the answer");
 			result.setStatus(0);
 			ex.printStackTrace();
@@ -197,14 +198,12 @@ public abstract class ChallengeManager {
 			}
 			
 			skipQuestionEvent.setChallengeCategory(returnedChallenge.getCategory());
-			messagingTemplate.convertAndSend("/topic/game/"+roomId+"/newQuestion", skipQuestionEvent);
+			String currentTurn = playerId.equals(gameRoom.getPlayer1().getPlayerId()) ? gameRoom.getPlayer2().getPlayerId() : gameRoom.getPlayer1().getPlayerId();;
+			skipQuestionEvent.setCurrentTurn(currentTurn);
 			
-			String currentTurn = null;
-			if(playerId != null)
-			{
-				currentTurn = playerId.equals(gameRoom.getPlayer1().getPlayerId()) ? gameRoom.getPlayer2().getPlayerId() : gameRoom.getPlayer1().getPlayerId();
-				messagingTemplate.convertAndSend("/topic/game/"+roomId+"/switchTurn", currentTurn);
-			}
+			messagingTemplate.convertAndSend("/topic/game/"+roomId+"/newQuestion", skipQuestionEvent);
+			messagingTemplate.convertAndSend("/topic/game/"+roomId+"/switchTurn", currentTurn);
+			
 			
 			int nextQuestionId = nextQuestion.getId();
 			

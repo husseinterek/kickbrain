@@ -11,6 +11,8 @@ public class WaitingGameVO {
 	private int status;
 	private String sessionId;
 	private String deviceToken;
+	private int isPrivate;
+	private String passcode;
 
 	public long getId() {
 		return id;
@@ -66,6 +68,22 @@ public class WaitingGameVO {
 
 	public void setDeviceToken(String deviceToken) {
 		this.deviceToken = deviceToken;
+	}
+
+	public int getIsPrivate() {
+		return isPrivate;
+	}
+
+	public void setIsPrivate(int isPrivate) {
+		this.isPrivate = isPrivate;
+	}
+
+	public String getPasscode() {
+		return passcode;
+	}
+
+	public void setPasscode(String passcode) {
+		this.passcode = passcode;
 	}
 
 }

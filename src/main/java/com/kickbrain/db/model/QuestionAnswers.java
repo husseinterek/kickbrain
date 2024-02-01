@@ -2,6 +2,7 @@ package com.kickbrain.db.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -40,6 +42,10 @@ public class QuestionAnswers implements Serializable {
 	
 	@Column(name = "ANSWER_AR")
 	private String answerAr;
+	
+	@OneToOne
+	@JoinColumn(name = "answer_id")
+	private Answers answer;
 
 	public long getId() {
 		return id;
@@ -71,6 +77,14 @@ public class QuestionAnswers implements Serializable {
 
 	public void setAnswerAr(String answerAr) {
 		this.answerAr = answerAr;
+	}
+
+	public Answers getAnswer() {
+		return answer;
+	}
+
+	public void setAnswer(Answers answer) {
+		this.answer = answer;
 	}
 
 }

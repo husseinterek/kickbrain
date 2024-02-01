@@ -17,6 +17,7 @@ public interface GameService {
 	public List<WaitingGameVO> getAvailableWaitingRooms();
 	public List<WaitingGameVO> getWaitingGamesByPlayerId(long playerId);
 	public void deleteWaitingGamesForPlayer(long playerId);
+	public void deleteGamesForPlayer(long playerId);
 	public void cancelActiveGame(long roomId, String playerId);
 	public void cleanActiveGame(long roomId, String playerId);
 	public void addPremiumPointsHistoryRecord(PremiumPointsHistoryVO premiumPointsHistoryVO);

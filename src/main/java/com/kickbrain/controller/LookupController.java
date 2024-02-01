@@ -40,12 +40,14 @@ public class LookupController {
 		homePageDictionaryEn.put("title", messageSource.getMessage("home.title", null, Locale.forLanguageTag("en")));
 		homePageDictionaryEn.put("subTitle", messageSource.getMessage("home.subtitle", null, Locale.forLanguageTag("en")));
 		homePageDictionaryEn.put("loginMessage", messageSource.getMessage("login.message", null, Locale.forLanguageTag("en")));
+		homePageDictionaryEn.put("watchAdSuccessfulMsg", messageSource.getMessage("home.watchAdSuccessfulMsg", null, Locale.forLanguageTag("en")));
 		
 		// Populate home page dictionary - Arabic
 		Map<String, String> homePageDictionaryAr = new HashMap<String, String>();
 		homePageDictionaryAr.put("title", messageSource.getMessage("home.title", null, Locale.forLanguageTag("ar")));
 		homePageDictionaryAr.put("subTitle", messageSource.getMessage("home.subtitle", null, Locale.forLanguageTag("ar")));
 		homePageDictionaryAr.put("loginMessage", messageSource.getMessage("login.message", null, Locale.forLanguageTag("ar")));
+		homePageDictionaryAr.put("watchAdSuccessfulMsg", messageSource.getMessage("home.watchAdSuccessfulMsg", null, Locale.forLanguageTag("ar")));
 		
 		homePageTranslations.put("en", homePageDictionaryEn);
 		homePageTranslations.put("ar", homePageDictionaryAr);

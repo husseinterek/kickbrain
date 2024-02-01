@@ -7,9 +7,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.kickbrain.beans.PremiumPointsHistoryVO;
 import com.kickbrain.beans.SubscribeRequest;
 import com.kickbrain.beans.SubscribeResult;
 import com.kickbrain.beans.UserVO;
+import com.kickbrain.configuration.XMLConfigurationManager;
 import com.kickbrain.db.service.GameService;
 import com.kickbrain.db.service.UserService;
 
@@ -21,6 +23,9 @@ public class UserManager{
 	
 	@Autowired
 	private GameService gameService;
+
+	@Autowired
+    private XMLConfigurationManager xmlConfigurationManager;
 	
 	private DecimalFormat df = new DecimalFormat("0.00");
 	
@@ -73,9 +78,41 @@ public class UserManager{
 		return userService.retrieveUsersWithScores();
 	}
 	
+	public List<UserVO> retrieveTopUsersThisMonth()
+	{
+		return userService.retrieveTopUsersThisMonth();
+	}
+	
 	public void deleteUser(String id)
 	{
-		userService.deleteUser(Long.valueOf(id));
 		gameService.deleteWaitingGamesForPlayer(Long.valueOf(id));
+		gameService.deleteGamesForPlayer(Long.valueOf(id));
+		userService.deleteUser(Long.valueOf(id));
+	}
+	
+	public void deductPrivateGamePoints(String id, float premiumPoints)
+	{
+		userService.deductUserPremiumPoints(Long.valueOf(id), premiumPoints);
+		
+		PremiumPointsHistoryVO premiumPointsHistoryVO = new PremiumPointsHistoryVO();
+		premiumPointsHistoryVO.setPlayerId(Long.valueOf(id));
+		premiumPointsHistoryVO.setPremiumPoints(premiumPoints * -1);
+		premiumPointsHistoryVO.setCreationDate(new Date());
+		
+		gameService.addPremiumPointsHistoryRecord(premiumPointsHistoryVO);
+	}
+	
+	public void completeWatchingAd(String userId)
+	{
+		float adToPremiumPoints = xmlConfigurationManager.getAppConfigurationBean().getAdToPremiumPoints();
+		
+		userService.addUserPremiumPoints(Long.valueOf(userId), adToPremiumPoints);
+		
+		PremiumPointsHistoryVO premiumPointsHistoryVO = new PremiumPointsHistoryVO();
+		premiumPointsHistoryVO.setPlayerId(Long.valueOf(userId));
+		premiumPointsHistoryVO.setPremiumPoints(adToPremiumPoints);
+		premiumPointsHistoryVO.setCreationDate(new Date());
+		
+		gameService.addPremiumPointsHistoryRecord(premiumPointsHistoryVO);
 	}
 }

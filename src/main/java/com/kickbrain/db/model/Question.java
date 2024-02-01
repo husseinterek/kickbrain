@@ -43,12 +43,15 @@ public class Question implements Serializable {
 	@Column(name = "DESCRIPTION_AR")
 	private String descriptionAr;
 	
-	@OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.ALL }, orphanRemoval = true, mappedBy = "question")
+	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.ALL }, orphanRemoval = true, mappedBy = "question")
 	@Fetch(value = FetchMode.SUBSELECT)
 	private List<QuestionAnswers> answers;
 	
 	@Column(name = "CATEGORY_ID")
 	private int categoryId;
+	
+	@Column(name = "TAG")
+	private int tag;
 
 	public long getId() {
 		return id;
@@ -90,4 +93,11 @@ public class Question implements Serializable {
 		this.categoryId = categoryId;
 	}
 	
+	public void setTag(int tag) {
+		this.tag = tag;
+	}
+	
+	public int getTag() {
+		return tag;
+	}
 }

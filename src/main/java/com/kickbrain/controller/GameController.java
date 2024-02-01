@@ -3,6 +3,7 @@ package com.kickbrain.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,8 +28,11 @@ import com.kickbrain.beans.AnswerVO;
 import com.kickbrain.beans.AuctionTimerCompleteRequest;
 import com.kickbrain.beans.BaseResult;
 import com.kickbrain.beans.GameReport;
+import com.kickbrain.beans.GameRequest;
 import com.kickbrain.beans.GameResult;
 import com.kickbrain.beans.GameRoom;
+import com.kickbrain.beans.GameRoomAnswerSearch;
+import com.kickbrain.beans.GameRoomAnswerSearchResult;
 import com.kickbrain.beans.GameStartEvent;
 import com.kickbrain.beans.GameVO;
 import com.kickbrain.beans.JoinGameResult;
@@ -37,6 +42,7 @@ import com.kickbrain.beans.QuestionResult;
 import com.kickbrain.beans.SingleGameReport;
 import com.kickbrain.beans.SkipBellRequest;
 import com.kickbrain.beans.StrikeRequest;
+import com.kickbrain.beans.UserVO;
 import com.kickbrain.beans.ValidateAnswerRequest;
 import com.kickbrain.beans.ValidateAnswerResult;
 import com.kickbrain.beans.ValidateSinglePlayerAnswerRequest;
@@ -50,8 +56,10 @@ import com.kickbrain.challenges.ChallengeManager;
 import com.kickbrain.challenges.WhatDoYouKnowChallengeManager;
 import com.kickbrain.challenges.WhoAmIChallengeManager;
 import com.kickbrain.configuration.XMLConfigurationManager;
+import com.kickbrain.db.service.QuestionService;
 import com.kickbrain.manager.GameRoomManager;
 import com.kickbrain.manager.GameTimerManager;
+import com.kickbrain.manager.UserManager;
 import com.kickbrain.manager.Utility;
 import com.kickbrain.manager.WebSocketManager;
 
@@ -74,10 +82,19 @@ public class GameController {
 	private GameTimerManager gameTimerManager;
 	
 	@Autowired
+	private UserManager userManager;
+	
+	@Autowired
 	private XMLConfigurationManager xmlConfigurationManager;
 	
 	@Autowired
 	private Environment env;
+	
+	@Autowired
+	private QuestionService questionService;
+	
+	@Autowired
+	private MessageSource messageSource;
 	
 	@Autowired
 	@Qualifier("gameProceedExecutor")
@@ -96,7 +113,7 @@ public class GameController {
 		String questionId = request.getQuestionId();
 		String playerId = request.getSubmittedPlayerId();
 		String validateAnswerRequest = playerId + "_" + questionId + "_" + capturedAnswer;
-		if(validateAnswerRequests.get(validateAnswerRequest) != null)
+		if(request.getChallengeCategory() == 1 && validateAnswerRequests.get(validateAnswerRequest) != null)
 		{
 			// duplicate requests detected
 			result.setStatus(1);
@@ -242,6 +259,49 @@ public class GameController {
 		challengeManager.skipBell(request.getRoomId(), request.getQuestionId(), request.getCurrentQuestionIndex());
 	}
 	
+	@RequestMapping(value = "/validateNewGame", method = RequestMethod.POST, consumes="application/json")
+	public BaseResult validateNewGame(@RequestBody GameRequest request) {
+		
+		BaseResult result = new BaseResult();
+		
+		int underMaintenance = xmlConfigurationManager.getAppConfigurationBean().getUnderMaintenance();
+		
+		if(underMaintenance == 0)
+		{
+			if(request.getIsPrivate() == 1)
+			{
+				// validate the premium points
+				String playerId = request.getPlayer().getPlayerId();
+				UserVO user = userManager.retrieveUser(Long.valueOf(playerId));
+				float premiumPoints = user.getPremiumPoints();
+				float minimumPremiumPointsPrivateGame = xmlConfigurationManager.getAppConfigurationBean().getMinimumPremiumPointsPrivateGame();
+				
+				if(premiumPoints >= minimumPremiumPointsPrivateGame)
+				{
+					result.setStatus(1);
+				}
+				else
+				{
+					result.setStatus(0);
+					result.setErrorMessage(messageSource.getMessage("createGame.notEnoughPremiumPoints", null, Locale.forLanguageTag("en")));
+					result.setErrorMessageAr(messageSource.getMessage("createGame.notEnoughPremiumPoints", null, Locale.forLanguageTag("ar")));
+				}
+			}
+			else
+			{
+				result.setStatus(1);
+			}
+		}
+		else
+		{
+			result.setStatus(0);
+			result.setErrorMessage(messageSource.getMessage("home.underMaintenance", null, Locale.forLanguageTag("en")));
+			result.setErrorMessageAr(messageSource.getMessage("home.underMaintenance", null, Locale.forLanguageTag("ar")));
+		}
+		
+		return result;
+	}
+	
 	@RequestMapping(value = "/whoAmITimerComplete", method = RequestMethod.POST, consumes="application/json")
 	public void whoAmITimerComplete(@RequestBody SkipBellRequest request) {
 		
@@ -270,7 +330,7 @@ public class GameController {
 	}
 	
 	@RequestMapping(value = "/{roomId}/join", method = RequestMethod.POST, consumes="application/json")
-	public JoinGameResult joinGame(@PathVariable String roomId, @RequestParam String username, @RequestParam(name="playerId",required=false) String playerId) {
+	public JoinGameResult joinGame(@PathVariable String roomId, @RequestParam String username, @RequestParam(name="playerId",required=false) String playerId, @RequestParam(name="passcode",required=false) String passcode) {
 		
 		JoinGameResult result = new JoinGameResult();
 		
@@ -279,6 +339,7 @@ public class GameController {
 			// duplicate requests detected
 			result.setStatus(0);
 			result.setErrorMessage("Duplicate Join Room requests detected!");
+			result.setErrorMessageAr("Duplicate Join Room requests detected!");
 		}
 		else
 		{
@@ -290,58 +351,85 @@ public class GameController {
 				if(playerId != null && waitingGame.getPlayer().getPlayerId() != null && playerId.equalsIgnoreCase(waitingGame.getPlayer().getPlayerId()))
 				{
 					result.setStatus(0);
-					result.setErrorMessage("Can't play with yourself!");
+					result.setErrorMessage(messageSource.getMessage("joinGame.playYourself", null, Locale.forLanguageTag("en")));
+					result.setErrorMessageAr(messageSource.getMessage("joinGame.playYourself", null, Locale.forLanguageTag("ar")));
 				}
 				else
 				{
-					String player1Session = waitingGame.getSessionId();
+					boolean passCodeValidated = true;
+					if(waitingGame.getIsPrivate() == 1)
+					{
+						// validate the pass code
+						String gamePasscode = waitingGame.getPasscode();
+						passCodeValidated = gamePasscode.equalsIgnoreCase(passcode);
+					}
+					
+					if(passCodeValidated)
+					{
+						String player1Session = waitingGame.getSessionId();
 
-					// An available game room is found, add the player to the room as player2
-					Player player = new Player(playerId, username);
-		        	GameRoom activeRoom = gameRoomManager.createActiveGameRoom(waitingGame, player);
-		        	
-		        	// Temporarily add the waiting session as active session. This is to handle the scenario where player1 was in the background and he didn't join
-		        	webSocketManager.addActiveSession(player1Session, activeRoom.getPlayer1().getPlayerId());
-		        	
-		        	GameStartEvent gameStartEventP1 = new GameStartEvent();
-		        	gameStartEventP1.setRoomId(activeRoom.getRoomId());
-		        	gameStartEventP1.setPlayerId(activeRoom.getPlayer1().getPlayerId());
-		        	
-		        	GameStartEvent gameStartEventP2 = new GameStartEvent();
-		        	gameStartEventP2.setRoomId(activeRoom.getRoomId());
-		        	gameStartEventP2.setPlayerId(activeRoom.getPlayer2().getPlayerId());
-		        	
-		            // Notify both players in the room about the game start
-		        	messagingTemplate.convertAndSend("/topic/game/start/" + activeRoom.getPlayer1().getUsername(), gameStartEventP1);
-		            messagingTemplate.convertAndSend("/topic/game/start/" + activeRoom.getPlayer2().getUsername(), gameStartEventP2);
-		            
-		            String player1Name = activeRoom.getPlayer1().getUsername();
-		        	if(player1Name.contains(" "))
-		        	{
-		        		player1Name = player1Name.replaceAll("\\s+", "_");
-		        		
-		        		// workaround for Android
-		                messagingTemplate.convertAndSend("/topic/game/start/" + player1Name, gameStartEventP1);
-		                System.out.println("Notification for room "+ activeRoom.getRoomId() +" has been sent to: " + player1Name);
-		        	}
-		            
-		            // Send push notification to player1 who initiated the game
-		            if(activeRoom.getPlayer1().getDeviceToken() != null)
-		            {
-		            	gameRoomManager.sendPushNotificationToWaitingPlayer(activeRoom.getPlayer1(), activeRoom.getRoomId());
-		            }
-		            
-		            // Start answer timer
-		            gameTimerManager.refreshGameTimer(activeRoom.getRoomId(), activeRoom.getPlayer1().getPlayerId(), String.valueOf(activeRoom.getQuestions().get(0).getId()), 1, null);
-		            
-		            result.setPlayerId(activeRoom.getPlayer2().getPlayerId());
-		            result.setStatus(1);
+						// An available game room is found, add the player to the room as player2
+						Player player = new Player(playerId, username);
+			        	GameRoom activeRoom = gameRoomManager.createActiveGameRoom(waitingGame, player);
+			        	
+			        	// Temporarily add the waiting session as active session. This is to handle the scenario where player1 was in the background and he didn't join
+			        	webSocketManager.addActiveSession(player1Session, activeRoom.getPlayer1().getPlayerId());
+			        	
+			        	GameStartEvent gameStartEventP1 = new GameStartEvent();
+			        	gameStartEventP1.setRoomId(activeRoom.getRoomId());
+			        	gameStartEventP1.setPlayerId(activeRoom.getPlayer1().getPlayerId());
+			        	
+			        	GameStartEvent gameStartEventP2 = new GameStartEvent();
+			        	gameStartEventP2.setRoomId(activeRoom.getRoomId());
+			        	gameStartEventP2.setPlayerId(activeRoom.getPlayer2().getPlayerId());
+			        	
+			            // Notify both players in the room about the game start
+			        	messagingTemplate.convertAndSend("/topic/game/start/" + activeRoom.getPlayer1().getUsername(), gameStartEventP1);
+			            messagingTemplate.convertAndSend("/topic/game/start/" + activeRoom.getPlayer2().getUsername(), gameStartEventP2);
+			            
+			            String player1Name = activeRoom.getPlayer1().getUsername();
+			        	if(player1Name.contains(" "))
+			        	{
+			        		player1Name = player1Name.replaceAll("\\s+", "_");
+			        		
+			        		// workaround for Android
+			                messagingTemplate.convertAndSend("/topic/game/start/" + player1Name, gameStartEventP1);
+			                System.out.println("Notification for room "+ activeRoom.getRoomId() +" has been sent to: " + player1Name);
+			        	}
+			            
+			            // Send push notification to player1 who initiated the game
+			            if(activeRoom.getPlayer1().getDeviceToken() != null)
+			            {
+			            	gameRoomManager.sendPushNotificationToWaitingPlayer(activeRoom.getPlayer1(), activeRoom.getRoomId());
+			            }
+			            
+			            // Start answer timer
+			            gameTimerManager.refreshGameTimer(activeRoom.getRoomId(), activeRoom.getPlayer1().getPlayerId(), String.valueOf(activeRoom.getQuestions().get(0).getId()), 1, null);
+			            
+			            // If game is private, then deduct the premium points of the creator
+			            if(waitingGame.getIsPrivate() == 1)
+			            {
+			            	float minimumPremiumPointsPrivateGame = xmlConfigurationManager.getAppConfigurationBean().getMinimumPremiumPointsPrivateGame();
+				            String creatorId = waitingGame.getPlayer().getPlayerId();
+				            userManager.deductPrivateGamePoints(creatorId, minimumPremiumPointsPrivateGame);
+			            }
+			            
+			            result.setPlayerId(activeRoom.getPlayer2().getPlayerId());
+			            result.setStatus(1);
+					}
+					else
+					{
+						result.setStatus(0);
+						result.setErrorMessage(messageSource.getMessage("joinGame.invalidPasscode", null, Locale.forLanguageTag("en")));
+						result.setErrorMessageAr(messageSource.getMessage("joinGame.invalidPasscode", null, Locale.forLanguageTag("ar")));
+					}
 				}
 			}
 			else
 			{
 				result.setStatus(0);
-				result.setErrorMessage("Game room is invalid!");
+				result.setErrorMessage(messageSource.getMessage("joinGame.gameNotExist", null, Locale.forLanguageTag("en")));
+				result.setErrorMessageAr(messageSource.getMessage("joinGame.gameNotExist", null, Locale.forLanguageTag("ar")));
 			}
 		}
 		
@@ -489,6 +577,7 @@ public class GameController {
 		{
 			WaitingRoomResultBean waitingRoomResult = new WaitingRoomResultBean();
 			waitingRoomResult.setRoomId(String.valueOf(room.getId()));
+			waitingRoomResult.setIsPrivate(room.getIsPrivate());
 			
 			String playerUsername = room.getAnonymousPlayer() != null ? room.getAnonymousPlayer() : (room.getPlayer().getFirstName() + " " + room.getPlayer().getLastName());
 			Player hostingPlayer = new Player(room.getPlayer().getPlayerId(), playerUsername);
@@ -948,5 +1037,37 @@ public class GameController {
 			joinRoomRequests.remove(toBeRemovedRequest);
 		}
 	}
-
+	
+	@RequestMapping(value = "/answers", method = RequestMethod.GET)
+	public GameRoomAnswerSearchResult retrieveAnswers(@RequestParam(name="answer") String answerSearch) {
+	
+		GameRoomAnswerSearchResult result = new GameRoomAnswerSearchResult();
+		
+		try
+		{
+			List<GameRoomAnswerSearch> answers = new ArrayList<GameRoomAnswerSearch>();
+			
+			boolean isArabicAnswer = Utility.isArabicText(answerSearch);
+			
+			List<AnswerVO> answersLst = questionService.retrieveAllAnswers(answerSearch, 0, 10);
+			for(AnswerVO answerVO : answersLst)
+			{
+				GameRoomAnswerSearch answer = new GameRoomAnswerSearch();
+				answer.setId(answerVO.getId());
+				answer.setDescription(isArabicAnswer ? answerVO.getAnswerAr() : answerVO.getAnswerEn());
+				
+				answers.add(answer);
+			}
+			
+			result.setAnswers(answers);
+			result.setStatus(1);
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+			result.setStatus(0);
+		}
+		
+		return result;
+	}
 }

@@ -12,6 +12,7 @@ import com.kickbrain.beans.PremiumPointsHistoryVO;
 import com.kickbrain.beans.WaitingGameVO;
 import com.kickbrain.db.model.Game;
 import com.kickbrain.db.model.PremiumPointsHistory;
+import com.kickbrain.db.model.User;
 import com.kickbrain.db.model.WaitingGame;
 import com.kickbrain.db.repository.GameRepository;
 import com.kickbrain.db.repository.PremiumPointsHistoryRepository;
@@ -70,7 +71,8 @@ public class GameMysqlService implements GameService {
 		
 		List<GameVO> result = new ArrayList<GameVO>();
 		
-		List<Game> games = gameDao.findSqlQuery("SELECT * FROM GAMES where player1_id = "+playerId+" or player2_id = "+playerId+" order by creation_date desc ", Game.class);
+		List<Game> games = gameDao.findSqlQuery("SELECT * FROM GAMES where (player1_id = "+playerId+" or player2_id = "+playerId+") and creation_date  BETWEEN NOW() - INTERVAL 30 DAY AND NOW() "
+				+ " order by creation_date desc ", Game.class);
 		for(Game game : games)
 		{
 			result.add(Utility.convertGameModelToGameVO(game));
@@ -156,11 +158,19 @@ public class GameMysqlService implements GameService {
 	
 	@Override
 	public void cleanActiveGame(long roomId, String playerId) {
-		Game game = gameDao.findById(roomId).get();
-		game.setIsCleaned(1);
-		game.setCleanedBy(playerId);
 		
-		gameDao.save(game);
+		try
+		{
+			Game game = gameDao.findById(roomId).get();
+			game.setIsCleaned(1);
+			game.setCleanedBy(playerId);
+			
+			gameDao.save(game);
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Error: Room Id: " + roomId + " was not found while cleanup");
+		}
 	}
 	
 	@Override
@@ -168,5 +178,34 @@ public class GameMysqlService implements GameService {
 		
 		PremiumPointsHistory premiumPointsHistory = Utility.convertPremiumPointsHistoryVOToModel(premiumPointsHistoryVO);
 		premiumPointsHistoryDao.save(premiumPointsHistory);
+	}
+	
+	@Override
+	public void deleteGamesForPlayer(long playerId) {
+		
+		List<Game> player1Games = gameDao.findSqlQuery("SELECT * FROM GAMES where player1_id = "+playerId, Game.class);
+		for(Game player1Game : player1Games)
+		{
+			player1Game.setAnonymousPlayer1(String.valueOf(player1Game.getPlayer1().getId()));
+			
+			User anonymousUser = new User();
+			anonymousUser.setId(1);
+			player1Game.setPlayer1(anonymousUser);
+			
+			gameDao.save(player1Game);
+		}
+		
+		List<Game> player2Games = gameDao.findSqlQuery("SELECT * FROM GAMES where player2_id = "+playerId, Game.class);
+		for(Game player2Game : player2Games)
+		{
+			player2Game.setAnonymousPlayer2(String.valueOf(player2Game.getPlayer2().getId()));
+			
+			User anonymousUser = new User();
+			anonymousUser.setId(1);
+			player2Game.setPlayer2(anonymousUser);
+			
+			gameDao.save(player2Game);
+		}
+		
 	}
 }

@@ -14,6 +14,7 @@ import com.kickbrain.beans.PremiumPointsHistoryVO;
 import com.kickbrain.beans.UserVO;
 import com.kickbrain.beans.WaitingGameVO;
 import com.kickbrain.beans.configuration.QuestionVO;
+import com.kickbrain.db.model.Answers;
 import com.kickbrain.db.model.Game;
 import com.kickbrain.db.model.GameDetails;
 import com.kickbrain.db.model.PremiumPointsHistory;
@@ -38,6 +39,7 @@ public class Utility {
 		userVO.setCreationDate(user.getCreationDate());
 		userVO.setTotalScore(user.getTotalScore());
 		userVO.setPremiumPoints(user.getPremiumPoints());
+		userVO.setReferredBy(user.getReferredBy());
 		
 		return userVO;
 	}
@@ -52,6 +54,7 @@ public class Utility {
 		user.setCreationDate(userVO.getCreationDate());
 		user.setTotalScore(userVO.getTotalScore());
 		user.setPremiumPoints(userVO.getPremiumPoints());
+		user.setReferredBy(userVO.getReferredBy());
 		
 		return user;
 	}
@@ -62,6 +65,8 @@ public class Utility {
 		questionVO.setId((int)question.getId());
 		questionVO.setPromptAr(question.getDescriptionAr());
 		questionVO.setPromptEn(question.getDescriptionEn());
+		questionVO.setCategory(question.getCategoryId());
+		questionVO.setTag(question.getTag());
 		
 		List<AnswerVO> answers = new ArrayList<AnswerVO>();
 		List<QuestionAnswers> questionAnswersLst = question.getAnswers();
@@ -77,6 +82,28 @@ public class Utility {
 		}
 
 		return questionVO;
+	}
+	
+	public static AnswerVO convertAnswerModelToVO(Answers answer)
+	{
+		AnswerVO answerVO = new AnswerVO();
+		answerVO.setId((int)answer.getId());
+		answerVO.setAnswerAr(answer.getNameAr());
+		answerVO.setAnswerEn(answer.getNameEn());
+		answerVO.setType(answer.getType());
+		
+		return answerVO;
+	}
+	
+	public static Answers convertAnswerVOToModel(AnswerVO answerVO)
+	{
+		Answers answer = new Answers();
+		answer.setId(answerVO.getId());
+		answer.setNameAr(answerVO.getAnswerAr());
+		answer.setNameEn(answerVO.getAnswerEn());
+		answer.setType(answerVO.getType());
+		
+		return answer;
 	}
 	
 	public static QuestionVO convertQuestionImportModelToVO(QuestionImport question)
@@ -108,6 +135,8 @@ public class Utility {
 		question.setId(questionVO.getId());
 		question.setDescriptionAr(questionVO.getPromptAr());
 		question.setDescriptionEn(questionVO.getPromptEn());
+		question.setTag(questionVO.getTag());
+		question.setCategoryId(questionVO.getCategory());
 		
 		if(questionVO.getAnswers() != null)
 		{
@@ -121,8 +150,6 @@ public class Utility {
 			question.setAnswers(questionAnswersLst);
 		}
 		
-		question.setCategoryId(1);
-
 		return question;
 	}
 	
@@ -237,9 +264,10 @@ public class Utility {
 	{
 		AnswerVO answer = new AnswerVO();
 		answer.setId((int)questionAnswers.getId());
-		answer.setAnswerAr(questionAnswers.getAnswerAr());
-		answer.setAnswerEn(questionAnswers.getAnswerEn());
+		answer.setAnswerAr(questionAnswers.getAnswer().getNameAr());
+		answer.setAnswerEn(questionAnswers.getAnswer().getNameEn());
 		answer.setQuestionId((int) questionAnswers.getQuestion().getId());
+		answer.setAnswerId((int)questionAnswers.getAnswer().getId());
 		
 		return answer;
 	}
@@ -261,6 +289,10 @@ public class Utility {
 		questionAnswers.setId(answer.getId());
 		questionAnswers.setAnswerAr(answer.getAnswerAr());
 		questionAnswers.setAnswerEn(answer.getAnswerEn());
+		
+		Answers answerModel = new Answers();
+		answerModel.setId(answer.getAnswerId());
+		questionAnswers.setAnswer(answerModel);
 		
 		Question question = new Question();
 		question.setId(answer.getQuestionId());
@@ -311,6 +343,8 @@ public class Utility {
 		waitingGameVO.setStatus(waitingGame.getStatus());
 		waitingGameVO.setSessionId(waitingGame.getSessionId());
 		waitingGameVO.setDeviceToken(waitingGame.getDeviceToken());
+		waitingGameVO.setIsPrivate(waitingGame.getIsPrivate());
+		waitingGameVO.setPasscode(waitingGame.getPasscode());
 		
 		return waitingGameVO;
 	}
@@ -331,6 +365,8 @@ public class Utility {
 		waitingGame.setStatus(waitingGameVO.getStatus());
 		waitingGame.setSessionId(waitingGameVO.getSessionId());
 		waitingGame.setDeviceToken(waitingGameVO.getDeviceToken());
+		waitingGame.setIsPrivate(waitingGameVO.getIsPrivate());
+		waitingGame.setPasscode(waitingGameVO.getPasscode());
 		
 		return waitingGame;
 	}
@@ -338,7 +374,8 @@ public class Utility {
 	public static AnswerVO getMatchingAnswerV2(String capturedAnswer, List<AnswerVO> possibleAnswers, List<AnswerVO> submittedPlayerAnswers, List<AnswerVO> opponentPlayerAnswers, int minimumMatchingRatio, int fullMatchRatio, int partMatchRatio)
 	{
 		//System.out.println("Checking for a match of captured answer: " + capturedAnswer);
-		AnswerVO matchingAnswer = null;
+		AnswerVO result = null;
+		List<AnswerVO> matchingAnswers = new ArrayList<>();
 		
 		int highestMatchingRatio = 0;
 		boolean isNumericAnswer = StringUtils.isNumeric(capturedAnswer);
@@ -371,7 +408,7 @@ public class Utility {
 			{
 				if(capturedAnswer.equals(possibleAnswer))
 				{
-					matchingAnswer = answerVO;
+					matchingAnswers.add(answerVO);
 					break;
 				}
 			}
@@ -389,11 +426,10 @@ public class Utility {
 						
 						if(matchingRatio >= fullMatchRatio)
 						{
-							if(highestMatchingRatio < matchingRatio)
+							if(highestMatchingRatio <= matchingRatio)
 							{
-								//System.out.println("Full name match is found with ratio: " + matchingRatio + " and answer: " + possibleAnswer);
 								highestMatchingRatio = matchingRatio;
-								matchingAnswer = answerVO;
+								matchingAnswers.add(answerVO);
 							}
 						}
 					}
@@ -419,11 +455,10 @@ public class Utility {
 							matchingRatio = FuzzySearch.ratio(capturedAnswer.toLowerCase(), token.toLowerCase());
 							if(matchingRatio >= fullMatchRatio)
 							{
-								if(highestMatchingRatio < matchingRatio)
+								if(highestMatchingRatio <= matchingRatio)
 								{
-									//System.out.println("Partial name match is found with ratio: " + matchingRatio + " and answer: " + possibleAnswer);
 									highestMatchingRatio = matchingRatio;
-									matchingAnswer = answerVO;
+									matchingAnswers.add(answerVO);
 								}
 							}
 						}
@@ -431,8 +466,8 @@ public class Utility {
 				}
 				else
 				{
-					if(storedAnswerArr.length <= 2)
-					{
+					/*if(storedAnswerArr.length <= 2)
+					{*/
 						// if the captured answer is one token and the possible answer is 2 tokens, then the captured answer should be minimum 3 characters
 						int capturedAnswerLength = capturedAnswer.length();
 						if(capturedAnswerLength >= 3)
@@ -443,16 +478,15 @@ public class Utility {
 								
 								if(matchingRatio >= partMatchRatio)
 								{
-									if(highestMatchingRatio < matchingRatio)
+									if(highestMatchingRatio <= matchingRatio)
 									{
-										//System.out.println("Partial name match is found with ratio: " + matchingRatio + " and answer: " + possibleAnswer);
 										highestMatchingRatio = matchingRatio;
-										matchingAnswer = answerVO;
+										matchingAnswers.add(answerVO);
 									}
 								}
 							}
 						}
-					}
+					/*}
 					else
 					{
 						// if the captured answer is one token and the possible answer is more than 2 tokens, then the captured answer length should be minimum 50% of the total length of the stored answer
@@ -465,49 +499,59 @@ public class Utility {
 								
 								if(matchingRatio >= partMatchRatio)
 								{
-									if(highestMatchingRatio < matchingRatio)
+									if(highestMatchingRatio <= matchingRatio)
 									{
-										//System.out.println("Partial name match is found with ratio: " + matchingRatio + " and answer: " + possibleAnswer);
 										highestMatchingRatio = matchingRatio;
-										matchingAnswer = answerVO;
+										matchingAnswers.add(answerVO);
 									}
 								}
 							}
 						}
-					}
+					}*/
 				}
 			}
 		}
 		
 		// Check if the matching answer is already answered by the submitted player or the opponent player
-		if(matchingAnswer != null)
+		List<AnswerVO> matchingAnswersUpdatedLst = new ArrayList<AnswerVO>();
+		if(!matchingAnswers.isEmpty())
 		{
-			if(opponentPlayerAnswers != null)
+			for(AnswerVO matchingAnswerVO : matchingAnswers)
 			{
-				for(AnswerVO oppoAnswerVO : opponentPlayerAnswers)
+				if(opponentPlayerAnswers != null)
 				{
-					if(matchingAnswer.getId() == oppoAnswerVO.getId())
+					for(AnswerVO oppoAnswerVO : opponentPlayerAnswers)
 					{
-						matchingAnswer = null;
-						break;
+						if(matchingAnswerVO.getId() == oppoAnswerVO.getId())
+						{
+							// Answer already answered
+							matchingAnswerVO = null;
+							break;
+						}
 					}
 				}
-			}
-			
-			if(matchingAnswer != null && submittedPlayerAnswers != null)
-			{
-				for(AnswerVO subAnswerVO : submittedPlayerAnswers)
+				
+				if(matchingAnswerVO != null && submittedPlayerAnswers != null)
 				{
-					if(matchingAnswer.getId() == subAnswerVO.getId())
+					for(AnswerVO subAnswerVO : submittedPlayerAnswers)
 					{
-						matchingAnswer = null;
-						break;
+						if(matchingAnswerVO.getId() == subAnswerVO.getId())
+						{
+							matchingAnswerVO = null;
+							break;
+						}
 					}
+				}
+				
+				if(matchingAnswerVO != null)
+				{
+					matchingAnswersUpdatedLst.add(matchingAnswerVO);
 				}
 			}
 		}
 		
-		return matchingAnswer;
+		result = matchingAnswersUpdatedLst.size() > 0 ? matchingAnswersUpdatedLst.get(0) : null;
+		return result;
 	}
 	
 	public static PremiumPointsHistory convertPremiumPointsHistoryVOToModel(PremiumPointsHistoryVO premiumPointsHistoryVO)
@@ -535,6 +579,20 @@ public class Utility {
 		premiumPointsHistoryVO.setCreationDate(premiumPointsHistory.getCreationDate());
 		
 		return premiumPointsHistoryVO;
+	}
+	
+	public static void main(String[] args) {
+		
+		String capturedAnswer = "sévilla";
+		
+		List<AnswerVO> possibleAnswers = new ArrayList<AnswerVO>();
+		AnswerVO answer = new AnswerVO();
+		answer.setAnswerAr("اشبيلية");
+		answer.setAnswerEn("Sevilla");
+		possibleAnswers.add(answer);
+		
+		AnswerVO matchedAnswer = getMatchingAnswerV2(capturedAnswer, possibleAnswers, null, null, 55, 70, 75);
+		System.out.println(matchedAnswer.getAnswerEn());
 	}
 	
 }

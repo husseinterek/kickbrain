@@ -26,11 +26,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kickbrain.beans.AnswerAdminRequest;
+import com.kickbrain.beans.AnswerAdminResult;
 import com.kickbrain.beans.AnswerVO;
 import com.kickbrain.beans.BaseResult;
 import com.kickbrain.beans.GeneralLookup;
+import com.kickbrain.beans.QuestionAdminRequest;
+import com.kickbrain.beans.QuestionAdminResult;
 import com.kickbrain.beans.SubmitQuestionRequest;
 import com.kickbrain.beans.configuration.QuestionVO;
 import com.kickbrain.db.service.QuestionService;
@@ -232,6 +237,212 @@ public class AdminController {
 			result.setStatus(0);
 		}
 		finally{
+		}
+		
+		return result;
+	}
+	
+	@RequestMapping(value = "/createQuestion", method = RequestMethod.POST, consumes="application/json")
+	public BaseResult createQuestion(@RequestBody QuestionAdminRequest request) {
+		
+		BaseResult result = new BaseResult();
+		try
+		{
+			if(StringUtils.isEmpty(request.getDescriptionAr()) || StringUtils.isEmpty(request.getDescriptionEn()) || request.getAnswers().isEmpty() || request.getCategory() == 0 || request.getTag() == 0)
+			{
+				result.setStatus(0);
+			}
+			else
+			{
+				QuestionVO question = new QuestionVO();
+				question.setPromptAr(request.getDescriptionAr());
+				question.setPromptEn(request.getDescriptionEn());
+				question.setCategory(request.getCategory());
+				question.setTag(request.getTag());
+				
+				question = questionService.addQuestion(question);
+				
+				List<AnswerVO> answers = new ArrayList<AnswerVO>();
+				for(int answerId : request.getAnswers())
+				{
+					AnswerVO answerVO = new AnswerVO();
+					answerVO.setAnswerId(answerId);
+					answerVO.setQuestionId(question.getId());
+					
+					answers.add(answerVO);
+				}
+				question.setAnswers(answers);
+				
+				questionService.addQuestion(question);
+				
+				result.setStatus(1);
+			}
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+			result.setStatus(0);
+		}
+		
+		return result;
+	}
+	
+	@RequestMapping(value = "/saveQuestion", method = RequestMethod.POST, consumes="application/json")
+	public BaseResult saveQuestion(@RequestBody QuestionAdminRequest request) {
+		
+		BaseResult result = new BaseResult();
+		try
+		{
+			if(StringUtils.isEmpty(request.getDescriptionAr()) || StringUtils.isEmpty(request.getDescriptionEn()) || request.getAnswers().isEmpty() || request.getCategory() == 0 || request.getTag() == 0)
+			{
+				result.setStatus(0);
+			}
+			else
+			{
+				QuestionVO question = new QuestionVO();
+				
+				if(request.getId() != null)
+				{
+					question.setId(request.getId());
+				}
+				question.setPromptAr(request.getDescriptionAr());
+				question.setPromptEn(request.getDescriptionEn());
+				question.setCategory(request.getCategory());
+				question.setTag(request.getTag());
+				
+				if(request.getId() == null)
+				{
+					question = questionService.addQuestion(question);
+				}
+				
+				List<AnswerVO> answers = new ArrayList<AnswerVO>();
+				for(int answerId : request.getAnswers())
+				{
+					AnswerVO answerVO = new AnswerVO();
+					answerVO.setAnswerId(answerId);
+					answerVO.setQuestionId(question.getId());
+					
+					answers.add(answerVO);
+				}
+				question.setAnswers(answers);
+				
+				questionService.addQuestion(question);
+				
+				result.setStatus(1);
+			}
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+			result.setStatus(0);
+		}
+		
+		return result;
+	}
+	
+	@RequestMapping(value = "/questions", method = RequestMethod.GET)
+	public List<QuestionAdminResult> retrieveQuestions(@RequestParam(name="search",required=false) String search, @RequestParam(name="offset",required=false) Integer offset, @RequestParam(name="max",required=false) Integer max) {
+		
+		List<QuestionAdminResult> questionsResult = new ArrayList<QuestionAdminResult>();
+		try
+		{
+			List<QuestionVO> questions = questionService.retrieveAllQuestions(search, offset, max);
+			for(QuestionVO question : questions)
+			{
+				QuestionAdminResult questionResult = new QuestionAdminResult();
+				questionResult.setId(question.getId());
+				questionResult.setDescriptionAr(question.getPromptAr());
+				questionResult.setDescriptionEn(question.getPromptEn());
+				questionResult.setCategory(question.getCategory());
+				questionResult.setTag(question.getTag());
+				questionResult.setAnswers(question.getAnswers());
+				
+				String answersEn = "";
+				String answersAr = "";
+				for(AnswerVO answerVO : question.getAnswers())
+				{
+					if(!answersEn.isEmpty())
+					{
+						answersEn += ",";
+					}
+					if(!answersAr.isEmpty())
+					{
+						answersAr += ",";
+					}
+					answersEn += answerVO.getAnswerEn();
+					answersAr += answerVO.getAnswerAr();
+				}
+				questionResult.setAnswersAr(answersAr);
+				questionResult.setAnswersEn(answersEn);
+				
+				questionsResult.add(questionResult);
+			}
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		
+		return questionsResult;
+	}
+
+	@RequestMapping(value = "/answers", method = RequestMethod.GET)
+	public List<AnswerAdminResult> retrieveAnswers(@RequestParam(name="search",required=false) String search, @RequestParam(name="offset",required=false) Integer offset, @RequestParam(name="max",required=false) Integer max) {
+		
+		List<AnswerAdminResult> answersResult = new ArrayList<AnswerAdminResult>();
+		try
+		{
+			List<AnswerVO> answers = questionService.retrieveAllAnswers(search, offset, max);
+			for(AnswerVO answer : answers)
+			{
+				AnswerAdminResult answerResult = new AnswerAdminResult();
+				answerResult.setId(answer.getId());
+				answerResult.setNameAr(answer.getAnswerAr());
+				answerResult.setNameEn(answer.getAnswerEn());
+				answerResult.setType(answer.getType());
+				
+				answersResult.add(answerResult);
+			}
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		
+		return answersResult;
+	}
+	
+	@RequestMapping(value = "/saveAnswer", method = RequestMethod.POST, consumes="application/json")
+	public BaseResult saveAnswer(@RequestBody AnswerAdminRequest request) {
+		
+		BaseResult result = new BaseResult();
+		try
+		{
+			if(StringUtils.isEmpty(request.getNameAr()) || StringUtils.isEmpty(request.getNameEn()) || request.getType() == 0)
+			{
+				result.setStatus(0);
+			}
+			else
+			{
+				AnswerVO answer = new AnswerVO();
+				
+				if(request.getId() != null)
+				{
+					answer.setId(request.getId());
+				}
+				answer.setAnswerAr(request.getNameAr());
+				answer.setAnswerEn(request.getNameEn());
+				answer.setType(request.getType());
+				
+				questionService.addAnswer(answer);
+				
+				result.setStatus(1);
+			}
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+			result.setStatus(0);
 		}
 		
 		return result;

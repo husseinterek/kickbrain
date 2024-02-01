@@ -30,16 +30,29 @@ public class BaseController {
 		return device.isMobile() ? "home-mobile" : "home";
 	}
 	
+	@RequestMapping(value = "/download", method = RequestMethod.GET)
+	public String download(Locale locale, Model model, HttpSession session, Device device) {
+		
+		String target = device.isMobile() ? "download" : "home";
+		return target;
+	}
+	
 	@RequestMapping(value = "/admin", method = RequestMethod.GET)
 	public String admin(Locale locale, Model model, HttpSession session, Device device) {
 		
-		return "admin";
+		return "admin-questions";
 	}
 	
 	@RequestMapping(value = "/admin-import", method = RequestMethod.GET)
 	public String adminImport(Locale locale, Model model, HttpSession session, Device device) {
 		
 		return "admin-import";
+	}
+	
+	@RequestMapping(value = "/admin-answers", method = RequestMethod.GET)
+	public String adminAnswers(Locale locale, Model model, HttpSession session, Device device) {
+		
+		return "admin-answers";
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)

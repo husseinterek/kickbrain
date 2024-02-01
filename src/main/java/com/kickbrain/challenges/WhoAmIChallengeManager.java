@@ -79,7 +79,7 @@ public class WhoAmIChallengeManager extends ChallengeManager{
 		GameRoom gameRoom = gameRoomManager.getGameRoomById(roomId);
 		if(gameRoom != null)
 		{
-			proceed(gameRoom, String.valueOf(questionId), currentQuestionIndex, null, 4);
+			proceed(gameRoom, String.valueOf(questionId), currentQuestionIndex, gameRoom.getPlayer1().getPlayerId(), 4);
 		}
 	}
 }

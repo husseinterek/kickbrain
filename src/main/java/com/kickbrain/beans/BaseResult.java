@@ -3,6 +3,7 @@ package com.kickbrain.beans;
 public class BaseResult {
 	private int status;
 	private String errorMessage;
+	private String errorMessageAr;
 	private String errorCode;
 
 	public int getStatus() {
@@ -27,6 +28,14 @@ public class BaseResult {
 
 	public void setErrorCode(String errorCode) {
 		this.errorCode = errorCode;
+	}
+
+	public String getErrorMessageAr() {
+		return errorMessageAr;
+	}
+
+	public void setErrorMessageAr(String errorMessageAr) {
+		this.errorMessageAr = errorMessageAr;
 	}
 
 }

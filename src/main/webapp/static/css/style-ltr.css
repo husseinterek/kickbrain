@@ -205,6 +205,19 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
 	background-color: #36A9F3 !important;
 }
 
+#questionModal .select2-container{
+	width: 100% !important;
+}
+
+#questionModal .select2-container .select2-selection__choice{
+	margin-top: 5px !important;
+}
+
+#questionModal .select2-container .select2-selection--multiple{
+	width: 100% !important;
+	height: 100% !important;
+}
+
 .columns-body tr{
 	cursor: move;
 }

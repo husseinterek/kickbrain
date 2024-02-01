@@ -51,6 +51,9 @@ public class User implements Serializable {
 	
 	@Column(name = "PREMIUM_POINTS")
 	private float premiumPoints;
+	
+	@Column(name = "REFERRED_BY")
+	private String referredBy;
 
 	public long getId() {
 		return id;
@@ -106,6 +109,14 @@ public class User implements Serializable {
 	
 	public void setPremiumPoints(float premiumPoints) {
 		this.premiumPoints = premiumPoints;
+	}
+	
+	public void setReferredBy(String referredBy) {
+		this.referredBy = referredBy;
+	}
+	
+	public String getReferredBy() {
+		return referredBy;
 	}
 	
 }

@@ -19,8 +19,8 @@ import com.kickbrain.beans.EndBidEvent;
 import com.kickbrain.beans.EndBidRequest;
 import com.kickbrain.beans.GameReport;
 import com.kickbrain.beans.GameReportResult;
+import com.kickbrain.beans.GameRequest;
 import com.kickbrain.beans.GameRoom;
-import com.kickbrain.beans.Player;
 import com.kickbrain.beans.QuestionResult;
 import com.kickbrain.beans.RingBellRequest;
 import com.kickbrain.beans.SkipQuestionEvent;
@@ -56,14 +56,14 @@ public class WebSocketController {
     }
     
     @MessageMapping("/startGame")
-    public void startGame(Player player, SimpMessageHeaderAccessor headerAccessor) {
+    public void startGame(GameRequest request, SimpMessageHeaderAccessor headerAccessor) {
 
         String playerId = null;
         try
         {
         	String sessionId = headerAccessor.getSessionId();
         	
-            GameRoom newGameRoom = gameRoomManager.createWaitingGameRoom(player, sessionId);
+            GameRoom newGameRoom = gameRoomManager.createWaitingGameRoom(request, sessionId);
             playerId = newGameRoom.getPlayer1().getPlayerId();
             
             // Add the sessionId and playerId to the WebSocketSessionManager
@@ -203,6 +203,7 @@ public class WebSocketController {
 					}
     			}
     			
+    			skipQuestionEvent.setCurrentTurn(request.getSubmittedPlayerId());
     			messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/newQuestion", skipQuestionEvent);
     			messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/switchTurn", request.getSubmittedPlayerId());
     			
@@ -259,6 +260,7 @@ public class WebSocketController {
 		if(ringBellRequests.get(ringBellRequest) == null)
 		{
 			ringBellRequests.put(ringBellRequest, System.currentTimeMillis());
+			
 			messagingTemplate.convertAndSend("/topic/game/"+request.getRoomId()+"/"+request.getQuestionId()+"/ringBell", request.getPlayerId());
 	    	gameTimerManager.refreshGameTimer(String.valueOf(request.getRoomId()), request.getPlayerId(), String.valueOf(request.getQuestionId()), 3, null);
 		}
@@ -350,7 +352,6 @@ public class WebSocketController {
     	
         // Send a message to the player informing them that they need to wait for another player to join
         messagingTemplate.convertAndSend("/topic/game/wait/" + gameRoom.getPlayer1().getUsername(), waitingRoom);
-        System.out.println("/topic/game/wait/" + gameRoom.getPlayer1().getUsername());
         
         String playerName = gameRoom.getPlayer1().getUsername();
     	if(playerName.contains(" "))

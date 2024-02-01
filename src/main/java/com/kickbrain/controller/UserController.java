@@ -39,7 +39,8 @@ public class UserController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces="application/json")
 	public UserVO retrieveUser(@PathVariable String id) {
 		
-		return userManager.retrieveUser(Long.valueOf(id));
+		UserVO result = userManager.retrieveUser(Long.valueOf(id));
+		return result;
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.POST, produces="application/json")
@@ -84,10 +85,33 @@ public class UserController {
 		return result;
 	}
 	
+	@RequestMapping(value = "/monthlyRankings", method = RequestMethod.GET, produces="application/json")
+	public UsersRecordsResult monthlyRankings() {
+		
+		UsersRecordsResult result = new UsersRecordsResult();
+		
+		List<UserVO> users = userManager.retrieveTopUsersThisMonth();
+		result.setUsers(users);
+		
+		result.setStatus(1);
+		return result;
+	}
+	
 	@RequestMapping(value = "/{id}/games/{gameId}", method = RequestMethod.GET, produces="application/json")
 	public GameHistoryReportResult gameHistoryReport(@PathVariable long id, @PathVariable long gameId) {
 		
 		GameHistoryReportResult result = gameRoomManager.retrieveGameHistoryReport(gameId, id);
+		result.setStatus(1);
+		return result;
+	}
+	
+	@RequestMapping(value = "/completeWatchingAd/{userId}", method = RequestMethod.POST, produces="application/json")
+	public BaseResult completeWatchingAd(@PathVariable String userId) {
+		
+		BaseResult result = new BaseResult();
+		
+		userManager.completeWatchingAd(userId);
+		
 		result.setStatus(1);
 		return result;
 	}

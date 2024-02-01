@@ -187,5 +187,5 @@ public class Game implements Serializable {
 	public void setCleanedBy(String cleanedBy) {
 		this.cleanedBy = cleanedBy;
 	}
-
+	
 }

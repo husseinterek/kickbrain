@@ -51,6 +51,12 @@ public class WaitingGame implements Serializable {
 	
 	@Column(name = "DEVICE_TOKEN")
 	private String deviceToken;
+	
+	@Column(name = "IS_PRIVATE")
+	private int isPrivate;
+	
+	@Column(name = "PASSCODE")
+	private String passcode;
 
 	public long getId() {
 		return id;
@@ -106,6 +112,22 @@ public class WaitingGame implements Serializable {
 	
 	public String getDeviceToken() {
 		return deviceToken;
+	}
+	
+	public void setPasscode(String passcode) {
+		this.passcode = passcode;
+	}
+	
+	public String getPasscode() {
+		return passcode;
+	}
+
+	public int getIsPrivate() {
+		return isPrivate;
+	}
+
+	public void setIsPrivate(int isPrivate) {
+		this.isPrivate = isPrivate;
 	}
 	
 }

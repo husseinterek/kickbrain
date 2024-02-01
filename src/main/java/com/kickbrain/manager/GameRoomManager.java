@@ -30,6 +30,7 @@ import com.kickbrain.beans.GameHistoryReportResult;
 import com.kickbrain.beans.GameReport;
 import com.kickbrain.beans.GameReportQuestion;
 import com.kickbrain.beans.GameReportResult;
+import com.kickbrain.beans.GameRequest;
 import com.kickbrain.beans.GameRoom;
 import com.kickbrain.beans.GameVO;
 import com.kickbrain.beans.GamesHistoryResult;
@@ -76,9 +77,10 @@ public class GameRoomManager {
 	@Autowired
     private XMLConfigurationManager xmlConfigurationManager;
 	
-	public GameRoom createWaitingGameRoom(Player player, String sessionId) {
+	public GameRoom createWaitingGameRoom(GameRequest request, String sessionId) {
 	    
 		List<WaitingGameVO> availableWaitingRooms = new ArrayList<WaitingGameVO>();
+		Player player = request.getPlayer();
 		if(player.getPlayerId() != null)
 		{
 			availableWaitingRooms = gameService.getWaitingGamesByPlayerId(Long.valueOf(player.getPlayerId()));
@@ -97,6 +99,8 @@ public class GameRoomManager {
 			waitingGameVO.setSessionId(sessionId);
 			waitingGameVO.setStatus(1);
 			waitingGameVO.setDeviceToken(player.getDeviceToken());
+			waitingGameVO.setIsPrivate(request.getIsPrivate());
+			waitingGameVO.setPasscode(request.getPasscode());
 			waitingGameVO = gameService.createWaitingGame(waitingGameVO);
 		}
 		
@@ -495,11 +499,11 @@ public class GameRoomManager {
 		GameRoom gameRoom = getGameRoomById(roomId);
 		
 		Map<String, Integer> playersScores = getPlayersScoresPerGame(roomId);
-		int player1Score = playersScores.get(gameRoom.getPlayer1().getPlayerId());
-		int player2Score = playersScores.get(gameRoom.getPlayer2().getPlayerId());
+		Integer player1Score = playersScores.get(gameRoom.getPlayer1().getPlayerId());
+		Integer player2Score = playersScores.get(gameRoom.getPlayer2().getPlayerId());
 		
-		gameReportResult.setPlayer1Score(player1Score);
-		gameReportResult.setPlayer2Score(player2Score);
+		gameReportResult.setPlayer1Score(player1Score == null ? 0 : player1Score);
+		gameReportResult.setPlayer2Score(player2Score == null ? 0 : player2Score);
 		
 		Map<String, String> questionsResult = getQuestionsResultPerGame(roomId);
 		gameReportResult.setQuestionsResult(questionsResult);
